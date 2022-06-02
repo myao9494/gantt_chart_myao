@@ -1,0 +1,13 @@
+id,start_date,text,duration,end_date,progress,parent,kind_task,memo,color,textColor,!nativeeditor_status,target
+room_moyo_kae_1,2022-01-21,家具を買う,5,2022-01-31,0,,2,None,None,None,updated,nan
+room_moyo_kae_2,2022-01-21,家具を選ぶ,5,2022-01-31,0,room_moyo_kae_1,1,None,None,None,updated,nan
+room_moyo_kae_3,2022-01-14,部屋の計画,5,2022-01-21,0,,2,None,None,None,updated,nan
+room_moyo_kae_4,2022-02-04,部屋の模様替え,6,2022-02-12,0,,2,None,None,None,updated,nan
+room_moyo_kae_5,2022-01-21,カーテンを選ぶ,5,2022-01-31,0,room_moyo_kae_1,1,,,,updated,nan
+room_moyo_kae_6,2022-01-20,どこに何を置くか決める,1,2022-01-22,0,room_moyo_kae_3,1,計測しようね,,,updated,nan
+room_moyo_kae_7,2022-02-04,掃除,1,2022-02-05,0,room_moyo_kae_4,1,,,,updated,nan
+room_moyo_kae_8,2022-02-05,配置を変更,0,2022-02-07,0,room_moyo_kae_4,1,ピアノは移動ね,,,updated,nan
+room_moyo_kae_9,2022-02-28,期限,1,2022-03-01,0,,3,,,,updated,room_moyo_kae_3
+room_moyo_kae_10,2022-01-19,部屋の大きさを測る,1,2022-01-20,0,room_moyo_kae_3,1,,,,updated,nan
+room_moyo_kae_11,2022-01-19,カーテン用の寸法を測る,1,2022-01-20,0,room_moyo_kae_3,1,"どこを測るかを調べてね
+",,,updated,nan
