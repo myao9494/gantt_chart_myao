@@ -72,6 +72,9 @@
 			background: #547dab;
 			height: 80%;
 		}
+
+		.weekend{ background: #f4f7f4 !important;}
+
 	</style>
 	<link rel="shortcut icon" href="">
 </head>
@@ -167,15 +170,17 @@
 		new Date(2022, 11, 25)
 	];
 
-	for (var i = 0; i < holidays.length; i++) {
-		gantt.setWorkTime({
-			date: holidays[i],
-			hours: false
-		});
-	}
+	// 週末(期間の計算に入れたい場合)
 
-	// 週末
 	// gantt.config.work_time = true; 
+
+	// for (var i = 0; i < holidays.length; i++) {
+	// 	gantt.setWorkTime({
+	// 		date: holidays[i],
+	// 		hours: false
+	// 	});
+	// }
+
 	// var weekScaleTemplate = function (date) {
 	// 	var dateToStr = gantt.date.date_to_str("%d %M");
 	// 	var weekNum = gantt.date.date_to_str("(week %W)");
@@ -187,6 +192,18 @@
 	// 		return "week_end";
 	// 	return "";
 	// };
+
+	// 週末(色だけ変えたい場合)
+	function isInArray(array, value) {
+  	return !!array.find(item => {return item.getTime() == value.getTime()});
+	}
+
+	gantt.templates.timeline_cell_class = function(task,date){
+    if(date.getDay()==0||date.getDay()==6||isInArray(holidays, date)){
+        return "weekend";
+    }
+	};
+
 	// プラグイン
 	gantt.plugins({
 		keyboard_navigation: true,
