@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `gantt_tasks` (
   `kind_task` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `ToDo` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `folder` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `url` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `url_adress` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `mail` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `memo` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `hyperlink` text COLLATE utf8_unicode_ci DEFAULT NULL,
