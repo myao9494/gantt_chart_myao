@@ -72,8 +72,8 @@ app.post("/data/task", function (req, res) { // adds new task to database
 			var orderIndex = (result[0].maxOrder || 0) + 1;
 			// return db.query("INSERT INTO gantt_tasks(text, start_date, duration, progress, parent, sortorder) VALUES (?,?,?,?,?,?)",
 			// 	[task.text, task.start_date, task.duration, task.progress, task.parent, orderIndex]);
-			return db.query("INSERT INTO gantt_tasks(text, start_date, duration, progress, parent,kind_task,ToDo,folder,url_adress,mail,memo,hyperlink,color,textColor,owner_id,sortorder) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id, orderIndex]);
+			return db.query("INSERT INTO gantt_tasks(text, start_date, duration, progress, parent,kind_task,reason,price_or_target_price,loss_cut_price,loss_cut_reason,memo,hyperlink,color,textColor,owner_id,sortorder) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.reason,task.price_or_target_price,task.loss_cut_price,task.loss_cut_reason,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id, orderIndex]);
 		})
 		.then(function (result) {
 			sendResponse(res, "inserted", result.insertId);
@@ -90,8 +90,8 @@ app.put("/data/task/:id", function (req, res) {
 		task = getTask(req.body);
 
 	Promise.all([
-		db.query("UPDATE gantt_tasks SET text = ?, start_date = ?, duration = ?, progress = ?, parent = ?, kind_task = ?, ToDo = ?, folder = ?, url_adress = ?, mail = ?, memo = ?, hyperlink = ?, color = ?, textColor = ?, owner_id = ?  WHERE id = ?",
-			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id, sid]),
+		db.query("UPDATE gantt_tasks SET text = ?, start_date = ?, duration = ?, progress = ?, parent = ?, kind_task = ?, reason = ?, price_or_target_price = ?, loss_cut_price = ?, loss_cut_reason = ?, memo = ?, hyperlink = ?, color = ?, textColor = ?, owner_id = ?  WHERE id = ?",
+			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.reason,task.price_or_target_price,task.loss_cut_price,task.loss_cut_reason,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id, sid]),
 		updateOrder(sid, target)
 	])
 		.then(function (result) {
@@ -195,10 +195,10 @@ function getTask(data) {
 		progress: data.progress || 0,
 		parent: data.parent,
 		kind_task: data.kind_task,
-		ToDo:data.ToDo,
-		folder:data.folder,
-		url_adress:data.url_adress,
-		mail:data.mail,
+		reason:data.reason,
+		price_or_target_price:data.price_or_target_price,
+		loss_cut_price:data.loss_cut_price,
+		loss_cut_reason:data.loss_cut_reason,
 		memo:data.memo,
 		hyperlink:data.hyperlink,
 		color:data.color,

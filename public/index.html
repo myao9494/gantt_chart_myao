@@ -36,7 +36,7 @@
 		}
 
 		.pro .gantt_side_content {
-			color: rgba(0, 0, 0, 0);
+			color: rgb(0, 0, 0);
 		}
 
 		.pro .gantt_task_content {
@@ -157,17 +157,7 @@
 
 	// 休日
 	var holidays = [//USA, DC holidays
-		new Date(2022, 0, 3),
-		new Date(2022, 0, 21),
-		new Date(2022, 3, 16),
-		new Date(2022, 4, 12),
-		new Date(2022, 4, 27),
-		new Date(2022, 5, 16),
-		new Date(2022, 6, 4),
-		new Date(2022, 8, 2),
-		new Date(2022, 9, 14),
-		new Date(2022, 10, 28),
-		new Date(2022, 11, 25)
+		new Date(2022, 5, 23),
 	];
 
 	// 週末(期間の計算に入れたい場合)
@@ -253,10 +243,10 @@
 			{ key: "2", label: "pro" },
 			{ key: "3", label: "MS" }
      	])},
-		{name: "ToDo", height: 50, map_to: "ToDo", type: "textarea"},
-		{name: "folder", height: 50, map_to: "folder", type: "textarea"},
-		{name: "url_adress", height: 50, map_to: "url_adress", type: "textarea"},
-		{name: "mail", height: 50, map_to: "mail", type: "textarea"},
+		{name: "reason", height: 50, map_to: "reason", type: "textarea"},
+		{name: "price_or_target_price", height: 50, map_to: "price_or_target_price", type: "textarea"},
+		{name: "loss_cut_price", height: 50, map_to: "loss_cut_price", type: "textarea"},
+		{name: "loss_cut_reason", height: 50, map_to: "loss_cut_reason", type: "textarea"},
 		{name: "memo", height: 50, map_to: "memo", type: "textarea"},
 		{name: "hyperlink", height: 50, map_to: "hyperlink", type: "textarea"},
 		{name: "time", type: "duration", map_to: "auto"},
@@ -265,10 +255,10 @@
 	];
 
 	gantt.locale.labels.section_kind = "kind_task"
-	gantt.locale.labels.section_ToDo = "ToDo"
-	gantt.locale.labels.section_folder = "folder"
-	gantt.locale.labels.section_url_adress = "url_adress"
-	gantt.locale.labels.section_mail = "mail"
+	gantt.locale.labels.section_reason = "reason"
+	gantt.locale.labels.section_price_or_target_price = "price_or_target_price"
+	gantt.locale.labels.section_loss_cut_price = "loss_cut_price"
+	gantt.locale.labels.section_loss_cut_reason = "loss_cut_reason"
 	// gantt.locale.labels.section_owner_id = "owner_id"
 	gantt.locale.labels.section_memo = "memo"
 	gantt.locale.labels.section_hyperlink = "hyperlink"
@@ -364,11 +354,26 @@
 	// タスクのバーの右側のテキスト設定
 	gantt.templates.rightside_text = function(start, end, task){
 		if (task.hyperlink === ""){
-			return task.text + " " + task.duration + "<b>日</b>";}
+			return "[" + task.id + "]"  + task.text + " " + task.duration  +  "<b>日</b>";}
 		else {
-			return '<a href="' + task.hyperlink + `" target="_blank">link   </a>`  + task.text + " " + task.duration + "<b>日</b>";}
+			return '<a href="' + task.hyperlink + '" target="_blank">' + "[" + task.id + "]" + task.text + '</a>';}
 		};
     // return task.text + " " + task.duration + "<b>日</b>";};
+
+	// タスクのバーのテキスト設定
+	gantt.templates.task_text = function(start, end, task){
+		if (task.hyperlink === "" ){
+			return "[" + task.id + "]" + task.text;}
+		else {
+			if (task.kind_task==="1"||task.kind_task==="3"){
+				// return '<a href="' + task.hyperlink + `" target="_blank">L</a>`;
+				return ""
+				}
+			else{
+				return '<a href="' + task.hyperlink + '" target="_blank">' + "[" + task.id + "]"  + task.text + '</a>';}
+				}
+		};
+
 
 	// スケールの設定
 	var zoomConfig = {
