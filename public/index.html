@@ -91,7 +91,7 @@
 	<select onchange=show_owners(this.value)><option value="All">All</option><option value="自分" selected>自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
 	<label for="progresses">完了か未完了か</label>
 	<select onchange=progresses(this.value)><option value="未完了" selected>未完了</option><option value="All">All</option></select>
-	<label for="kikans">種類</label>
+	<label for="kikans">表示期間</label>
 	<select onchange=kikans(this.value)><option value="限定期間" selected>限定期間</option><option value="All">All</option></select>
 
 	<!-- 展開と縮める -->
@@ -271,6 +271,10 @@
 		return true;
 	});
 
+	// タスク追加時に一番前に移動させる
+	gantt.attachEvent("onAfterTaskAdd", function(id,task){
+		gantt.moveTask(task.id, 0,task.parent);
+	});
 
 	// 左側欄の設定
 	var show_owner = "自分";
@@ -323,16 +327,18 @@
 				},
 		editor: kind_task
 		},
-		{name:"duration",   label:"期間",  align: "center", width: 50 , editor: durationEditor},
-		{name: "owner_id", label: 'owner', width: 70, resize: true, 
+		// {name:"duration",   label:"期間",  align: "center", width: 50 , editor: durationEditor},
+		{name: "owner_id", label: 'owner', width: 50, resize: true, 
 			template: function (task_object) {
 				if (task_object.owner_id) return (find_by_id (task_object.owner_id)).label;
 				else return gantt.owners[0].label
 				},
 			editor: owner_id
 		},
-		{name:"add",        label:"" , width: 35 },
-
+		{name:"add",        label:"add" , width: 35 },
+		{name:"clone", label:"clone", width:60, template: function(task){
+  			return "<input type=button value='copy' onclick=clone_task("+task.id+")>"}
+		},
 	];
 
 	// 色付け
@@ -482,6 +488,15 @@
 	gantt.config.keyboard_navigation_cells = true;
 	// 行の高さ
 	gantt.config.row_height = 28
+
+	// タスクのコピー
+	function clone_task(id){
+		var task = gantt.getTask(id);
+		var clone = gantt.copy(task);
+		clone.id = +(new Date());
+		console.log("task",task,"clone",clone);
+		gantt.addTask(clone, clone.parent, clone.$index)
+	}
 
 	// init
 	gantt.init("gantt_here");
