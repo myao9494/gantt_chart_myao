@@ -243,10 +243,10 @@
 			{ key: "2", label: "pro" },
 			{ key: "3", label: "MS" }
      	])},
-		{name: "reason", height: 50, map_to: "reason", type: "textarea"},
-		{name: "price_or_target_price", height: 50, map_to: "price_or_target_price", type: "textarea"},
-		{name: "loss_cut_price", height: 50, map_to: "loss_cut_price", type: "textarea"},
-		{name: "loss_cut_reason", height: 50, map_to: "loss_cut_reason", type: "textarea"},
+		{name: "ToDo", height: 50, map_to: "ToDo", type: "textarea"},
+		{name: "folder", height: 50, map_to: "folder", type: "textarea"},
+		{name: "url_adress", height: 50, map_to: "url_adress", type: "textarea"},
+		{name: "mail", height: 50, map_to: "mail", type: "textarea"},
 		{name: "memo", height: 50, map_to: "memo", type: "textarea"},
 		{name: "hyperlink", height: 50, map_to: "hyperlink", type: "textarea"},
 		{name: "time", type: "duration", map_to: "auto"},
@@ -255,13 +255,14 @@
 	];
 
 	gantt.locale.labels.section_kind = "kind_task"
-	gantt.locale.labels.section_reason = "reason"
-	gantt.locale.labels.section_price_or_target_price = "price_or_target_price"
-	gantt.locale.labels.section_loss_cut_price = "loss_cut_price"
-	gantt.locale.labels.section_loss_cut_reason = "loss_cut_reason"
+	gantt.locale.labels.section_ToDo = "ToDo"
+	gantt.locale.labels.section_folder = "folder"
+	gantt.locale.labels.section_url_adress = "url_adress"
+	gantt.locale.labels.section_mail = "mail"
 	// gantt.locale.labels.section_owner_id = "owner_id"
 	gantt.locale.labels.section_memo = "memo"
 	gantt.locale.labels.section_hyperlink = "hyperlink"
+
 
 	// タスク追加時の初期値の設定
 	gantt.attachEvent("onTaskCreated", function(task){
