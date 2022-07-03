@@ -910,8 +910,8 @@ div.dhx_modal_cover {
     white-space: nowrap;
     color: #000000;
     font-weight: 700;
-    top: 0;
-    font-size: 12px;
+    top: -5px;
+    font-size: 9px;
 }
 
 .gantt_side_content.gantt_left {

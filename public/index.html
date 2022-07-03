@@ -3,6 +3,9 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>nyanko_test</title>
 	<script src="/js/dhtmlxgantt.js"></script>
+	<script src="/holidays.js"></script>
+	<script src="/event.js"></script>
+	<script src="/schedule.js"></script>
 	<!-- <script type="text/javascript" src="/js/kaslab.js" charset="UTF-8"></script> -->
 	<!-- <link href="/css/dhtmlxgantt.css" rel="stylesheet"> -->
 	<link href="/skins/dhtmlxgantt_broadway_mod.css" rel="stylesheet">
@@ -25,13 +28,13 @@
 		}
 		/* 色分け */
 		.pro {
-			border: 2px solid #f6e789;
+			border: 2px solid #f6e889;
 			color: #f9f4d2;
-			background: #f6f2d8;
+			background: #ffc06877;
 		}
 
 		.pro .gantt_task_progress {
-			background: #ffd1a4;
+			background: #ffd1a491;
 			height: 80%;
 		}
 
@@ -40,10 +43,10 @@
 		}
 
 		.pro .gantt_task_content {
-			font-size: 14px;
+			font-size: 9px;
 			color: rgb(137, 132, 6);
 			width: 100%;
-			top: 0;
+			top: -5px;
 			cursor: pointer;
 			position: absolute;
 			white-space: nowrap;
@@ -51,30 +54,36 @@
 		}
 
 		.ms {
-			border: 2px solid #34c461;
-			color: #34c461;
-			background: #34c461;
+			border: 2px solid #7234c4;
+			color: #7234c4;
+			background: #7234c481;
 			border-radius: 100%;
 		}
 
 		.ms .gantt_task_progress {
-			background: #23964d;
+			background: #7234c481;
 			height: 80%;
 		}
 
 		.task {
-			border: 2px solid #6ba8e3;
-			color: #6ba8e3;
-			background: #6ba8e3;
+			border: 2px solid #9cbcdd;
+			color: #9cbcdd;
+			background: #c4f2ff71;
 		}
 
 		.task .gantt_task_progress {
-			background: #547dab;
+			background: #6fe0ff71;
 			height: 80%;
 		}
 
-		.weekend{ background: #f4f7f4 !important;}
-
+		.weekend{ background: #95c8dc33 !important;}
+		.event{ background: #b8fff24d !important;}
+		/* .yotei_test{ background: #00ff0000 !important;} */
+		/* .yotei_test::before {
+			content: "«";
+			background: #00ff0000 !important;
+			color: rgb(138, 170, 49) !important;
+			} */
 	</style>
 	<link rel="shortcut icon" href="">
 </head>
@@ -154,12 +163,6 @@
 	gantt.render();
 	}
 
-
-	// 休日
-	var holidays = [//USA, DC holidays
-		new Date(2022, 5, 23),
-	];
-
 	// 週末(期間の計算に入れたい場合)
 
 	// gantt.config.work_time = true; 
@@ -177,22 +180,65 @@
 	// 	var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
 	// 	return dateToStr(date) + " - " + dateToStr(endDate) + " " + weekNum(date);
 	// };
-	// gantt.templates.timeline_cell_class = function (task, date) {
-	// 	if (!gantt.isWorkTime(date))
-	// 		return "week_end";
-	// 	return "";
-	// };
+
 
 	// 週末(色だけ変えたい場合)
 	function isInArray(array, value) {
   	return !!array.find(item => {return item.getTime() == value.getTime()});
 	}
 
+	// 予定を入れる
 	gantt.templates.timeline_cell_class = function(task,date){
-    if(date.getDay()==0||date.getDay()==6||isInArray(holidays, date)){
-        return "weekend";
-    }
+		if (list_yotei.length!=0){
+			for (var i = 0; i < list_yotei.length; i++) {
+				if(task.id== list_yotei[i][0] && date.getTime() == list_yotei[i][2].getTime()){
+				return list_yotei[i][1]
+				}
+			};
+		}
+		if(isInArray(events, date)){
+		return "event";
+		}
+		if(date.getDay()==0||date.getDay()==6||isInArray(holidays, date)){
+			return "weekend";
+		}
 	};
+
+	for (var i = 0; i < list_yotei.length; i++) {
+			var styleSheetElement = document.createElement('style'),
+			sheet             = null,
+			selector          = '.' + list_yotei[i][1] + '::after',
+			propertyValue     = 'content: "▼' + list_yotei[i][1] + '";position: absolute;top: 15px;font-size: 11px;';
+			cssRuleString     = selector + ' { ' + propertyValue + ' }';
+
+			document.head.appendChild(styleSheetElement);
+
+			sheet = styleSheetElement.sheet;
+
+			if (sheet.insertRule) {
+				sheet.insertRule(cssRuleString, sheet.cssRules.length);
+			} else {
+				sheet.addRule(selector, propertyValue);
+			}
+		};
+
+		for (var i = 0; i < list_yotei.length; i++) {
+			var styleSheetElement = document.createElement('style'),
+			sheet             = null,
+			selector          = '.' + list_yotei[i][1] ,
+			propertyValue     = 'background: rgb(250 145 145 / 44%);';
+			cssRuleString     = selector + ' { ' + propertyValue + ' }';
+
+			document.head.appendChild(styleSheetElement);
+
+			sheet = styleSheetElement.sheet;
+
+			if (sheet.insertRule) {
+				sheet.insertRule(cssRuleString, sheet.cssRules.length);
+			} else {
+				sheet.addRule(selector, propertyValue);
+			}
+		};
 
 	// プラグイン
 	gantt.plugins({
@@ -224,14 +270,14 @@
 
 	var colors = [
 		{key: "", label: "Default"},
-		{key: "#4B0082", label: "Indigo"},
-		{key: "#FFFFF0", label: "Ivory"},
-		{key: "#F0E68C", label: "Khaki"},
-		{key: "#B0C4DE", label: "LightSteelBlue"},
-		{key: "#32CD32", label: "LimeGreen"},
-		{key: "#7B68EE", label: "MediumSlateBlue"},
-		{key: "#FFA500", label: "Orange"},
-		{key: "#FF4500", label: "OrangeRed"}
+		{key: "#4B008270", label: "Indigo"},
+		{key: "#FFFFF070", label: "Ivory"},
+		{key: "#F0E68C70", label: "Khaki"},
+		{key: "#B0C4DE70", label: "LightSteelBlue"},
+		{key: "#32CD3270", label: "LimeGreen"},
+		{key: "#7B68EE70", label: "MediumSlateBlue"},
+		{key: "#FFA50070", label: "Orange"},
+		{key: "#FF450070", label: "OrangeRed"}
 	];
 
 	// lightboxウインド(追加した時に出てくるpopup)
@@ -488,7 +534,7 @@
 	gantt.config.open_tree_initially = true;
 	gantt.config.keyboard_navigation_cells = true;
 	// 行の高さ
-	gantt.config.row_height = 28
+	gantt.config.row_height = 27
 
 	// タスクのコピー
 	function clone_task(id){
