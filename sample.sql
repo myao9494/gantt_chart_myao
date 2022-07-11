@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `gantt_tasks` (
   `textColor` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `owner_id` int(11) DEFAULT NULL,
   `sortorder` int(11) DEFAULT NULL,
+  `edit_date` text COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

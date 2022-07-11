@@ -72,8 +72,8 @@ app.post("/data/task", function (req, res) { // adds new task to database
 			var orderIndex = (result[0].maxOrder || 0) + 1;
 			// return db.query("INSERT INTO gantt_tasks(text, start_date, duration, progress, parent, sortorder) VALUES (?,?,?,?,?,?)",
 			// 	[task.text, task.start_date, task.duration, task.progress, task.parent, orderIndex]);
-			return db.query("INSERT INTO gantt_tasks(text, start_date, duration, progress, parent,kind_task,ToDo,folder,url_adress,mail,memo,hyperlink,color,textColor,owner_id,sortorder) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id, orderIndex]);
+			return db.query("INSERT INTO gantt_tasks(text, start_date, duration, progress, parent,kind_task,ToDo,folder,url_adress,mail,memo,hyperlink,color,textColor,owner_id,sortorder,edit_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id, orderIndex,task.edit_date]);
 		})
 		.then(function (result) {
 			sendResponse(res, "inserted", result.insertId);
@@ -90,8 +90,8 @@ app.put("/data/task/:id", function (req, res) {
 		task = getTask(req.body);
 
 	Promise.all([
-		db.query("UPDATE gantt_tasks SET text = ?, start_date = ?, duration = ?, progress = ?, parent = ?, kind_task = ?, ToDo = ?, folder = ?, url_adress = ?, mail = ?, memo = ?, hyperlink = ?, color = ?, textColor = ?, owner_id = ?  WHERE id = ?",
-			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id, sid]),
+		db.query("UPDATE gantt_tasks SET text = ?, start_date = ?, duration = ?, progress = ?, parent = ?, kind_task = ?, ToDo = ?, folder = ?, url_adress = ?, mail = ?, memo = ?, hyperlink = ?, color = ?, textColor = ?, owner_id = ? , edit_date = ? , WHERE id = ?",
+			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id,task.edit_date, sid]),
 		updateOrder(sid, target)
 	])
 		.then(function (result) {
@@ -203,7 +203,8 @@ function getTask(data) {
 		hyperlink:data.hyperlink,
 		color:data.color,
 		textColor:data.textColor,
-		owner_id:data.owner_id
+		owner_id:data.owner_id,
+		edit_date:data.edit_date
 	};
 }
 

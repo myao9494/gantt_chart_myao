@@ -78,7 +78,7 @@
 
 		.weekend{ background: #95c8dc33 !important;}
 		.event{ background: #b8fff24d !important;}
-		/* .yotei_test{ background: #00ff0000 !important;} */
+		.yotei_moji_nasi{ background: rgb(250 145 145 / 44%) !important;}
 		/* .yotei_test::before {
 			content: "«";
 			background: #00ff0000 !important;
@@ -96,6 +96,7 @@
 <form class="gantt_control">
 	<label class='searchEl'>タスク検索 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></label>
 	<label class='searchEl_2'>プロ検索 <input id='search_2' type='field' placeholder='Search pro...' oninput=change_detector_2() style='width:150px' /></label>
+	<label class='kikan_nisu'>表示管 <input id='kikan_nisu' type='field' value="10" placeholder='input...' oninput=change_detector_3() style='width:30px' /></label>
 	<label for="show_owners">所有者</label>
 	<select onchange=show_owners(this.value)><option value="All">All</option><option value="自分" selected>自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
 	<label for="progresses">完了か未完了か</label>
@@ -192,7 +193,14 @@
 		if (list_yotei.length!=0){
 			for (var i = 0; i < list_yotei.length; i++) {
 				if(task.id== list_yotei[i][0] && date.getTime() == list_yotei[i][2].getTime()){
-				return list_yotei[i][1]
+					return list_yotei[i][1]
+				}
+				if(list_yotei[i][3] > 1){
+					for (let j = 1; j< list_yotei[i][3] ; j++){
+						if(task.id== list_yotei[i][0] && date.getTime() == (new Date(list_yotei[i][2]).setDate(new Date(list_yotei[i][2]).getDate()+j))){
+							return "yotei_moji_nasi"
+						}
+					}
 				}
 			};
 		}
@@ -226,7 +234,7 @@
 			var styleSheetElement = document.createElement('style'),
 			sheet             = null,
 			selector          = '.' + list_yotei[i][1] ,
-			propertyValue     = 'background: rgb(250 145 145 / 44%);';
+			propertyValue     = 'z-index: 1;background: rgb(250 145 145 / 44%);';
 			cssRuleString     = selector + ' { ' + propertyValue + ' }';
 
 			document.head.appendChild(styleSheetElement);
@@ -297,7 +305,9 @@
 		{name: "hyperlink", height: 50, map_to: "hyperlink", type: "textarea"},
 		{name: "time", type: "duration", map_to: "auto"},
 		{name: "barColor", height: 22, map_to: "color", type: "select", options: colors},
-		{name: "textColor", height: 22, map_to: "textColor", type: "select", options: colors}
+		{name: "textColor", height: 22, map_to: "textColor", type: "select", options: colors},
+		{name: "edit_date", height: 22, map_to: "edit_date", type: "textarea"},
+		// {name: "end_date", height: 22, map_to: "end_date", type: "textarea"},
 	];
 
 	gantt.locale.labels.section_kind = "kind_task"
@@ -308,13 +318,29 @@
 	// gantt.locale.labels.section_owner_id = "owner_id"
 	gantt.locale.labels.section_memo = "memo"
 	gantt.locale.labels.section_hyperlink = "hyperlink"
+	gantt.locale.labels.section_edit_date = "edit_date"
+	// gantt.locale.labels.section_end_date = "end_date"
 
 
 	// タスク追加時の初期値の設定
 	gantt.attachEvent("onTaskCreated", function(task){
 		let today = new Date();
+		let formatDate = today.getFullYear() + "-" + today.getMonth()  + "-" + today.getDate();
 		task.duration = 1;
 		task.start_date = today;
+		task.edit_date = formatDate;
+		return true;
+	});
+
+	gantt.attachEvent("onAfterTaskUpdate", function(id,task){
+		let today = new Date();
+		let formatDate = today.getFullYear() + "-" + today.getMonth()  + "-" + today.getDate();
+		if (task.edit_date.split(",").indexOf(formatDate) == -1){
+			task.edit_date = task.edit_date + "," + formatDate
+		};
+		// if (task.edit_date != ""){
+		// 	var li =task.edit_date.split(",");
+		// }
 		return true;
 	});
 
@@ -359,21 +385,22 @@
 	// var textFilter = "<div class='searchEl'>タスク名 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></div>";
 
 	gantt.config.columns=[
-		{name: "text" , tree: true, width: 230 , editor: textEditor, resize: true},
-		{name:"start_date", label:"開始", align: "center", width: 80 },
-		{
-		name: "kind_task", label: "種別", align: "center", 
-			template: function (obj) {
-				if (obj.kind_task == 1) {
-					return "task"
-				}
-				if (obj.kind_task == 2) {
-					return "pro"
-				}
-					return "MS"
-				},
-		editor: kind_task
-		},
+		// {name: "text" , tree: true, width: 230 , editor: textEditor, resize: true},
+		{name: "text" , tree: true, width: 280 , resize: true},
+		// {name:"start_date", label:"開始", align: "center", width: 80 },
+		// {
+		// name: "kind_task", label: "種別", align: "center", 
+		// 	template: function (obj) {
+		// 		if (obj.kind_task == 1) {
+		// 			return "task"
+		// 		}
+		// 		if (obj.kind_task == 2) {
+		// 			return "pro"
+		// 		}
+		// 			return "MS"
+		// 		},
+		// editor: kind_task
+		// },
 		// {name:"duration",   label:"期間",  align: "center", width: 50 , editor: durationEditor},
 		{name: "owner_id", label: 'owner', width: 50, resize: true, 
 			template: function (task_object) {
@@ -407,7 +434,7 @@
 	// タスクのバーの右側のテキスト設定
 	gantt.templates.rightside_text = function(start, end, task){
 		if (task.hyperlink === ""){
-			return "[" + task.id + "]"  + task.text + " " + task.duration  +  "<b>日</b>";}
+			return "[" + task.id + "]"  + task.text ;}
 		else {
 			return '<a href="' + task.hyperlink + '" target="_blank">' + "[" + task.id + "]" + task.text + '</a>';}
 		};
@@ -635,15 +662,27 @@
 		return false;	
 	});
 
+	var kikan_date;
+	var kikan_nisu_box = document.getElementById("kikan_nisu");
+	gantt.attachEvent("onDataRender", function(){
+		kikan_nisu_box = document.getElementById("kikan_nisu");
+	});  
+
+	function change_detector_3(){
+		kikan_date = kikan_nisu_box.value;
+		gantt.refreshData();
+		gantt.ext.zoom.setLevel("month");
+	}
 	// var bdt = new Date().setDate(new Date().getDate() - 30);
-	var adt = new Date().setDate(new Date().getDate() + 30);
 	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
+		var adt = new Date().setDate(new Date().getDate() + parseInt(kikan_date,10));
 		if (kikan == "All") return true;
 		// if (kikan == "Default" &&  task.start_date >= new Date(bdt) &&  task.start_date <= new Date(adt)) return true;
 		if (kikan == "限定期間" && task.start_date <= new Date(adt)) return true;
-		return false;	
+		return false;
 	});
 
+	change_detector_3();
 
 	var filter_data;
 	var search_box = document.getElementById("search");
