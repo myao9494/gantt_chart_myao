@@ -79,6 +79,7 @@
 		.weekend{ background: #95c8dc33 !important;}
 		.event{ background: #b8fff24d !important;}
 		.yotei_moji_nasi{ background: rgb(250 145 145 / 44%) !important;}
+		.kusa{ background: rgba(145, 255, 0, 0.545) !important;}
 		/* .yotei_test::before {
 			content: "«";
 			background: #00ff0000 !important;
@@ -197,6 +198,20 @@
 
 	// 予定を入れる
 	gantt.templates.timeline_cell_class = function(task,date){
+		if (!!task.edit_date){
+			const li_a = task.edit_date.split(",")
+			if (task.kind_task == 1 ){
+				for (var k = 0; k < li_a.length ; k++){
+					const aaa = li_a[k].split("-")
+					if(aaa.length==3){
+						if (date.getTime() == (new Date(aaa[0],aaa[1],aaa[2])).getTime()){
+							return "kusa"
+						};
+					};
+				};
+			};
+		};
+
 		if (list_yotei.length!=0){
 			for (var i = 0; i < list_yotei.length; i++) {
 				if(task.id== list_yotei[i][0] && date.getTime() == list_yotei[i][2].getTime()){
