@@ -96,9 +96,11 @@
 <form class="gantt_control">
 	<label class='searchEl'>タスク検索 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></label>
 	<label class='searchEl_2'>プロ検索 <input id='search_2' type='field' placeholder='Search pro...' oninput=change_detector_2() style='width:150px' /></label>
-	<label class='kikan_nisu'>表示管 <input id='kikan_nisu' type='field' value="10" placeholder='input...' oninput=change_detector_3() style='width:30px' /></label>
+	<label class='kikan_nisu'>表示期間 <input id='kikan_nisu' type='field' value="10" placeholder='input...' oninput=change_detector_3() style='width:30px' /></label>
+	<label for="show_kind_tasks">種類</label>
+	<select onchange=show_kind_tasks(this.value)><option value="All" selected>All</option><option value="task">task</option><option value="pro">pro</option><option value="MS">MS</option></select>
 	<label for="show_owners">所有者</label>
-	<select onchange=show_owners(this.value)><option value="All">All</option><option value="自分" selected>自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
+	<select onchange=show_owners(this.value)><option value="All" selected>All</option><option value="自分">自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
 	<label for="progresses">完了か未完了か</label>
 	<select onchange=progresses(this.value)><option value="未完了" selected>未完了</option><option value="All">All</option></select>
 	<label for="kikans">表示期間</label>
@@ -149,19 +151,24 @@
 
 	// フィルター
 
+	function show_kind_tasks(selected_kind_task){
+		show_kind_task = selected_kind_task;
+		gantt.render();
+	}
+
 	function show_owners(selected_owner){
-	show_owner = selected_owner;
-	gantt.render();
+		show_owner = selected_owner;
+		gantt.render();
 	}
 
 	function progresses(selected_progress){
-	progress = selected_progress;
-	gantt.render();
+		progress = selected_progress;
+		gantt.render();
 	}
 
 	function kikans(selected_kikan){
-	kikan = selected_kikan;
-	gantt.render();
+		kikan = selected_kikan;
+		gantt.render();
 	}
 
 	// 週末(期間の計算に入れたい場合)
@@ -216,7 +223,7 @@
 			var styleSheetElement = document.createElement('style'),
 			sheet             = null,
 			selector          = '.' + list_yotei[i][1] + '::after',
-			propertyValue     = 'content: "▼' + list_yotei[i][1] + '";position: absolute;top: 15px;font-size: 11px;';
+			propertyValue     = 'content: "▼' + list_yotei[i][1] + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
 			cssRuleString     = selector + ' { ' + propertyValue + ' }';
 
 			document.head.appendChild(styleSheetElement);
@@ -234,7 +241,7 @@
 			var styleSheetElement = document.createElement('style'),
 			sheet             = null,
 			selector          = '.' + list_yotei[i][1] ,
-			propertyValue     = 'z-index: 1;background: rgb(250 145 145 / 44%);';
+			propertyValue     = 'background: rgb(250 145 145 / 44%);';
 			cssRuleString     = selector + ' { ' + propertyValue + ' }';
 
 			document.head.appendChild(styleSheetElement);
@@ -335,8 +342,10 @@
 	gantt.attachEvent("onAfterTaskUpdate", function(id,task){
 		let today = new Date();
 		let formatDate = today.getFullYear() + "-" + today.getMonth()  + "-" + today.getDate();
-		if (task.edit_date.split(",").indexOf(formatDate) == -1){
-			task.edit_date = task.edit_date + "," + formatDate
+		if (!!task.edit_date){
+			if (task.edit_date.split(",").indexOf(formatDate) == -1){
+				task.edit_date = task.edit_date + "," + formatDate
+			};
 		};
 		// if (task.edit_date != ""){
 		// 	var li =task.edit_date.split(",");
@@ -350,7 +359,8 @@
 	});
 
 	// 左側欄の設定
-	var show_owner = "自分";
+	var show_kind_task = "All";
+	var show_owner = "All";
 	var progress = "未完了";
 	var kikan = "限定期間";
 
@@ -362,6 +372,14 @@
 	return gantt.owners[0]
 	};
 
+	// find kind_task's name, background colour and text colour
+	function find_by_id_kind_task(kind_task) {
+	for (var i = 0; i < gantt.kind_tasks.length; i++){
+		if (gantt.kind_tasks[i].key == kind_task) return gantt.kind_tasks[i];
+	}
+	return gantt.kind_tasks[0]
+	};
+
 	gantt.owners = [
 	{ key: 0, label: "自分"},
 	{ key: 10, label: "待" },
@@ -369,17 +387,17 @@
 	{ key: 30, label: "他"},
 	];
 
-	gantt.kind_task = [
-			{ key: "1", label: "task" },
-			{ key: "2", label: "pro" },
-			{ key: "3", label: "MS" },
+	gantt.kind_tasks = [
+			{ key: 1, label: "task" },
+			{ key: 2, label: "pro" },
+			{ key: 3, label: "MS" },
 		];
 
 
 	var textEditor = {type: "text", map_to: "text"};
 	// var dateEditor = {type: "date", map_to: "start_date", min: new Date(2018, 0, 1), max: new Date(2019, 0, 1)};
 	var durationEditor = {type: "number", map_to: "duration", min:0, max: 100};
-	var kind_task = {type: "select", map_to: "kind_task", options:gantt.serverList("kind_task", kind_task)};
+	var kind_task = {type: "select", map_to: "kind_task", options:gantt.serverList("kind_task", gantt.kind_task)};
 	var owner_id = {type: "select", map_to: "owner_id", options:gantt.serverList("owner_id", gantt.owners)};
 
 	// var textFilter = "<div class='searchEl'>タスク名 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></div>";
@@ -647,6 +665,13 @@
 	// });
 
 	// フィルター
+
+	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
+		if (show_kind_task == "All") return true;
+		if (((find_by_id_kind_task (task.kind_task)).label.toLowerCase() == show_kind_task.toLowerCase())) return true;
+		return false;
+	});
+
 	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
 		if (show_owner == "All") return true;
 		if (((find_by_id (task.owner_id)).label.toLowerCase() == show_owner.toLowerCase())) return true;
