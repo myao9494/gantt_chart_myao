@@ -79,7 +79,7 @@
 		.weekend{ background: #95c8dc33 !important;}
 		.event{ background: #b8fff24d !important;}
 		.yotei_moji_nasi{ background: rgb(250 145 145 / 44%) !important;}
-		.kusa{ background: rgba(145, 255, 0, 0.545) !important;}
+		.kusa{ background: rgba(38, 200, 2, 0.402) !important;}
 		/* .yotei_test::before {
 			content: "«";
 			background: #00ff0000 !important;
@@ -196,8 +196,9 @@
   	return !!array.find(item => {return item.getTime() == value.getTime()});
 	}
 
-	// 予定を入れる
+	// cssでセルの色や予定を入れる
 	gantt.templates.timeline_cell_class = function(task,date){
+		// 編集した日時に草をはやす
 		if (!!task.edit_date){
 			const li_a = task.edit_date.split(",")
 			if (task.kind_task == 1 ){
@@ -211,10 +212,12 @@
 				};
 			};
 		};
-
+		// スケジュール.jsで設定したスケジュールを入れる
 		if (list_yotei.length!=0){
 			for (var i = 0; i < list_yotei.length; i++) {
 				if(task.id== list_yotei[i][0] && date.getTime() == list_yotei[i][2].getTime()){
+					css_moji(list_yotei[i][1])
+					css_back(list_yotei[i][1])
 					return list_yotei[i][1]
 				}
 				if(list_yotei[i][3] > 1){
@@ -226,49 +229,104 @@
 				}
 			};
 		}
+	
+		// taskで設定したスケジュールを入れる
+		// if (list_yotei.length!=0){
+		// 	for (var i = 0; i < list_yotei.length; i++) {
+		// 		if(task.id== list_yotei[i][0] && date.getTime() == list_yotei[i][2].getTime()){
+		// 			css_moji(list_yotei[i][1])
+		// 			css_back(list_yotei[i][1])
+		// 			return list_yotei[i][1]
+		// 		}
+		// 		if(list_yotei[i][3] > 1){
+		// 			for (let j = 1; j< list_yotei[i][3] ; j++){
+		// 				if(task.id== list_yotei[i][0] && date.getTime() == (new Date(list_yotei[i][2]).setDate(new Date(list_yotei[i][2]).getDate()+j))){
+		// 					return "yotei_moji_nasi"
+		// 				}
+		// 			}
+		// 		}
+		// 	};
+		// }
+
+		// event.jsで設定したイベントの色を変える
 		if(isInArray(events, date)){
 		return "event";
 		}
+		// 週末の色を帰る
 		if(date.getDay()==0||date.getDay()==6||isInArray(holidays, date)){
 			return "weekend";
 		}
 	};
 
-	for (var i = 0; i < list_yotei.length; i++) {
-			var styleSheetElement = document.createElement('style'),
-			sheet             = null,
-			selector          = '.' + list_yotei[i][1] + '::after',
-			propertyValue     = 'content: "▼' + list_yotei[i][1] + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
-			cssRuleString     = selector + ' { ' + propertyValue + ' }';
 
-			document.head.appendChild(styleSheetElement);
 
-			sheet = styleSheetElement.sheet;
+	function css_moji(yotei) {
+		var styleSheetElement = document.createElement('style'),
+		sheet             = null,
+		selector          = '.' + yotei + '::after',
+		propertyValue     = 'content: "▼' + yotei + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
+		cssRuleString     = selector + ' { ' + propertyValue + ' }';
+		document.head.appendChild(styleSheetElement);
+		sheet = styleSheetElement.sheet;
+		if (sheet.insertRule) {
+			sheet.insertRule(cssRuleString, sheet.cssRules.length);
+		} else {
+			sheet.addRule(selector, propertyValue);
+		}
+	};
 
-			if (sheet.insertRule) {
-				sheet.insertRule(cssRuleString, sheet.cssRules.length);
-			} else {
-				sheet.addRule(selector, propertyValue);
-			}
-		};
+	function css_back(yotei) {
+		var styleSheetElement = document.createElement('style'),
+		sheet             = null,
+		selector          = '.' + yotei ,
+		propertyValue     = 'background: rgb(250 145 145 / 44%);';
+		cssRuleString     = selector + ' { ' + propertyValue + ' }';
+		document.head.appendChild(styleSheetElement);
+		sheet = styleSheetElement.sheet;
+		if (sheet.insertRule) {
+			sheet.insertRule(cssRuleString, sheet.cssRules.length);
+		} else {
+			sheet.addRule(selector, propertyValue);
+		}
+	};
 
-		for (var i = 0; i < list_yotei.length; i++) {
-			var styleSheetElement = document.createElement('style'),
-			sheet             = null,
-			selector          = '.' + list_yotei[i][1] ,
-			propertyValue     = 'background: rgb(250 145 145 / 44%);';
-			cssRuleString     = selector + ' { ' + propertyValue + ' }';
 
-			document.head.appendChild(styleSheetElement);
 
-			sheet = styleSheetElement.sheet;
+	// for (var i = 0; i < list_yotei.length; i++) {
+	// 	var styleSheetElement = document.createElement('style'),
+	// 	sheet             = null,
+	// 	selector          = '.' + list_yotei[i][1] + '::after',
+	// 	propertyValue     = 'content: "▼' + list_yotei[i][1] + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
+	// 	cssRuleString     = selector + ' { ' + propertyValue + ' }';
 
-			if (sheet.insertRule) {
-				sheet.insertRule(cssRuleString, sheet.cssRules.length);
-			} else {
-				sheet.addRule(selector, propertyValue);
-			}
-		};
+	// 	document.head.appendChild(styleSheetElement);
+
+	// 	sheet = styleSheetElement.sheet;
+
+	// 	if (sheet.insertRule) {
+	// 		sheet.insertRule(cssRuleString, sheet.cssRules.length);
+	// 	} else {
+	// 		sheet.addRule(selector, propertyValue);
+	// 	}
+	// };
+
+	// for (var i = 0; i < list_yotei.length; i++) {
+	// 	var styleSheetElement = document.createElement('style'),
+	// 	sheet             = null,
+	// 	selector          = '.' + list_yotei[i][1] ,
+	// 	propertyValue     = 'background: rgb(250 145 145 / 44%);';
+	// 	cssRuleString     = selector + ' { ' + propertyValue + ' }';
+
+	// 	document.head.appendChild(styleSheetElement);
+
+	// 	sheet = styleSheetElement.sheet;
+
+	// 	if (sheet.insertRule) {
+	// 		sheet.insertRule(cssRuleString, sheet.cssRules.length);
+	// 	} else {
+	// 		sheet.addRule(selector, propertyValue);
+	// 	}
+	// };
 
 	// プラグイン
 	gantt.plugins({
@@ -313,27 +371,29 @@
 	// lightboxウインド(追加した時に出てくるpopup)
 
 	gantt.config.lightbox.sections = [
-		{name: "description", height: 38, map_to: "text", type: "textarea", focus: true},
+		{name: "description", height: 35, map_to: "text", type: "textarea", focus: true},
 	    {name: "kind", height:22, map_to:"kind_task", type:"select", options:gantt.serverList("kind_task", [
 			{ key: "1", label: "task" },
 			{ key: "2", label: "pro" },
 			{ key: "3", label: "MS" }
      	])},
-		{name: "ToDo", height: 50, map_to: "ToDo", type: "textarea"},
-		{name: "folder", height: 50, map_to: "folder", type: "textarea"},
-		{name: "url_adress", height: 50, map_to: "url_adress", type: "textarea"},
-		{name: "mail", height: 50, map_to: "mail", type: "textarea"},
-		{name: "memo", height: 50, map_to: "memo", type: "textarea"},
-		{name: "hyperlink", height: 50, map_to: "hyperlink", type: "textarea"},
+		{name: "ToDo", height: 35, map_to: "ToDo", type: "textarea"},
+		{name: "task_schedule", height: 35, map_to: "task_schedule", type: "textarea"},
+		{name: "folder", height: 35, map_to: "folder", type: "textarea"},
+		{name: "url_adress", height: 35, map_to: "url_adress", type: "textarea"},
+		{name: "mail", height: 35, map_to: "mail", type: "textarea"},
+		{name: "memo", height: 35, map_to: "memo", type: "textarea"},
+		{name: "hyperlink", height: 22, map_to: "hyperlink", type: "textarea"},
 		{name: "time", type: "duration", map_to: "auto"},
 		{name: "barColor", height: 22, map_to: "color", type: "select", options: colors},
 		{name: "textColor", height: 22, map_to: "textColor", type: "select", options: colors},
-		{name: "edit_date", height: 22, map_to: "edit_date", type: "textarea"},
+		{name: "edit_date", height: 35, map_to: "edit_date", type: "textarea"},
 		// {name: "end_date", height: 22, map_to: "end_date", type: "textarea"},
 	];
 
 	gantt.locale.labels.section_kind = "kind_task"
 	gantt.locale.labels.section_ToDo = "ToDo"
+	gantt.locale.labels.section_task_schedule = "task_schedule"
 	gantt.locale.labels.section_folder = "folder"
 	gantt.locale.labels.section_url_adress = "url_adress"
 	gantt.locale.labels.section_mail = "mail"
