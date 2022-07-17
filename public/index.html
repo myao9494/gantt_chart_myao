@@ -231,22 +231,30 @@
 		}
 	
 		// taskで設定したスケジュールを入れる
-		// if (list_yotei.length!=0){
-		// 	for (var i = 0; i < list_yotei.length; i++) {
-		// 		if(task.id== list_yotei[i][0] && date.getTime() == list_yotei[i][2].getTime()){
-		// 			css_moji(list_yotei[i][1])
-		// 			css_back(list_yotei[i][1])
-		// 			return list_yotei[i][1]
-		// 		}
-		// 		if(list_yotei[i][3] > 1){
-		// 			for (let j = 1; j< list_yotei[i][3] ; j++){
-		// 				if(task.id== list_yotei[i][0] && date.getTime() == (new Date(list_yotei[i][2]).setDate(new Date(list_yotei[i][2]).getDate()+j))){
-		// 					return "yotei_moji_nasi"
-		// 				}
-		// 			}
-		// 		}
-		// 	};
-		// }
+		if (!!task.task_schedule){
+			var li_komoku = task.task_schedule.split("___")
+			try {
+			for (var i = 0; i < li_komoku.length; i++) {
+				var li = li_komoku[i].split(",")
+				var dt_li = li[0].split("-")
+				var dt = new Date(Number(dt_li[0]),Number(dt_li[1])-1,Number(dt_li[2]))
+				if(date.getTime() == dt.getTime()){
+					css_moji(li[1])
+					css_back(li[1])
+					return li[1]
+				}
+				if(Number(li[2]) > 1){
+					for (let j = 1; j< Number(li[2]) ; j++){
+						if(date.getTime() == new Date(Number(dt_li[0]),Number(dt_li[1])-1,Number(dt_li[2])+j).getTime()){
+							return "yotei_moji_nasi"
+						}
+					}
+				}
+			};
+		} catch(e) {
+				console.log( e.message );
+		}
+		}
 
 		// event.jsで設定したイベントの色を変える
 		if(isInArray(events, date)){
