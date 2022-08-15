@@ -21,146 +21,68 @@
 
 # [github](https://github.com/myao9494/gantt_chart_myao)
 
-# # factory
+# # 予定を入れる 
 
-# ## 日付をずらす
+# glideへ入れる
+
+import sys;sys.path.append("../mylib");import gss
+import pendulum
+df = gss.create_df()
+
+# チョク
+
+sch_date = (2022,8,23,7,0,"部活(23~26日)")
+sch_date
+
+# 文字
+
+from Reminder_data_from_ambiguous_information import remind_make; 
+sch_date = remind_make.main("明日誕生日",pendulum.now())
+sch_date
+
+# 入力
+
+i=len(df)+2
+date = pendulum.datetime(year=int(sch_date[0]),month=int(sch_date[1]),day=int(sch_date[2]),hour=int(sch_date[3]),minute=int(sch_date[4]))
+
+worksheet.update_cell(i, 2, str(date)[:-6]+".000Z")
+worksheet.update_cell(i, 3, sch_date[5])
+worksheet.update_cell(i, 4, "True")
+
+# ## glideからgatttへ入れる
+
+import sys;sys.path.append("../mylib");import gss;gss.print_week_schedule();import pandas  as pd
+
+import DB_python ,my_utility; self = DB_python.db_con();df = self.create_db();df_sc = df[["id","text","task_schedule"]].copy().dropna();df_sc = df_sc[df_sc["task_schedule"]!=""]
+qg = my_utility.qgid_local(df_sc);qg
+
+
+df_sc_edit = qg.get_changed_df();df_comp, df_add_index, _, df_del_index, _ = my_utility.df_compare(df_sc,df_sc_edit)
+
+df_comp
+
+df_add_index
+
+df_del_index
+
+for index in list(df_comp.index):
+    print(index)
+    taisho = df_sc_edit.loc[[index]]
+    out = self.to_db(taisho,"task_schedule")
+
+if len(df_add_index) != 0:
+    out = self.to_db(df_add_index,"task_schedule")
+
+if len(df_del_index) != 0:
+    df_del_index["task_schedule"] = ""
+    out = self.to_db(df_del_index,"task_schedule")
+
+# # 日付をずらす
 
 import DB_python ; obj = DB_python.db_con()
 
-taisho_start = "2022-7-4"
-# taisho_start = "2022-7-11"
-nobasu_day = 7
+taisho_start = "2022-8-15"
+nobasu_day = -7
 obj.move_task(taisho_start,nobasu_day)
 
-# ## 予定を作成する
-
-# 予定を確認
-
-import DB_python ; self = DB_python.db_con()
-
-df = self.create_db()
-
-df_sc = df[["id","text","task_schedule"]].copy().dropna()
-df_sc = df_sc[df_sc["task_schedule"]!=""]
-
-df_sc
-
-qg = DB_python.qgid_local(df_sc)
-
-qg
-
-# 予定を編集
-
-import pandas  as pd
-
-df_sc_edit = qg.get_changed_df()
-df_sc.compare(df_sc_edit)
-
-
-
-self.to_db(df_sc_edit.loc[8:9],"task_schedule")
-
-# 新規作成
-
-id_num = 15
-
-id_num in list(df_sc_edit["id"])
-
-if id_num  in list(df_sc["id"]):
-    out = df_sc.loc[id_num,"task_schedule"] + "___" + yotei_str
-    df_out = pd.DataFrame([[id_num,out]],columns=["id","task_schedule"])
-    print(out)
-else:
-    out = yotei_str + "___" 
-    df_out = pd.DataFrame([[id_num,out]],columns=["id","task_schedule"])
-
-df_out
-
-rec = df_out.iloc[0:1][["id", "task_schedule"]].to_dict("records")[0]
-
-rec
-
-
-
-
-
- values(id=str(rec["id"]), data=rec["task_schedule"])
-
-
-
-self.to_db(df_out,"task_schedule")
-
-import pandas as pd
-
-
-
-
-
-id_num = 107
-yotei = "上西内科"
-date = "2022-7-22"
-length = 1
-biko = ""
-
-yotei_str = f"{date},{yotei},{str(length)},{biko}"
-
-self.to_db()
-
-
-
-
-
-import pendulum
-
-date = pendulum.datetime(2022,7,21)
-yotei = "部活"
-id_num =48
-
-out = f'[{str(id_num)},"{yotei}",new Date({date.year},{date.month-1},{date.day})],'
-
-
-
-# +
-import qgrid
-import pandas as pd
-url = 'https://github.com/chris1610/pbpython/blob/master/data/2018_Sales_Total_v2.xlsx?raw=True'
-df = pd.read_excel(url)
-
-widget = qgrid.show_grid(df)
-# -
-
-widget
-
-# ## 過去
-
-import Gantt_control
-self = Gantt_control.gantt()
-
-self.save_data("default")
-
-# ガントへデータからエクセルへ
-
-self.db_to_gantt("default")
-
-# df_taskを編集
-
-# ! code .
-
-# 編集結果を取得
-
-# df_task_edit = pd.read_csv("df_task.csv")
-
-
-# データを戻す
-
-
-
-# 完了したら閉じる
-
-
-
-# 消す
-
-
-
-
+# # factory

@@ -16,27 +16,8 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, 
 from sqlalchemy.dialects.mysql import insert
 import pandas as pd
 # import utility
-import qgrid
-
-
-def qgid_local(df):
-    col_options = {
-        'width': 10,
-    }
-    col_defs = {
-        'text': {
-            'width': 100,
-        },
-        'task_schedule': {
-            'width': 400,
-        }
-    }
-
-    qgrid_widget = qgrid.show_grid(df,
-                                   column_options=col_options,
-                                   column_definitions=col_defs,
-                                   show_toolbar=True)
-    return qgrid_widget
+import sys
+sys.path.append("../mylib")
 
 
 class db_con(object):
