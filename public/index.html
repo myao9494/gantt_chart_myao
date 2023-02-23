@@ -97,7 +97,7 @@
 <form class="gantt_control">
 	<label class='searchEl'>タスク検索 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></label>
 	<label class='searchEl_2'>プロ検索 <input id='search_2' type='field' placeholder='Search pro...' oninput=change_detector_2() style='width:150px' /></label>
-	<label class='kikan_nisu'>表示期間 <input id='kikan_nisu' type='field' value="10" placeholder='input...' oninput=change_detector_3() style='width:30px' /></label>
+	<label class='kikan_nisu'>表示期間 <input id='kikan_nisu' type='field' value="7" placeholder='input...' oninput=change_detector_3() style='width:30px' /></label>
 	<label for="show_kind_tasks">種類</label>
 	<select onchange=show_kind_tasks(this.value)><option value="All" selected>All</option><option value="task">task</option><option value="pro">pro</option><option value="MS">MS</option></select>
 	<label for="show_owners">所有者</label>
@@ -382,18 +382,18 @@
 
 	gantt.config.lightbox.sections = [
 		{name: "description", height: 35, map_to: "text", type: "textarea", focus: true},
+		{name: "hyperlink", height: 30, map_to: "hyperlink", type: "textarea"},
+		{name: "ToDo", height: 230, map_to: "ToDo", type: "textarea"},
+		{name: "memo", height: 123, map_to: "memo", type: "textarea"},
+		{name: "task_schedule", height: 77, map_to: "task_schedule", type: "textarea"},
+		// {name: "folder", height: 35, map_to: "folder", type: "textarea"},
+		// {name: "url_adress", height: 35, map_to: "url_adress", type: "textarea"},
+		// {name: "mail", height: 35, map_to: "mail", type: "textarea"},
 	    {name: "kind", height:22, map_to:"kind_task", type:"select", options:gantt.serverList("kind_task", [
 			{ key: "1", label: "task" },
 			{ key: "2", label: "pro" },
 			{ key: "3", label: "MS" }
      	])},
-		{name: "ToDo", height: 35, map_to: "ToDo", type: "textarea"},
-		{name: "task_schedule", height: 35, map_to: "task_schedule", type: "textarea"},
-		{name: "folder", height: 35, map_to: "folder", type: "textarea"},
-		{name: "url_adress", height: 35, map_to: "url_adress", type: "textarea"},
-		{name: "mail", height: 35, map_to: "mail", type: "textarea"},
-		{name: "memo", height: 35, map_to: "memo", type: "textarea"},
-		{name: "hyperlink", height: 22, map_to: "hyperlink", type: "textarea"},
 		{name: "time", type: "duration", map_to: "auto"},
 		{name: "barColor", height: 22, map_to: "color", type: "select", options: colors},
 		{name: "textColor", height: 22, map_to: "textColor", type: "select", options: colors},
