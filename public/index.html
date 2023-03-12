@@ -97,14 +97,15 @@
 <form class="gantt_control">
 	<label class='searchEl'>タスク検索 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></label>
 	<label class='searchEl_2'>プロ検索 <input id='search_2' type='field' placeholder='Search pro...' oninput=change_detector_2() style='width:150px' /></label>
-	<label class='kikan_nisu'>表示期間 <input id='kikan_nisu' type='field' value="7" placeholder='input...' oninput=change_detector_3() style='width:30px' /></label>
+	<label class='kikan_nisu'>表示 <input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width:30px; text-align:center;' /></label>
+	<label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="1" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label>
 	<label for="show_kind_tasks">種類</label>
 	<select onchange=show_kind_tasks(this.value)><option value="All" selected>All</option><option value="task">task</option><option value="pro">pro</option><option value="MS">MS</option></select>
 	<label for="show_owners">所有者</label>
 	<select onchange=show_owners(this.value)><option value="All" selected>All</option><option value="自分">自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
-	<label for="progresses">完了か未完了か</label>
+	<label for="progresses">完/未</label>
 	<select onchange=progresses(this.value)><option value="未完了" selected>未完了</option><option value="All">All</option></select>
-	<label for="kikans">表示期間</label>
+	<label for="kikans">表示</label>
 	<select onchange=kikans(this.value)><option value="限定期間" selected>限定期間</option><option value="All">All</option></select>
 
 	<!-- 展開と縮める -->
@@ -113,16 +114,16 @@
 
 	<!-- ズーム用 -->
 	<input type="radio" id="scale1" class="gantt_radio" name="scale" value="day">
-	<label for="scale1">Day scale</label>
+	<label for="scale1">Day</label>
 
 	<input type="radio" id="scale3" class="gantt_radio" name="scale" value="month" checked>
-	<label for="scale3">Month scale</label>
+	<label for="scale3">Month</label>
 
 	<input type="radio" id="scale4" class="gantt_radio" name="scale" value="quarter">
-	<label for="scale4">Quarter scale</label>
+	<label for="scale4">Quarter</label>
 
 	<input type="radio" id="scale5" class="gantt_radio" name="scale" value="year">
-	<label for="scale5">Year scale</label>
+	<label for="scale5">Year</label>
 
 </form>
 
@@ -383,9 +384,9 @@
 	gantt.config.lightbox.sections = [
 		{name: "description", height: 35, map_to: "text", type: "textarea", focus: true},
 		{name: "hyperlink", height: 30, map_to: "hyperlink", type: "textarea"},
-		{name: "ToDo", height: 230, map_to: "ToDo", type: "textarea"},
-		{name: "memo", height: 123, map_to: "memo", type: "textarea"},
-		{name: "task_schedule", height: 77, map_to: "task_schedule", type: "textarea"},
+		{name: "ToDo", height: 90, map_to: "ToDo", type: "textarea"},
+		{name: "memo", height: 90, map_to: "memo", type: "textarea"},
+		{name: "task_schedule", height: 75, map_to: "task_schedule", type: "textarea"},
 		// {name: "folder", height: 35, map_to: "folder", type: "textarea"},
 		// {name: "url_adress", height: 35, map_to: "url_adress", type: "textarea"},
 		// {name: "mail", height: 35, map_to: "mail", type: "textarea"},
@@ -776,23 +777,45 @@
 	var kikan_nisu_box = document.getElementById("kikan_nisu");
 	gantt.attachEvent("onDataRender", function(){
 		kikan_nisu_box = document.getElementById("kikan_nisu");
-	});  
-
+	});
 	function change_detector_3(){
 		kikan_date = kikan_nisu_box.value;
 		gantt.refreshData();
 		gantt.ext.zoom.setLevel("month");
 	}
+
+	var kikan_date2;
+	var kikan_nisu_box2 = document.getElementById("kikan_nisu2");
+	gantt.attachEvent("onDataRender", function(){
+		kikan_nisu_box2 = document.getElementById("kikan_nisu2");
+	});  
+
+	function change_detector_4(){
+		kikan_date2 = kikan_nisu_box2.value;
+		gantt.refreshData();
+		gantt.ext.zoom.setLevel("month");
+	}
 	// var bdt = new Date().setDate(new Date().getDate() - 30);
 	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
-		var adt = new Date().setDate(new Date().getDate() + parseInt(kikan_date,10));
+		var adt = new Date().setDate(new Date().getDate() + (parseInt(kikan_date,10)-1));
+		var adt2 = new Date().setDate(new Date().getDate() + (parseInt(kikan_date2,10)));
 		if (kikan == "All") return true;
 		// if (kikan == "Default" &&  task.start_date >= new Date(bdt) &&  task.start_date <= new Date(adt)) return true;
-		if (kikan == "限定期間" && task.start_date <= new Date(adt)) return true;
-		return false;
+		// if (kikan == "限定期間" && task.start_date <= new Date(adt)) return true;
+		// if (kikan == "限定期間" && task.start_date <= new Date(adt2) && task.start_date >= new Date(adt)) return true;
+		// return false;
+		if (kikan_date != "0") {
+			if (kikan == "限定期間" && task.start_date <= new Date(adt2) && task.start_date >= new Date(adt)) return true;
+			return false;} 
+		else {
+			if (kikan == "限定期間" && task.start_date <= new Date(adt2)) return true;
+			return false;
+		}
 	});
 
+	// HTMLで設定した初期の値を読みこんで表示させる
 	change_detector_3();
+	change_detector_4();
 
 	var filter_data;
 	var search_box = document.getElementById("search");
