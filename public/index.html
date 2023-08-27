@@ -272,7 +272,7 @@
 	// エスケープが必要な文字を安全な形に変換
 	function escapeForCssClass(str) {
 		// エスケープが必要な文字をアンダースコア "_" に置き換える
-		return str.replace(/[().#:\[\]@=~,]/g, '_');
+		return str.replace(/[().#:\[\]@=~,%]/g, '_');
 	}
 
 
