@@ -199,46 +199,46 @@
 
 	// cssでセルの色や予定を入れる
 	gantt.templates.timeline_cell_class = function(task,date){
-		// taskで設定したスケジュールを入れる
-		if (!!task.task_schedule){
-			var li_komoku = task.task_schedule.split("___")
-			try {
-			for (var i = 0; i < li_komoku.length; i++) {
-				var li = li_komoku[i].split(",")
-				var dt_li = li[0].split("-")
-				var dt = new Date(Number(dt_li[0]),Number(dt_li[1])-1,Number(dt_li[2]))
-				if(date.getTime() == dt.getTime()){
-					css_moji(li[1])
-					css_back(li[1])
-					return li[1]
-				}
-				if(Number(li[2]) > 1){
-					for (let j = 1; j< Number(li[2]) ; j++){
-						if(date.getTime() == new Date(Number(dt_li[0]),Number(dt_li[1])-1,Number(dt_li[2])+j).getTime()){
-							return "yotei_moji_nasi"
-						}
-					}
-				}
-			};
+    // taskで設定したスケジュールを入れる
+    if (!!task.task_schedule){
+        var li_komoku = task.task_schedule.split("___")
+        try {
+        for (var i = 0; i < li_komoku.length; i++) {
+            var li = li_komoku[i].split(",")
+            var dt_li = li[0].split("-")
+            var dt = new Date(Number(dt_li[0]),Number(dt_li[1])-1,Number(dt_li[2]))
+            if(date.getTime() == dt.getTime()){
+                css_moji(li[1])
+                css_back(li[1])
+                return escapeForCssClass(li[1]);  // この行を変更
+            }
+            if(Number(li[2]) > 1){
+                for (let j = 1; j< Number(li[2]) ; j++){
+                    if(date.getTime() == new Date(Number(dt_li[0]),Number(dt_li[1])-1,Number(dt_li[2])+j).getTime()){
+                        return "yotei_moji_nasi"
+                    }
+                }
+            }
+        };
 		} catch(e) {
 				console.log( e.message );
 		}
-		}
+    }
 
-		// 編集した日時に草をはやす
-		if (!!task.edit_date){
-			const li_a = task.edit_date.split(",")
-			if (task.kind_task == 1 ){
-				for (var k = 0; k < li_a.length ; k++){
-					const aaa = li_a[k].split("-")
-					if(aaa.length==3){
-						if (date.getTime() == (new Date(aaa[0],aaa[1],aaa[2])).getTime()){
-							return "kusa"
-						};
-					};
-				};
-			};
-		};
+    // 編集した日時に草をはやす
+    if (!!task.edit_date){
+        const li_a = task.edit_date.split(",")
+        if (task.kind_task == 1 ){
+            for (var k = 0; k < li_a.length ; k++){
+                const aaa = li_a[k].split("-")
+                if(aaa.length==3){
+                    if (date.getTime() == (new Date(aaa[0],aaa[1],aaa[2])).getTime()){
+                        return "kusa"
+                    };
+                };
+            };
+        };
+    };
 		// スケジュール.jsで設定したスケジュールを入れる
 		// if (list_yotei.length!=0){
 		// 	for (var i = 0; i < list_yotei.length; i++) {
@@ -269,13 +269,19 @@
 		}
 	};
 
+	// エスケープが必要な文字を安全な形に変換
+	function escapeForCssClass(str) {
+		// エスケープが必要な文字をアンダースコア "_" に置き換える
+		return str.replace(/[().#:\[\]@=~,]/g, '_');
+	}
 
 
 	function css_moji(yotei) {
+		var escapedYotei = escapeForCssClass(yotei);
 		var styleSheetElement = document.createElement('style'),
 		sheet             = null,
-		selector          = '.' + yotei + '::after',
-		propertyValue     = 'content: "▼' + yotei + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
+		selector          = '.' + escapedYotei + '::after',
+		propertyValue     = 'content: "▼' + escapedYotei + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
 		cssRuleString     = selector + ' { ' + propertyValue + ' }';
 		document.head.appendChild(styleSheetElement);
 		sheet = styleSheetElement.sheet;
@@ -287,9 +293,10 @@
 	};
 
 	function css_back(yotei) {
+		var escapedYotei = escapeForCssClass(yotei);
 		var styleSheetElement = document.createElement('style'),
 		sheet             = null,
-		selector          = '.' + yotei ,
+		selector          = '.' + escapedYotei ,
 		propertyValue     = 'background: rgb(250 145 145 / 44%);';
 		cssRuleString     = selector + ' { ' + propertyValue + ' }';
 		document.head.appendChild(styleSheetElement);
