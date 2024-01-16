@@ -188,25 +188,25 @@ app.delete("/data/link/:id", function (req, res) {
 
 
 function getTask(data) {
-	return {
-		text: data.text,
-		start_date: data.start_date.date("YYYY-MM-DD"),
-		duration: data.duration,
-		progress: data.progress || 0,
-		parent: data.parent,
-		kind_task: data.kind_task,
-		ToDo:data.ToDo,
-		task_schedule:data.task_schedule,
-		folder:data.folder,
-		url_adress:data.url_adress,
-		mail:data.mail,
-		memo:data.memo,
-		hyperlink:data.hyperlink,
-		color:data.color,
-		textColor:data.textColor,
-		owner_id:data.owner_id,
-		edit_date:data.edit_date
-	};
+    return {
+        text: data.text,
+        start_date: data.start_date.date("YYYY-MM-DD"),
+        duration: data.duration,
+        progress: data.progress || 0,
+        parent: data.parent === '' ? null : data.parent,
+        kind_task: data.kind_task,
+        ToDo: data.ToDo,
+        task_schedule: data.task_schedule,
+        folder: data.folder,
+        url_adress: data.url_adress,
+        mail: data.mail,
+        memo: data.memo,
+        hyperlink: data.hyperlink,
+        color: data.color,
+        textColor: data.textColor,
+        owner_id: data.owner_id,
+        edit_date: data.edit_date
+    };
 }
 
 function getLink(data) {
