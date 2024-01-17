@@ -40,6 +40,7 @@
 
 		.pro .gantt_side_content {
 			color: rgb(0, 0, 0);
+			font-size: 10px;
 		}
 
 		.pro .gantt_task_content {
@@ -567,9 +568,9 @@
 	// タスクのバーの右側のテキスト設定
 	gantt.templates.rightside_text = function(start, end, task){
 		if (task.hyperlink === ""){
-			return "[" + task.id + "]"  + task.text ;}
+			return "[" + task.id + "]"  + task.text + " [親]" + task.parent + ":" + getParentTaskName(task.id);}
 		else {
-			return '<a href="' + task.hyperlink + '" target="_blank">' + "[" + task.id + "]" + task.text + '</a>';}
+			return '<a href="' + task.hyperlink + '" target="_blank">' + "[" + task.id + "]" + task.text  + " [親]" + task.parent + ":" + getParentTaskName(task.id) + '</a>';}
 		};
     // return task.text + " " + task.duration + "<b>日</b>";};
 
