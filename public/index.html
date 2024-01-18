@@ -565,12 +565,63 @@
 		}
 	};
 
+
+	// function getAllParentTexts(taskId) {
+	// 	var texts = [];
+	// 	while(taskId) {
+	// 		var task = gantt.getTask(taskId);
+	// 		if (!task) break; // タスクが見つからない場合、ループを抜ける
+
+	// 		// タスクのテキストを配列に追加
+	// 		if (task.text) {
+	// 			texts.push(task.text);
+	// 		}
+
+	// 		// 親タスクに移動
+	// 		taskId = task.parent;
+	// 	}
+
+	// 	// 最上位のタスクから順にテキストを結合
+	// 	return texts.reverse().join(" > ");
+	// 	}
+
+	// 	gantt.templates.rightside_text = function(start, end, task){
+	// 		return getAllParentTexts(task.id);
+	// 	};
+
+	function getTaskHierarchy(taskId) {
+    var hierarchy = [];
+    var currentTaskId = taskId; // 現在のタスクIDを保持
+
+    // 最下位のタスクから開始
+    var task = gantt.getTask(currentTaskId);
+    if (task) {
+        hierarchy.push("[" + task.id + "]" + task.text); // 最初のタスクを追加
+    }
+
+    // 親タスクを遡る
+    while(task && task.parent) {
+        task = gantt.getTask(task.parent);
+        if (task) {
+            hierarchy.push("[" + task.id + "]" + task.text);
+        }
+    }
+
+    // 階層をそのままの順序で結合
+    return hierarchy.join(" > ");
+	}
+
+	// gantt.templates.rightside_text = function(start, end, task){
+	// 	return getTaskHierarchy(task.id);
+	// };
+
+	
 	// タスクのバーの右側のテキスト設定
 	gantt.templates.rightside_text = function(start, end, task){
 		if (task.hyperlink === ""){
-			return "[" + task.id + "]"  + task.text + " [親]" + task.parent + ":" + getParentTaskName(task.id);}
+			return getTaskHierarchy(task.id);}
 		else {
-			return '<a href="' + task.hyperlink + '" target="_blank">' + "[" + task.id + "]" + task.text  + " [親]" + task.parent + ":" + getParentTaskName(task.id) + '</a>';}
+			return '<a href="' + task.hyperlink + '" target="_blank">' + getTaskHierarchy(task.id) + '</a>';}
 		};
     // return task.text + " " + task.duration + "<b>日</b>";};
 
