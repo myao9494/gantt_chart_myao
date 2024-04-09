@@ -89,9 +89,11 @@ app.put("/data/task/:id", function (req, res) {
 		target = req.body.target,
 		task = getTask(req.body);
 
+    var endDate = task.progress == 1 ? new Date().toLocaleString({ timeZone: 'Asia/Tokyo' }): null;
+
 	Promise.all([
-		db.query("UPDATE gantt_tasks SET text = ?, start_date = ?, duration = ?, progress = ?, parent = ?, kind_task = ?, ToDo = ?, task_schedule = ? ,folder = ?, url_adress = ?, mail = ?, memo = ?, hyperlink = ?, color = ?, textColor = ?, owner_id = ? , edit_date = ? WHERE id = ?",
-			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.task_schedule,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id,task.edit_date, sid]),
+		db.query("UPDATE gantt_tasks SET text = ?, start_date = ?,end_date = ?, duration = ?, progress = ?, parent = ?, kind_task = ?, ToDo = ?, task_schedule = ? ,folder = ?, url_adress = ?, mail = ?, memo = ?, hyperlink = ?, color = ?, textColor = ?, owner_id = ? , edit_date = ? WHERE id = ?",
+			[task.text, task.start_date, endDate ,task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.task_schedule,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id,task.edit_date, sid]),
 		updateOrder(sid, target)
 	])
 		.then(function (result) {
