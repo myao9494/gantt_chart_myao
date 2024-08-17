@@ -96,12 +96,12 @@
 <!-- フォーム -->
 <!-- <input type='button' class="input_export" value='Sort by Order' onclick='gantt.sort("start_date", false);'> -->
 <form class="gantt_control" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
-	<a href="http://localhost:8888/notebooks/000_top.ipynb" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
+	<a href="http://localhost:8888/notebooks" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
 	<strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong>
 	<label class='searchEl'>task検索 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></label>
 	<label class='searchEl_2'>pro検索 <input id='search_2' type='field' placeholder='Search pro...' oninput=change_detector_2() style='width:150px' /></label>
 	<label class='kikan_nisu'>表示 <input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width:30px; text-align:center;' /></label>
-	<label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="1" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label>
+	<label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label>
 	<label for="show_kind_tasks">種類</label>
 	<select onchange=show_kind_tasks(this.value)><option value="All" selected>All</option><option value="task">task</option><option value="pro">pro</option><option value="MS">MS</option></select>
 	<label for="show_owners">所有者</label>
@@ -413,9 +413,9 @@
 		},
 		{name: "description", height: 35, map_to: "text", type: "textarea", focus: true},
 		{name: "hyperlink", height: 30, map_to: "hyperlink", type: "textarea"},
-		{name: "ToDo", height: 90, map_to: "ToDo", type: "textarea"},
-		{name: "memo", height: 90, map_to: "memo", type: "textarea"},
-		{name: "task_schedule", height: 75, map_to: "task_schedule", type: "textarea"},
+		{name: "ToDo", height: 60, map_to: "ToDo", type: "textarea"},
+		{name: "memo", height: 60, map_to: "memo", type: "textarea"},
+		{name: "task_schedule", height: 60, map_to: "task_schedule", type: "textarea"},
 		// {name: "folder", height: 35, map_to: "folder", type: "textarea"},
 		// {name: "url_adress", height: 35, map_to: "url_adress", type: "textarea"},
 		// {name: "mail", height: 35, map_to: "mail", type: "textarea"},
@@ -590,26 +590,26 @@
 	// 	};
 
 	function getTaskHierarchy(taskId) {
-    var hierarchy = [];
-    var currentTaskId = taskId; // 現在のタスクIDを保持
+		var hierarchy = [];
+		var currentTaskId = taskId; // 現在のタスクIDを保持
 
-    // 最下位のタスクから開始
-    var task = gantt.getTask(currentTaskId);
-    if (task) {
-        hierarchy.push("[" + task.id + "]" + task.text); // 最初のタスクを追加
-    }
+		// 最下位のタスクから開始
+		var task = gantt.getTask(currentTaskId);
+		if (task) {
+			hierarchy.push("[" + task.id + "]" + task.text); // 最初のタスクを追加
+		}
 
-    // 親タスクを遡る
-    while(task && task.parent) {
-        task = gantt.getTask(task.parent);
-        if (task) {
-            hierarchy.push("[" + task.id + "]" + task.text);
-        }
-    }
+		// 親タスクを遡る
+		while(task && task.parent) {
+			task = gantt.getTask(task.parent);
+			if (task) {
+				hierarchy.push("[" + task.id + "]" + task.text);
+			}
+		}
 
-    // 階層をそのままの順序で結合
-    return hierarchy.join(" > ");
-	}
+		// 階層をそのままの順序で結合
+		return hierarchy.join(" > ");
+		}
 
 	// gantt.templates.rightside_text = function(start, end, task){
 	// 	return getTaskHierarchy(task.id);

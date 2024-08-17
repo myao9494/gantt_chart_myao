@@ -13,6 +13,7 @@
 # ---
 
 # +
+from sqlalchemy import create_engine
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DATETIME
 from sqlalchemy.dialects.mysql import insert
 import pandas as pd
@@ -20,7 +21,7 @@ import pandas as pd
 import sys
 from bs4 import BeautifulSoup
 import re
-from datetime import datetime
+from datetime import datetime,timedelta
 
 sys.path.append("../mylib")
 
@@ -53,10 +54,17 @@ class db_con(object):
         self.create_db()
         df_taisho = self.df.copy()
         df_taisho = df_taisho[df_taisho["start_date"] == taisho_start]
+        df_taisho = df_taisho[df_taisho["progress"] < 1]
         df_taisho["start_date"] = df_taisho["start_date"] + \
             pd.Timedelta(days=nobasu_day)
         out = self.to_db(df_taisho, "start_date")
         print(out)
+        # 文字列から日付オブジェクトに変換
+        taisho_start_date = datetime.strptime(taisho_start, "%Y-%m-%d")
+        # 日数を加算
+        extended_date = taisho_start_date + timedelta(days=nobasu_day)
+        # 結果を表示
+        print(extended_date.strftime("%Y-%m-%d"))
 
     def to_db(self, df_taisho, retu_mei):
         if len(df_taisho) != 0:
@@ -87,44 +95,55 @@ class db_con(object):
         return out
 
 
+if __name__ == "__main__":
+    try:
+        get_ipython
+        print("ss")
+        obj = db_con()
+        taisho_start = "2024-2-19"
+        nobasu_day = 7
+    except NameError:
+        print("このコードはJupyter Notebook外で実行されています。")
+
 # # factory
 
 # +
-from sqlalchemy import create_engine
-import pandas as pd
+
 
 def read_from_db(db_config: dict) -> pd.DataFrame:
     """
     データベースからgantt_tasksテーブルのデータを読み込み、データフレームとして返します。
-    
+
     Args:
     - db_config (dict): データベース接続の詳細。キーにはhost, port, user, password, databaseが含まれます。
-    
+
     Returns:
     - pd.DataFrame: gantt_tasksテーブルのデータを含むデータフレーム。
     """
     # SQLAlchemyエンジンを作成
-    engine = create_engine(f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
+    engine = create_engine(
+        f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
     # データベースからデータを読み込む
     df = pd.read_sql("SELECT * FROM gantt_tasks", engine)
     return df
 
+
 def write_to_db(df: pd.DataFrame, db_config: dict) -> None:
     """
     指定されたデータフレームをデータベースのgantt_tasksテーブルに書き込みます。あ
-    
+
     Args:
     - df (pd.DataFrame): 書き込みたいデータを含むデータフレーム。
     - db_config (dict): データベース接続の詳細。キーにはhost, port, user, password, databaseが含まれます。
-    
+
     Returns:
     - None
     """
     # SQLAlchemyエンジンを作成
-    engine = create_engine(f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
+    engine = create_engine(
+        f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
     # データフレームをデータベースに書き込む
     df.to_sql('gantt_tasks', engine, if_exists='replace', index=False)
-
 
 
 # +
@@ -141,7 +160,7 @@ def generate_relationship_id_using_text(df: pd.DataFrame) -> pd.DataFrame:
         元のデータフレームに'relationship_id'の列が追加されたデータフレーム。
     """
 
-    def get_path(text, relationships):
+    def get_path(text, relationships, df):
         """タスクのtextから親へのパスを取得"""
         path = [text]
         task_id = df[df['text'] == text]['id'].values[0]
@@ -168,8 +187,8 @@ def generate_relationship_id_using_text(df: pd.DataFrame) -> pd.DataFrame:
             relationships[task_id] = {'parent': parent_id, 'children': []}
 
     # "___"を使って親子関係のパスを構築
-    df['relationship_id'] = df['text'].apply(
-        lambda x: '___'.join(get_path(x, relationships)))
+    df['relationship_id'] = df.apply(lambda row: '___'.join(
+        get_path(row['text'], relationships, df)), axis=1)
 
     return df
 
@@ -322,247 +341,226 @@ def extract_js_object_from_html_as_dict(html_path: str, keyword: str) -> dict:
 
     return result_dict
 
-
 # +
-self = db_con()
+# self = db_con()
 
-# 関数を使用してrelationship_idを生成
-df = self.create_db()
-df_moto = df.copy()
-db_col = df.columns
-original_dtypes = df.dtypes
+# # 関数を使用してrelationship_idを生成
+# df = self.create_db()
+# df_moto = df.copy()
+# db_col = df.columns
+# original_dtypes = df.dtypes
 
-result_df_text = generate_relationship_id_using_text(df)
+# result_df_text = generate_relationship_id_using_text(df)
 
-# 'relationship_id' 列を使用してソート
-sorted_df = result_df_text.sort_values(by='relationship_id')
-# 関数をテスト
-owner_dict= extract_js_object_from_html_as_dict('public/index.html', 'gantt.owners')
-#  担当者をIDから
-sorted_df["担当者"] = sorted_df["owner_id"].map(owner_dict)
+# # 'relationship_id' 列を使用してソート
+# sorted_df = result_df_text.sort_values(by='relationship_id')
+# # 関数をテスト
+# owner_dict = extract_js_object_from_html_as_dict(
+#     'public/index.html', 'gantt.owners')
+# #  担当者をIDから
+# sorted_df["担当者"] = sorted_df["owner_id"].map(owner_dict)
 
 
-# "___"の数を数える
-num_underscores = sorted_df['relationship_id'].str.count("___")
+# # "___"の数を数える
+# num_underscores = sorted_df['relationship_id'].str.count("___")
 
-num_col = []
-# "___"の数に応じて新しい列にxを入れる
-for i in range(1, num_underscores.max() + 2):  # +1 for zero count and another +1 for range's exclusive end
-    col_name = str(i)
-    num_col.append(col_name)
-    sorted_df[col_name] = num_underscores.apply(lambda x: 'x' if x == i - 1 else '')
-# -
+# num_col = []
+# # "___"の数に応じて新しい列にxを入れる
 
-col_name
+# for i in range(1, num_underscores.max() + 2):
+#     col_name = str(i)
+#     num_col.append(col_name)
+#     sorted_df[col_name] = num_underscores.apply(
+#         lambda x: 'x' if x == i - 1 else '')
 
-sorted_df.columns
+# col_name
 
-# +
-a  = ["text"]
+# sorted_df.columns
 
-a.extend(num_col)
-a.extend(['start_date', 'duration', 'progress','kind_task', 'memo', 'color', 'textColor', '担当者','hyperlink'])
-# -
+# a = ["text"]
 
-sorted_df[a]
+# a.extend(num_col)
+# a.extend(['start_date', 'duration', 'progress', 'kind_task',
+#          'memo', 'color', 'textColor', '担当者', 'hyperlink'])
+
+# sorted_df[a]
 
 # テストデータ追加
 
-sorted_df = sorted_df.reset_index(drop=True)
+# sorted_df = sorted_df.reset_index(drop=True)
 
-# +
-# # 85と104の間に行を追加するためのインデックスを取得
-index_85 = sorted_df.index[sorted_df['id'] == 147].tolist()[0]
-# index_104 = sorted_df.index[sorted_df['id'] == 208].tolist()[0]
+# # # 85と104の間に行を追加するためのインデックスを取得
+# index_85 = sorted_df.index[sorted_df['id'] == 147].tolist()[0]
+# # index_104 = sorted_df.index[sorted_df['id'] == 208].tolist()[0]
 
-# 新しい行を作成し、textと3列のみ値を設定
-new_row = pd.Series(index=sorted_df.columns)
-new_row['text'] = 'テスト'
-new_row['3'] = 'x'
+# # 新しい行を作成し、textと3列のみ値を設定
+# new_row = pd.Series(index=sorted_df.columns)
+# new_row['text'] = 'テスト'
+# new_row['3'] = 'x'
 
-# ID 85 と 104 の間の新しい行を削除
-# sorted_df = sorted_df.drop(index_104)
+# # ID 85 と 104 の間の新しい行を削除
+# # sorted_df = sorted_df.drop(index_104)
 
-# +
-# 新しい行を追加
-sorted_df = pd.concat([sorted_df.iloc[:index_85+1], new_row.to_frame().T, sorted_df.iloc[index_85+1:]]).reset_index(drop=True)
+# # 新しい行を追加
+# sorted_df = pd.concat([sorted_df.iloc[:index_85+1], new_row.to_frame().T,
+#                       sorted_df.iloc[index_85+1:]]).reset_index(drop=True)
 
-sorted_df.iloc[index_85-1:index_85+3]  # 対象の範囲を表示して確認
+# sorted_df.iloc[index_85-1:index_85+3]  # 対象の範囲を表示して確認
 
-# +
-# id 列がNaNの行を新しく追加された行として識別
-new_rows = sorted_df[sorted_df['id'].isna()]
+# # id 列がNaNの行を新しく追加された行として識別
+# new_rows = sorted_df[sorted_df['id'].isna()]
 
-# id 列のデータ型を数値に変換
-sorted_df['id'] = pd.to_numeric(sorted_df['id'], errors='coerce')
+# # id 列のデータ型を数値に変換
+# sorted_df['id'] = pd.to_numeric(sorted_df['id'], errors='coerce')
 
-# 新しい行の parent と relationship_id を設定
-new_rows = sorted_df[sorted_df['id'].isna()]
+# # 新しい行の parent と relationship_id を設定
+# new_rows = sorted_df[sorted_df['id'].isna()]
 
-# 今日の日付を取得
-today = datetime.today().strftime('%Y-%m-%d')
+# # 今日の日付を取得
+# today = datetime.today().strftime('%Y-%m-%d')
 
-for idx, row in new_rows.iterrows():
-    # 新しい行のxが位置する列の番号-1を取得
-    x_position = int(row[row == 'x'].index[0])
-    parent_position = x_position - 1
+# for idx, row in new_rows.iterrows():
+#     # 新しい行のxが位置する列の番号-1を取得
+#     x_position = int(row[row == 'x'].index[0])
+#     parent_position = x_position - 1
 
-    # その列にxが設定されている最も近い上の行を探す
-    parent_index = sorted_df.iloc[:idx][sorted_df[str(parent_position)] == 'x'].index[-1]
-    parent_row = sorted_df.iloc[parent_index]
+#     # その列にxが設定されている最も近い上の行を探す
+#     parent_index = sorted_df.iloc[:idx][sorted_df[str(
+#         parent_position)] == 'x'].index[-1]
+#     parent_row = sorted_df.iloc[parent_index]
 
-    # その行のidとrelationship_idを新しい行のparentとrelationship_idに設定
-    sorted_df.at[idx, 'parent'] = parent_row['id']
-    sorted_df.at[idx, 'relationship_id'] = parent_row['relationship_id'] + '___' + row['text']
-    
-    # 新しい行にルールに従って値を設定
-    sorted_df.loc[sorted_df['id'].isna(), 'start_date'] = sorted_df['start_date'].fillna(today)
-    sorted_df.loc[sorted_df['id'].isna(), 'duration'] = sorted_df['duration'].fillna(1)
-    sorted_df.loc[sorted_df['id'].isna(), 'progress'] = sorted_df['progress'].fillna(0)
-    sorted_df.loc[sorted_df['id'].isna(), 'kind_task'] = sorted_df['kind_task'].fillna(1)
-    
-    # id の最大値を取得して、新しい行の 'id' 列に max_id + 1 を設定
-    max_id = sorted_df['id'].max()
-    sorted_df.at[idx, 'id'] = max_id + 1
-    max_sortorder = sorted_df['sortorder'].max()
-    sorted_df.at[idx, 'sortorder'] = max_sortorder + 1
+#     # その行のidとrelationship_idを新しい行のparentとrelationship_idに設定
+#     sorted_df.at[idx, 'parent'] = parent_row['id']
+#     sorted_df.at[idx, 'relationship_id'] = parent_row['relationship_id'] + \
+#         '___' + row['text']
 
-sorted_df = sorted_df.fillna("")
-# -
+#     # 新しい行にルールに従って値を設定
+#     sorted_df.loc[sorted_df['id'].isna(
+#     ), 'start_date'] = sorted_df['start_date'].fillna(today)
+#     sorted_df.loc[sorted_df['id'].isna(
+#     ), 'duration'] = sorted_df['duration'].fillna(1)
+#     sorted_df.loc[sorted_df['id'].isna(
+#     ), 'progress'] = sorted_df['progress'].fillna(0)
+#     sorted_df.loc[sorted_df['id'].isna(
+#     ), 'kind_task'] = sorted_df['kind_task'].fillna(1)
 
-sorted_df[sorted_df['id'] > max_id - len(new_rows)]  # 新しい行の確認
+#     # id の最大値を取得して、新しい行の 'id' 列に max_id + 1 を設定
+#     max_id = sorted_df['id'].max()
+#     sorted_df.at[idx, 'id'] = max_id + 1
+#     max_sortorder = sorted_df['sortorder'].max()
+#     sorted_df.at[idx, 'sortorder'] = max_sortorder + 1
 
-sorted_df.to_clipboard()
+# sorted_df = sorted_df.fillna("")
 
-# 結果を確認
-sorted_df = sorted_df.astype(original_dtypes)
+# sorted_df[sorted_df['id'] > max_id - len(new_rows)]  # 新しい行の確認
 
-df_common_updated, added_df, to_delete_df, df_diff, common_col, col_diff = compare_dataframes(df_moto,sorted_df,"id")
+# sorted_df.to_clipboard()
 
-added_df
+# # 結果を確認
+# sorted_df = sorted_df.astype(original_dtypes)
 
-to_delete_df
+# df_common_updated, added_df, to_delete_df, df_diff, common_col, col_diff = compare_dataframes(
+#     df_moto, sorted_df, "id")
 
-df_diff
+# added_df
 
-# +
-db_config = {
-    "host": "localhost",
-    "port": 3306,  # default MySQL port
-    "user": "root",
-    "password": "",
-    "database": "gantt_howto_node"
-}
+# to_delete_df
 
-write_to_db(sorted_df[db_col],db_config)
+# df_diff
 
+# db_config = {
+#     "host": "localhost",
+#     "port": 3306,  # default MySQL port
+#     "user": "root",
+#     "password": "",
+#     "database": "gantt_howto_node"
+# }
 
-# -
+# write_to_db(sorted_df[db_col], db_config)
 
 # ## スケジュール
 
-# +
-def extract_schedule_with_text_from_df_v3(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    DataFrameからtask_scheduleとtextカラムを抽出し、テーブル形式に変換する関数 (さらに修正版)
-    
-    Args:
-    - df (pd.DataFrame): 入力のDataFrame
-    
-    Returns:
-    - pd.DataFrame: 変換したテーブル形式のDataFrame
-    """
-    
-    def convert_task_schedule(row):
-        items = str(row['task_schedule']).split('___')
-        records = []
-        for item in items:
-            parts = item.split(',')
-            if len(parts) >= 3:
-                records.append({
-                    'original_id': row['id'],
-                    'pro_or_task': row['text'],
-                    'description': parts[1],
-                    'start_date': parts[0],
-                    'duration[days]': parts[2],
-                })
-        return records
-    
-    extracted_data = df.apply(convert_task_schedule, axis=1)
-    flat_data = [item for sublist in extracted_data for item in sublist]
-    
-    return pd.DataFrame(flat_data)
+# def extract_schedule_with_text_from_df_v3(df: pd.DataFrame) -> pd.DataFrame:
+#     """
+#     DataFrameからtask_scheduleとtextカラムを抽出し、テーブル形式に変換する関数 (さらに修正版)
 
-# テスト
-extracted_schedule_with_text_df_v3 = extract_schedule_with_text_from_df_v3(df)
-extracted_schedule_with_text_df_v3
+#     Args:
+#     - df (pd.DataFrame): 入力のDataFrame
+
+#     Returns:
+#     - pd.DataFrame: 変換したテーブル形式のDataFrame
+#     """
+
+#     def convert_task_schedule(row):
+#         items = str(row['task_schedule']).split('___')
+#         records = []
+#         for item in items:
+#             parts = item.split(',')
+#             if len(parts) >= 3:
+#                 records.append({
+#                     'original_id': row['id'],
+#                     'pro_or_task': row['text'],
+#                     'description': parts[1],
+#                     'start_date': parts[0],
+#                     'duration[days]': parts[2],
+#                 })
+#         return records
+
+#     extracted_data = df.apply(convert_task_schedule, axis=1)
+#     flat_data = [item for sublist in extracted_data for item in sublist]
+
+#     return pd.DataFrame(flat_data)
 
 
-# +
-def update_original_df_with_text_v3(original_df: pd.DataFrame, edited_schedule_df: pd.DataFrame) -> pd.DataFrame:
-    """
-    編集後のテーブル形式のデータ（text列を含む）をもとに、オリジナルのDataFrameに変更を反映する関数 (さらに修正版)
-    
-    Args:
-    - original_df (pd.DataFrame): オリジナルのDataFrame
-    - edited_schedule_df (pd.DataFrame): 編集後のテーブル形式のデータ
-    
-    Returns:
-    - pd.DataFrame: 更新されたDataFrame
-    """
-    
-    # start_dateのフォーマットを確認・修正する関数
-    def format_date(date_str):
-        try:
-            return pd.to_datetime(date_str).strftime('%Y-%m-%d')
-        except:
-            return date_str  # フォーマットできない場合はそのまま返す
-    
-    edited_schedule_df['start_date'] = edited_schedule_df['start_date'].apply(format_date)
-    
-    # original_idでgroupbyして文字列を再構築
-    def rebuild_task_schedule(group):
-        return '___'.join([f"{row['start_date']},{row['description']},{row['duration[days]']}" for _, row in group.iterrows()])
-    
-    new_task_schedule = edited_schedule_df.groupby('original_id').apply(rebuild_task_schedule)
-    
-    # オリジナルのDataFrameを更新
-    updated_df = original_df.copy()
-    updated_df['task_schedule'] = updated_df['id'].map(new_task_schedule)
-    
-    return updated_df
+# # テスト
+# extracted_schedule_with_text_df_v3 = extract_schedule_with_text_from_df_v3(df)
+# extracted_schedule_with_text_df_v3
 
-# テスト
-edited_schedule_with_text_df_v3 = extracted_schedule_with_text_df_v3.copy()  # ここでは変換したデータをそのまま「編集後」として扱う
-updated_df_with_text_v3 = update_original_df_with_text_v3(df, edited_schedule_with_text_df_v3)
-updated_df_with_text_v3[['id', 'text', 'task_schedule']]
+# def update_original_df_with_text_v3(original_df: pd.DataFrame, edited_schedule_df: pd.DataFrame) -> pd.DataFrame:
+#     """
+#     編集後のテーブル形式のデータ（text列を含む）をもとに、オリジナルのDataFrameに変更を反映する関数 (さらに修正版)
 
-# -
+#     Args:
+#     - original_df (pd.DataFrame): オリジナルのDataFrame
+#     - edited_schedule_df (pd.DataFrame): 編集後のテーブル形式のデータ
+
+#     Returns:
+#     - pd.DataFrame: 更新されたDataFrame
+#     """
+
+#     # start_dateのフォーマットを確認・修正する関数
+#     def format_date(date_str):
+#         try:
+#             return pd.to_datetime(date_str).strftime('%Y-%m-%d')
+#         except:
+#             return date_str  # フォーマットできない場合はそのまま返す
+
+#     edited_schedule_df['start_date'] = edited_schedule_df['start_date'].apply(
+#         format_date)
+
+#     # original_idでgroupbyして文字列を再構築
+#     def rebuild_task_schedule(group):
+#         return '___'.join([f"{row['start_date']},{row['description']},{row['duration[days]']}" for _, row in group.iterrows()])
+
+#     new_task_schedule = edited_schedule_df.groupby(
+#         'original_id').apply(rebuild_task_schedule)
+
+#     # オリジナルのDataFrameを更新
+#     updated_df = original_df.copy()
+#     updated_df['task_schedule'] = updated_df['id'].map(new_task_schedule)
+
+#     return updated_df
 
 
-
-# +
-
-
-
-db_config = {
-    "host": "localhost",
-    "port": 3306,  # default MySQL port
-    "user": "root",
-    "password": "",
-    "database": "gantt_howto_node"
-}
+# # テスト
+# # ここでは変換したデータをそのまま「編集後」として扱う
+# edited_schedule_with_text_df_v3 = extracted_schedule_with_text_df_v3.copy()
+# updated_df_with_text_v3 = update_original_df_with_text_v3(
+#     df, edited_schedule_with_text_df_v3)
+# updated_df_with_text_v3[['id', 'text', 'task_schedule']]
 
 
-
-df = read_from_db(db_config)
-# -
-
-write_to_db(df,db_config)
-
-# +
 # # ! code .
-# -
 
 # ## test
 
@@ -571,17 +569,13 @@ write_to_db(df,db_config)
 
 # df_taisho
 
-# +
-# self = db_con()
+# # self = db_con()
 
-# # self.create_db()
+# # # self.create_db()
 
-# taisho_start = "2022-07-11"
-# nobasu_day = -7
-# self.move_task(taisho_start,nobasu_day)
-
-
-# -
+# # taisho_start = "2022-07-11"
+# # nobasu_day = -7
+# # self.move_task(taisho_start,nobasu_day)
 
 # retu_mei = "task_schedule"
 
@@ -595,15 +589,11 @@ write_to_db(df,db_config)
 
 # conn = self.engine_1.connect()
 
-
 # rec = df_taisho.iloc[index:index+1][["id", retu_mei]].to_dict("records")
 # insert_stmt = insert(menus).values(rec)
-
 
 # command = f"on_duplicate_key_stmt = insert_stmt.on_duplicate_key_update({retu_mei}=insert_stmt.inserted.{retu_mei})"
 
 # exec(command)
 
 # conn.execute(on_duplicate_key_stmt)
-
-
