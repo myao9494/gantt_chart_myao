@@ -391,26 +391,28 @@
 
 	// lightboxウインド(追加した時に出てくるpopup)
 
-	function getParentTaskName(taskId) {
-    var task = gantt.getTask(taskId);
-    if(task && task.parent && gantt.getTask(task.parent)) {
-        var parentTask = gantt.getTask(task.parent);
-        return parentTask.text; // 親タスクの名前を返す
-    }
-    return "this is top"; // 親タスクがない場合
-	}
+	// function getParentTaskName(taskId) {
+	// 	var task = gantt.getTask(taskId);
+	// 	if (task && task.parent !== undefined && task.parent !== null && task.parent !== 0) {
+	// 		var parentTask = gantt.getTask(task.parent);
+	// 		if (parentTask) {
+	// 			return parentTask.text; // 親タスクの名前を返す
+	// 		}
+	// 	}
+	// 	return ""; // 親タスクがない場合は空文字列を返す
+	// }
 
 	gantt.config.lightbox.sections = [
-		{
-			name: "parent",
-			height: 10,
-			type: "template",
-			map_to: "parent",
-			focus: true,
-			template: function(task){
-				return getParentTaskName(task.id); // ここで関数を使用
-			}
-		},
+		// {
+		// 	name: "parent",
+		// 	height: 30,
+		// 	type: "template",
+		// 	map_to: "parent",
+		// 	template: function(task){
+		// 		var parentName = getParentTaskName(task.id);
+		// 		return "親タスク: " + (parentName === "トップレベルタスク" ? "" : parentName);
+		// 	}
+		// },
 		{name: "description", height: 35, map_to: "text", type: "textarea", focus: true},
 		{name: "hyperlink", height: 30, map_to: "hyperlink", type: "textarea"},
 		{name: "ToDo", height: 60, map_to: "ToDo", type: "textarea"},
@@ -452,6 +454,7 @@
 		task.duration = 1;
 		task.start_date = today;
 		task.edit_date = formatDate;
+		task.parent = gantt.config.root_id
 		return true;
 	});
 
