@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
--- ホスト:                          127.0.0.1
--- サーバーのバージョン:                   10.4.22-MariaDB - mariadb.org binary distribution
--- サーバー OS:                      Win64
--- HeidiSQL バージョン:               11.3.0.6295
+-- Host:                         127.0.0.1
+-- Server version:               10.4.22-MariaDB - mariadb.org binary distribution
+-- Server OS:                    Win64
+-- HeidiSQL Version:             11.3.0.6295
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `gantt_links` (
   `target` int(11) DEFAULT NULL,
   `type` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- エクスポートするデータが選択されていません
 
@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `gantt_tasks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `text` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `start_date` datetime DEFAULT NULL,
+  `end_date` datetime DEFAULT NULL,
   `duration` int(11) NOT NULL DEFAULT 1,
   `progress` float NOT NULL DEFAULT 0,
   `parent` int(11) DEFAULT NULL,
@@ -50,9 +51,7 @@ CREATE TABLE IF NOT EXISTS `gantt_tasks` (
   `sortorder` int(11) DEFAULT NULL,
   `edit_date` text COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- エクスポートするデータが選択されていません
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

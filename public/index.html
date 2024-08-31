@@ -96,19 +96,20 @@
 <!-- フォーム -->
 <!-- <input type='button' class="input_export" value='Sort by Order' onclick='gantt.sort("start_date", false);'> -->
 <form class="gantt_control" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
-	<a href="http://localhost:8888/notebooks" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
-	<strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong>
-	<label class='searchEl'>task検索 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></label>
-	<label class='searchEl_2'>pro検索 <input id='search_2' type='field' placeholder='Search pro...' oninput=change_detector_2() style='width:150px' /></label>
-	<label class='kikan_nisu'>表示 <input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width:30px; text-align:center;' /></label>
-	<label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label>
-	<label for="show_kind_tasks">種類</label>
+	<a href="http://localhost:5001/view/top.dio.svg" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
+	<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
+	<label class='searchEl'>task検索: <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:100px' /></label>
+	<label class='searchEl_2'>pro検索: <input id='search_2' type='field' placeholder='Search pro...' oninput=change_detector_2() style='width:100px' /></label>
+	<label class='kikan_nisu'>表示: <input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width:30px; text-align:center;' /></label>
+	<!-- <label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label> -->
+	<label class='kikan_nisu2' style="display: flex; align-items: center;"> ~ <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center; margin-left: 5px;' /></label>
+	<label for="show_kind_tasks">種類:</label>
 	<select onchange=show_kind_tasks(this.value)><option value="All" selected>All</option><option value="task">task</option><option value="pro">pro</option><option value="MS">MS</option></select>
-	<label for="show_owners">所有者</label>
+	<label for="show_owners">所有者:</label>
 	<select onchange=show_owners(this.value)><option value="All" selected>All</option><option value="自分">自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
-	<label for="progresses">完/未</label>
+	<label for="progresses">完/未:</label>
 	<select onchange=progresses(this.value)><option value="未完了" selected>未完了</option><option value="All">All</option></select>
-	<label for="kikans">表示</label>
+	<label for="kikans">表示:</label>
 	<select onchange=kikans(this.value)><option value="限定期間" selected>限定期間</option><option value="All">All</option></select>
 
 	<!-- 展開と縮める -->
@@ -117,16 +118,16 @@
 
 	<!-- ズーム用 -->
 	<input type="radio" id="scale1" class="gantt_radio" name="scale" value="day">
-	<label for="scale1">Day</label>
+	<label for="scale1">D</label>
 
 	<input type="radio" id="scale3" class="gantt_radio" name="scale" value="month" checked>
-	<label for="scale3">Month</label>
+	<label for="scale3">M</label>
 
 	<input type="radio" id="scale4" class="gantt_radio" name="scale" value="quarter">
-	<label for="scale4">Quarter</label>
+	<label for="scale4">Q</label>
 
 	<input type="radio" id="scale5" class="gantt_radio" name="scale" value="year">
-	<label for="scale5">Year</label>
+	<label for="scale5">Y</label>
 
 </form>
 
@@ -209,15 +210,15 @@
         for (var i = 0; i < li_komoku.length; i++) {
             var li = li_komoku[i].split(",")
             var dt_li = li[0].split("-")
-            var dt = new Date(Number(dt_li[0]),Number(dt_li[1])-1,Number(dt_li[2]))
+            var dt = new Date(Number(dt_li[0]), Number(dt_li[1]) - 1, Number(dt_li[2]))
             if(date.getTime() == dt.getTime()){
                 css_moji(li[1])
                 css_back(li[1])
-                return escapeForCssClass(li[1]);  // この行を変更
+                return escapeForCssClass(li[1]);
             }
             if(Number(li[2]) > 1){
                 for (let j = 1; j< Number(li[2]) ; j++){
-                    if(date.getTime() == new Date(Number(dt_li[0]),Number(dt_li[1])-1,Number(dt_li[2])+j).getTime()){
+                    if(date.getTime() == new Date(Number(dt_li[0]), Number(dt_li[1]) - 1, Number(dt_li[2]) + j).getTime()){
                         return "yotei_moji_nasi"
                     }
                 }
@@ -235,7 +236,7 @@
             for (var k = 0; k < li_a.length ; k++){
                 const aaa = li_a[k].split("-")
                 if(aaa.length==3){
-                    if (date.getTime() == (new Date(aaa[0],aaa[1],aaa[2])).getTime()){
+                    if (date.getTime() == (new Date(aaa[0], aaa[1] - 1, aaa[2])).getTime()){
                         return "kusa"
                     };
                 };
@@ -450,7 +451,7 @@
 	// タスク追加時の初期値の設定
 	gantt.attachEvent("onTaskCreated", function(task){
 		let today = new Date();
-		let formatDate = today.getFullYear() + "-" + today.getMonth()  + "-" + today.getDate();
+		let formatDate = today.getFullYear() + "-" + (today.getMonth() + 1)  + "-" + today.getDate();
 		task.duration = 1;
 		task.start_date = today;
 		task.edit_date = formatDate;
@@ -460,15 +461,12 @@
 
 	gantt.attachEvent("onAfterTaskUpdate", function(id,task){
 		let today = new Date();
-		let formatDate = today.getFullYear() + "-" + today.getMonth()  + "-" + today.getDate();
+		let formatDate = today.getFullYear() + "-" + (today.getMonth() + 1)  + "-" + today.getDate();
 		if (!!task.edit_date){
 			if (task.edit_date.split(",").indexOf(formatDate) == -1){
 				task.edit_date = task.edit_date + "," + formatDate
 			};
 		};
-		// if (task.edit_date != ""){
-		// 	var li =task.edit_date.split(",");
-		// }
 		return true;
 	});
 
@@ -596,7 +594,7 @@
 		var hierarchy = [];
 		var currentTaskId = taskId; // 現在のタスクIDを保持
 
-		// 最下位のタスクから開始
+		// 最下���のタスクから開始
 		var task = gantt.getTask(currentTaskId);
 		if (task) {
 			hierarchy.push("[" + task.id + "]" + task.text); // 最初のタスクを追加
