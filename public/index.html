@@ -122,6 +122,19 @@
 			padding: 2px 5px;
 			height: 20px;
 		}
+
+		.gantt_button {
+			padding: 5px 10px;
+			margin: 0 5px;
+			background-color: #f0f0f0;
+			border: 1px solid #ccc;
+			cursor: pointer;
+		}
+
+		.gantt_button.active {
+			background-color: #007bff;
+			color: white;
+		}
 	</style>
 	<link rel="shortcut icon" href="">
 </head>
@@ -154,17 +167,10 @@
 	<input type="button" value="close all" onclick="window.closeAll()">
 
 	<!-- ズーム用 -->
-	<input type="radio" id="scale1" class="gantt_radio" name="scale" value="day">
-	<label for="scale1">D</label>
-
-	<input type="radio" id="scale3" class="gantt_radio" name="scale" value="month" checked>
-	<label for="scale3">M</label>
-
-	<input type="radio" id="scale4" class="gantt_radio" name="scale" value="quarter">
-	<label for="scale4">Q</label>
-
-	<input type="radio" id="scale5" class="gantt_radio" name="scale" value="year">
-	<label for="scale5">Y</label>
+	<button type="button" id="scale1" class="gantt_button" value="day">日</button>
+	<button type="button" id="scale3" class="gantt_button" value="month">月</button>
+	<button type="button" id="scale4" class="gantt_button" value="quarter">四半期</button>
+	<button type="button" id="scale5" class="gantt_button" value="year">年</button>
 
 </form>
 
@@ -733,13 +739,18 @@
 	gantt.ext.zoom.init(zoomConfig);
 	gantt.ext.zoom.setLevel("month");
 	gantt.ext.zoom.attachEvent("onAfterZoom", function(level, config){
-		document.querySelector(".gantt_radio[value='" +config.name+ "']").checked = true;
-	})
+		document.querySelector(".gantt_button[value='" + config.name + "']").classList.add("active");
+	});
 
-	var radios = document.getElementsByName("scale");
-	for (var i = 0; i < radios.length; i++) {
-		radios[i].onclick = function (event) {
+	var buttons = document.querySelectorAll(".gantt_button");
+	for (var i = 0; i < buttons.length; i++) {
+		buttons[i].onclick = function (event) {
 			gantt.ext.zoom.setLevel(event.target.value);
+			// クリックされたボタンにアクティブクラスを追加し、他のボタンから削除
+			buttons.forEach(function(btn) {
+				btn.classList.remove("active");
+			});
+			event.target.classList.add("active");
 		};
 	}
 
