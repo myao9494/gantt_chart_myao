@@ -89,7 +89,7 @@ app.put("/data/task/:id", function (req, res) {
 		target = req.body.target,
 		task = getTask(req.body);
 
-    var endDate = task.progress == 1 ? new Date().toLocaleString({ timeZone: 'Asia/Tokyo' }): null;
+    var endDate = task.progress == 1 ? formatDateForMySQL(new Date()) : null;
 
 	Promise.all([
 		db.query("UPDATE gantt_tasks SET text = ?, start_date = ?,end_date = ?, duration = ?, progress = ?, parent = ?, kind_task = ?, ToDo = ?, task_schedule = ? ,folder = ?, url_adress = ?, mail = ?, memo = ?, hyperlink = ?, color = ?, textColor = ?, owner_id = ? , edit_date = ? WHERE id = ?",
@@ -206,7 +206,7 @@ function getTask(data) {
         hyperlink: data.hyperlink,
         color: data.color,
         textColor: data.textColor,
-        owner_id: data.owner_id,
+        owner_id: data.owner_id === '' ? 0 : data.owner_id, // 空の場合は0を設定
         edit_date: data.edit_date
     };
 }
@@ -231,4 +231,9 @@ function sendResponse(res, action, tid, error) {
 		result.tid = tid;
 
 	res.send(result);
+}
+
+// 日付をMySQLの形式に変換する関数を追加
+function formatDateForMySQL(date) {
+    return date.toISOString().slice(0, 19).replace('T', ' ');
 }

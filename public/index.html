@@ -86,6 +86,42 @@
 			background: #00ff0000 !important;
 			color: rgb(138, 170, 49) !important;
 			} */
+
+		/* フォーム用の新しいスタイル */
+		.gantt_control {
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
+			background: #ededed;
+			text-align: center;
+			padding: 5px 0; /* パディングを縮小 */
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 5px; /* ギャップを縮小 */
+			min-height: 35px; /* ぽんぽこのファビコンの高さに合わせる */
+		}
+
+		/* フォーム内の要素のスタイルを調整 */
+		.gantt_control * {
+			margin: 0;
+			padding: 0;
+			font-size: 12px; /* フォントサイズを小さくする */
+			line-height: 1;
+		}
+
+		/* 入力フィールドのスタイルを調整 */
+		.gantt_control input[type="field"],
+		.gantt_control select {
+			height: 20px; /* 高さを小さくする */
+			padding: 0 5px;
+		}
+
+		/* ボタンのスタイルを調整 */
+		.gantt_control input[type="button"],
+		.gantt_control input[type="radio"] + label {
+			padding: 2px 5px;
+			height: 20px;
+		}
 	</style>
 	<link rel="shortcut icon" href="">
 </head>
@@ -95,11 +131,12 @@
 
 <!-- フォーム -->
 <!-- <input type='button' class="input_export" value='Sort by Order' onclick='gantt.sort("start_date", false);'> -->
-<form class="gantt_control" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+<form class="gantt_control">
 	<a href="http://localhost:5001/view/top.dio.svg" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
+	<a href="http://localhost:5001/view/My_Reminder_App/gaiyo_zu.dio.svg" target="_blank" style="margin-left: 10px; text-decoration: none; color: #0066cc; font-weight: bold;">予定</a>
 	<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
-	<label class='searchEl'>task検索: <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:100px' /></label>
-	<label class='searchEl_2'>pro検索: <input id='search_2' type='field' placeholder='Search pro...' oninput=change_detector_2() style='width:100px' /></label>
+	<label class='searchEl'>task検索: <input id='search' type='field' placeholder='Search tasks...' style='width:100px' /></label>
+	<label class='searchEl_2'>pro検索: <input id='search_2' type='field' placeholder='Search pro...' style='width:100px' /></label>
 	<label class='kikan_nisu'>表示: <input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width:30px; text-align:center;' /></label>
 	<!-- <label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label> -->
 	<label class='kikan_nisu2' style="display: flex; align-items: center;"> ~ <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center; margin-left: 5px;' /></label>
@@ -455,7 +492,7 @@
 		task.duration = 1;
 		task.start_date = today;
 		task.edit_date = formatDate;
-		task.parent = gantt.config.root_id
+		// task.parent = gantt.config.root_id
 		return true;
 	});
 
@@ -594,7 +631,7 @@
 		var hierarchy = [];
 		var currentTaskId = taskId; // 現在のタスクIDを保持
 
-		// 最下���のタスクから開始
+		// 最下のタスクから開始
 		var task = gantt.getTask(currentTaskId);
 		if (task) {
 			hierarchy.push("[" + task.id + "]" + task.text); // 最初のタスクを追加
@@ -758,6 +795,16 @@
 		gantt.addTask(clone, clone.parent, clone.$index)
 	}
 
+	// ライトボックスが開いたときに description フィールドにフォーカスを当てる
+	gantt.attachEvent("onLightbox", function(task_id){
+		setTimeout(function(){
+			var descriptionField = document.querySelector(".gantt_cal_ltext textarea");
+			if (descriptionField) {
+				descriptionField.focus();
+			}
+		}, 0);
+	});
+
 	// init
 	gantt.init("gantt_here");
 	gantt.load("/data");
@@ -899,15 +946,17 @@
 	change_detector_3();
 	change_detector_4();
 
-	var filter_data;
+	var filter_data = "";
 	var search_box = document.getElementById("search");
 	gantt.attachEvent("onDataRender", function(){
 	search_box = document.getElementById("search");
 	});  
 
-	function change_detector(){
-		filter_data = search_box.value;
-		gantt.refreshData();
+	function change_detector(event){
+	    if (event.key === "Enter") {
+	        filter_data = search_box.value;
+	        gantt.refreshData();
+	    }
 	}
 
 	function compare_input(id) {
@@ -934,17 +983,20 @@
 		return false;
 	});
 
-	change_detector();
+	// 新しいイベントリスナーを追加
+	search_box.addEventListener("keyup", change_detector);
 
-	var filter_data_2;
+	var filter_data_2 = "";
 	var search_box_2 = document.getElementById("search_2");
 	gantt.attachEvent("onDataRender", function(){
 	search_box_2 = document.getElementById("search_2");
 	});  
 
-	function change_detector_2(){
-	filter_data_2 = search_box_2.value;
-	gantt.refreshData();
+	function change_detector_2(event){
+	    if (event.key === "Enter") {
+	        filter_data_2 = search_box_2.value;
+	        gantt.refreshData();
+	    }
 	}
 
 	function compare_input_2(id) {
@@ -969,7 +1021,8 @@
 	return false;
 	});
 
-	change_detector_2();
+	// 新しいイベントリスナーを追加
+	search_box_2.addEventListener("keyup", change_detector_2);
 
 	// 開いたときに開始日でソード
 	// gantt.sort("start_date",false);
