@@ -67,32 +67,43 @@ class db_con(object):
         print(extended_date.strftime("%Y-%m-%d"))
 
     def to_db(self, df_taisho, retu_mei):
-        if len(df_taisho) != 0:
+        if len(df_taisho) == 0:
+            return "０件でした"
+
+        try:
             metadata_1 = MetaData()
             metadata_1.bind = self.engine_1
             menus = Table(
                 'gantt_tasks', metadata_1,
                 Column('id', Integer, primary_key=True),
-                Column(retu_mei, DATETIME),
+                Column(retu_mei, String),  # DATETIMEからStringに変更
             )
 
             conn = self.engine_1.connect()
+            trans = conn.begin()
 
             for index in range(len(df_taisho)):
-                rec = df_taisho.iloc[index:index +
-                                     1][["id", retu_mei]].to_dict("records")
+                rec = df_taisho.iloc[index:index + 1][["id", retu_mei]].to_dict("records")[0]
+                print(f"処理中のレコード: {rec}")  # デバッグ用
+
                 insert_stmt = insert(menus).values(rec)
-                # on_duplicate_key_stmt = insert_stmt.on_duplicate_key_update(
-                #     start_date=insert_stmt.inserted.start_date
-                # )
-                command = f"conn.execute(insert_stmt.on_duplicate_key_update({retu_mei}=insert_stmt.inserted.{retu_mei}))"
-                exec(command)
-#                 print(index,rec)
+                on_duplicate_key_stmt = insert_stmt.on_duplicate_key_update(
+                    **{retu_mei: insert_stmt.inserted[retu_mei]}
+                )
+                result = conn.execute(on_duplicate_key_stmt)
+                print(f"更新結果: {result.rowcount}行影響")  # デバッグ用
+
+            trans.commit()
             conn.close()
-            out = f"{len(df_taisho)}件処理しました"
-        else:
-            out = "０件でした"
-        return out
+            return f"{len(df_taisho)}件処理しました"
+
+        except Exception as e:
+            print(f"エラーが発生しました: {str(e)}")
+            if 'trans' in locals():
+                trans.rollback()
+            if 'conn' in locals() and not conn.closed:
+                conn.close()
+            return f"エラー: {str(e)}"
 
 
 if __name__ == "__main__":

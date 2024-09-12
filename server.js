@@ -32,6 +32,8 @@ var db = mysql.createPool({
 	database: 'gantt_howto_node'
 });
 
+var moment = require('moment-timezone');
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -48,7 +50,17 @@ app.get("/data", function (req, res) {
 			links = results[1];
 
 		for (var i = 0; i < tasks.length; i++) {
-			tasks[i].start_date = tasks[i].start_date.format("YYYY-MM-DD hh:mm:ss");
+			// start_dateをMomentオブジェクトに変換し、ISO 8601形式の文字列に変換
+			tasks[i].start_date = moment(tasks[i].start_date).tz('Asia/Tokyo').format();
+			
+			// end_dateが設定されている場合、同様に処理
+			if (tasks[i].end_date) {
+				tasks[i].end_date = moment(tasks[i].end_date).tz('Asia/Tokyo').format();
+			}
+			
+			// durationを数値に変換
+			tasks[i].duration = parseInt(tasks[i].duration, 10);
+			
 			tasks[i].open = true;
 		}
 
@@ -89,7 +101,8 @@ app.put("/data/task/:id", function (req, res) {
 		target = req.body.target,
 		task = getTask(req.body);
 
-    var endDate = task.progress == 1 ? formatDateForMySQL(new Date()) : null;
+    var endDate = task.progress == 1 ? formatDateForMySQL(moment().add(1, 'days')) : task.end_date;
+    // var endDate = task.progress == 1 ? formatDateForMySQL(moment()) : task.end_date;
 
 	Promise.all([
 		db.query("UPDATE gantt_tasks SET text = ?, start_date = ?,end_date = ?, duration = ?, progress = ?, parent = ?, kind_task = ?, ToDo = ?, task_schedule = ? ,folder = ?, url_adress = ?, mail = ?, memo = ?, hyperlink = ?, color = ?, textColor = ?, owner_id = ? , edit_date = ? WHERE id = ?",
@@ -192,7 +205,8 @@ app.delete("/data/link/:id", function (req, res) {
 function getTask(data) {
     return {
         text: data.text,
-        start_date: data.start_date.date("YYYY-MM-DD"),
+        start_date: moment(data.start_date).tz('Asia/Tokyo').format("YYYY-MM-DD"),
+        end_date: data.end_date ? moment(data.end_date).tz('Asia/Tokyo').format("YYYY-MM-DD") : null,
         duration: data.duration,
         progress: data.progress || 0,
         parent: data.parent === '' ? null : data.parent,
@@ -233,7 +247,7 @@ function sendResponse(res, action, tid, error) {
 	res.send(result);
 }
 
-// 日付をMySQLの形式に変換する関数を追加
+// 日付をMySQLの形式に変換する関数を修正
 function formatDateForMySQL(date) {
-    return date.toISOString().slice(0, 19).replace('T', ' ');
+    return moment(date).tz('Asia/Tokyo').format('YYYY-MM-DD HH:mm:ss');
 }
