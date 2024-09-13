@@ -117,20 +117,37 @@
 		}
 
 		/* ボタンのスタイルを調整 */
-		.gantt_control input[type="button"],
 		.gantt_control input[type="radio"] + label {
 			padding: 2px 5px;
-			height: 20px;
+			height: 25px;
+		}
+		.gantt_control input[type="button"],
+		.gantt_control input[type="file"],
+		.gantt_control input[type="checkbox"],
+		.gantt_control button,
+		.gantt_control .filter-button,
+		.gantt_control label,
+		.gantt_control .gantt_button {
+		font-size: 11px; /* フォントサイズを10pxに統一 */
+		margin: 0;
+		}
+		.button-group {
+			display: inline-flex;
+			margin-right: 5px;
 		}
 
+		.filter-button,
 		.gantt_button {
-			padding: 5px 10px;
-			margin: 0 5px;
+			padding: 2px 5px;
 			background-color: #f0f0f0;
 			border: 1px solid #ccc;
 			cursor: pointer;
+			font-size: 10px; /* フォントサイズを10pxに変更 */
+			height: 25px;
+			line-height: 1;
 		}
 
+		.filter-button.active,
 		.gantt_button.active {
 			background-color: #007bff;
 			color: white;
@@ -150,23 +167,38 @@
 	<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
 	<label class='searchEl'>task検索: <input id='search' type='field' placeholder='Search tasks...' style='width:100px' /></label>
 	<label class='searchEl_2'>pro検索: <input id='search_2' type='field' placeholder='Search pro...' style='width:100px' /></label>
-	<label class='kikan_nisu'>表示: <input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width:30px; text-align:center;' /></label>
-	<!-- <label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label> -->
-	<label class='kikan_nisu2' style="display: flex; align-items: center;"> ~ <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center; margin-left: 5px;' /></label>
-	<label for="show_kind_tasks">種類:</label>
-	<select onchange=show_kind_tasks(this.value)><option value="All" selected>All</option><option value="task">task</option><option value="pro">pro</option><option value="MS">MS</option></select>
-	<label for="show_owners">所有者:</label>
-	<select onchange=show_owners(this.value)><option value="All" selected>All</option><option value="自分">自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
-	<label for="progresses">完/未:</label>
-	<select onchange=progresses(this.value)><option value="未完了" selected>未完了</option><option value="All">All</option></select>
-	<label for="kikans">表示:</label>
-	<select onchange=kikans(this.value)><option value="限定期間" selected>限定期間</option><option value="All">All</option></select>
 
 	<!-- 展開と縮める -->
+	<label for="show_owners">展開:</label>
 	<input type="button" value="open all" onclick="window.openAll()" >
 	<input type="button" value="close all" onclick="window.closeAll()">
+	<!-- 期間限定表示 -->
+	<label for="kikans">表示:</label>
+	<div class="button-group">
+		<button type="button" class="filter-button" data-filter="kikan" data-value="All">全て</button>
+		<button type="button" class="filter-button active" data-filter="kikan" data-value="限定期間">限定期間</button>
+	</div>
+	<label class='kikan_nisu'><input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width: 20px; text-align:center;' /></label>
+	<label class='kikan_nisu2' style="display: flex; align-items: center;"> ~ <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width: 20px; text-align:center; margin-left: 5px;' /></label>
+	<!-- 完了、未完了 -->
+	<label for="progresses">完/未:</label>
+	<div class="button-group">
+		<button type="button" class="filter-button active" data-filter="progress" data-value="未完了">未完了</button>
+		<button type="button" class="filter-button" data-filter="progress" data-value="All">全て</button>
+	</div>
+	<!-- <label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label> -->
+	<label for="show_kind_tasks">種類:</label>
+	<div class="button-group">
+		<button type="button" class="filter-button active" data-filter="kind" data-value="All">全て</button>
+		<button type="button" class="filter-button" data-filter="kind" data-value="task">task</button>
+		<button type="button" class="filter-button" data-filter="kind" data-value="pro">pro</button>
+		<!-- <button type="button" class="filter-button" data-filter="kind" data-value="MS">MS</button> -->
+	</div>
+	<label for="show_owners">所有者:</label>
+	<select onchange=show_owners(this.value)><option value="All" selected>All</option><option value="自分">自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
 
 	<!-- ズーム用 -->
+	<label for="show_owners">期間:</label>
 	<button type="button" id="scale1" class="gantt_button" value="day">日</button>
 	<button type="button" id="scale3" class="gantt_button" value="month">月</button>
 	<button type="button" id="scale4" class="gantt_button" value="quarter">四半期</button>
@@ -786,6 +818,38 @@
 	// 	"</ul>",
 	// 	expire: -1
 	// });
+
+	// フィルターボタンのイベントリスナー
+	document.querySelectorAll('.filter-button').forEach(button => {
+		button.addEventListener('click', function() {
+			const filterType = this.dataset.filter;
+			const filterValue = this.dataset.value;
+			
+			// 同じグループ内のボタンからactiveクラスを削除
+			this.closest('.button-group').querySelectorAll('.filter-button').forEach(btn => {
+				btn.classList.remove('active');
+			});
+			
+			// クリックされたボタンにactiveクラスを追加
+			this.classList.add('active');
+			
+			// フィルター値を更新
+			switch(filterType) {
+				case 'kind':
+					show_kind_task = filterValue;
+					break;
+				case 'progress':
+					progress = filterValue;
+					break;
+				case 'kikan':
+					kikan = filterValue;
+					break;
+			}
+			
+			// データを再描画
+			gantt.refreshData();
+		});
+	});
 
 	// 設定
 	gantt.config.order_branch = true;/*!*/
