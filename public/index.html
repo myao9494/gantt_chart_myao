@@ -848,6 +848,11 @@
 			
 			// データを再描画
 			gantt.refreshData();
+			
+			// ガントチャートの高さを再計算
+			setTimeout(function() {
+				gantt.setSizes();
+			}, 0);
 		});
 	});
 
@@ -958,13 +963,13 @@
 
 	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
 		if (show_kind_task == "All") return true;
-		if (((find_by_id_kind_task (task.kind_task)).label.toLowerCase() == show_kind_task.toLowerCase())) return true;
+		if ((find_by_id_kind_task(task.kind_task)).label.toLowerCase() == show_kind_task.toLowerCase()) return true;
 		return false;
 	});
 
 	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
 		if (show_owner == "All") return true;
-		if (((find_by_id (task.owner_id)).label.toLowerCase() == show_owner.toLowerCase())) return true;
+		if ((find_by_id(task.owner_id)).label.toLowerCase() == show_owner.toLowerCase()) return true;
 		return false;
 	});
 
@@ -986,6 +991,9 @@
 		kikan_date = kikan_nisu_box.value;
 		gantt.refreshData();
 		gantt.ext.zoom.setLevel("month");
+		setTimeout(function() {
+			gantt.setSizes();
+		}, 0);
 	}
 
 	var kikan_date2;
@@ -998,6 +1006,9 @@
 		kikan_date2 = kikan_nisu_box2.value;
 		gantt.refreshData();
 		gantt.ext.zoom.setLevel("month");
+		setTimeout(function() {
+			gantt.setSizes();
+		}, 0);
 	}
 	// var bdt = new Date().setDate(new Date().getDate() - 30);
 	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
@@ -1031,6 +1042,9 @@
 	    if (event.key === "Enter") {
 	        filter_data = search_box.value;
 	        gantt.refreshData();
+	        setTimeout(function() {
+	            gantt.setSizes();
+	        }, 0);
 	    }
 	}
 
@@ -1071,6 +1085,9 @@
 	    if (event.key === "Enter") {
 	        filter_data_2 = search_box_2.value;
 	        gantt.refreshData();
+	        setTimeout(function() {
+	            gantt.setSizes();
+	        }, 0);
 	    }
 	}
 
