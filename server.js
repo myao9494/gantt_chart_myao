@@ -50,19 +50,33 @@ app.get("/data", function (req, res) {
 			links = results[1];
 
 		for (var i = 0; i < tasks.length; i++) {
-			// start_dateをMomentオブジェクトに変換し、ISO 8601形式の文字列に変換
-			tasks[i].start_date = moment(tasks[i].start_date).tz('Asia/Tokyo').format();
-			
-			// end_dateが設定されている場合、同様に処理
-			if (tasks[i].end_date) {
-				tasks[i].end_date = moment(tasks[i].end_date).tz('Asia/Tokyo').format();
+			// start_dateをMomentオブジェクトに変換（タイムゾーンの変更なし）
+			tasks[i].start_date = moment(tasks[i].start_date);
+
+			// progressが1でない場合は、durationを使ってend_dateを計算
+			if (tasks[i].progress != 1) {
+				tasks[i].end_date = tasks[i].start_date.clone().add(tasks[i].duration, 'days');
+			} else if (tasks[i].end_date) {
+				// progressが1で、end_dateが設定されている場合は、そのend_dateを使用
+				tasks[i].end_date = moment(tasks[i].end_date);
+			} else {
+				// progressが1で、end_dateが設定されていない場合は、start_dateと同じにする
+				tasks[i].end_date = tasks[i].start_date.clone();
 			}
-			
+
+			// start_dateとend_dateをISO 8601形式の文字列に変換
+			tasks[i].start_date = tasks[i].start_date.format();
+			tasks[i].end_date = tasks[i].end_date.format();
+
 			// durationを数値に変換
 			tasks[i].duration = parseInt(tasks[i].duration, 10);
-			
 			tasks[i].open = true;
+
+			console.log(`Task ID: ${tasks[i].id}, Start Date: ${tasks[i].start_date}, Duration: ${tasks[i].duration}, Progress: ${tasks[i].progress}, End Date: ${tasks[i].end_date}`);
 		}
+
+		// end_dateの値をログに出力
+		console.log("Tasks with end_date:", tasks.map(task => ({ id: task.id, end_date: task.end_date })));
 
 		res.send({
 			data: tasks,
