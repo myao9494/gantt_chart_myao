@@ -72,11 +72,11 @@ app.get("/data", function (req, res) {
 			tasks[i].duration = parseInt(tasks[i].duration, 10);
 			tasks[i].open = true;
 
-			console.log(`Task ID: ${tasks[i].id}, Start Date: ${tasks[i].start_date}, Duration: ${tasks[i].duration}, Progress: ${tasks[i].progress}, End Date: ${tasks[i].end_date}`);
+			// console.log(`Task ID: ${tasks[i].id}, Start Date: ${tasks[i].start_date}, Duration: ${tasks[i].duration}, Progress: ${tasks[i].progress}, End Date: ${tasks[i].end_date}`);
 		}
 
 		// end_dateの値をログに出力
-		console.log("Tasks with end_date:", tasks.map(task => ({ id: task.id, end_date: task.end_date })));
+		// console.log("Tasks with end_date:", tasks.map(task => ({ id: task.id, end_date: task.end_date })));
 
 		res.send({
 			data: tasks,
