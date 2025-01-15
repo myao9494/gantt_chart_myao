@@ -224,6 +224,9 @@
 	<button type="button" id="scale4" class="gantt_button" value="quarter">四半期</button>
 	<button type="button" id="scale5" class="gantt_button" value="year">年</button>
 
+    <!-- 印刷用ボタンを追加 -->
+    <button type="button" id="printModeToggle" class="filter-button">印刷モード</button>
+
 </form>
 
 <div id="gantt_here" style='width:100%; height:calc(100vh - 52px); transform-origin: top left;'></div>
@@ -1214,6 +1217,82 @@
 			// データを再描画
 			gantt.refreshData();
 		}
+	});
+
+	// 印刷モードの状態管理
+	let isPrintMode = false;
+
+	// 印刷モードトグルボタンのイベントリスナー
+	document.getElementById('printModeToggle').addEventListener('click', function() {
+		isPrintMode = !isPrintMode;
+		this.classList.toggle('active');
+		
+		// 左側のグリッド制御部分は変更なし...
+
+		// タスクの表示形式を変更
+		if (isPrintMode) {
+			// 印刷モード時のタスク表示設定
+			gantt.templates.task_text = function(start, end, task){
+				return ""; // タスク内の表示を完全に消す
+			};
+			
+			gantt.templates.rightside_text = function(start, end, task){
+				if (task.hyperlink === ""){
+					return task.text;
+				} else {
+					// リンクを黒色・下線なしで表示
+					return '<span style="color: black; text-decoration: none;">' + task.text + '</span>';
+				}
+			};
+		} else {
+			// 通常モード時のタスク表示設定（既存の設定を復元）
+			gantt.templates.task_text = function(start, end, task){
+				if (task.hyperlink === "" ){
+					return "[" + task.id + "]" + task.text;
+				} else {
+					if (task.kind_task==="1"||task.kind_task==="3"){
+						return "";
+					} else {
+						return '<a href="' + task.hyperlink + '" target="_blank">' + "[" + task.id + "]"  + task.text + '</a>';
+					}
+				}
+			};
+			
+			gantt.templates.rightside_text = function(start, end, task){
+				if (task.hyperlink === ""){
+					return getTaskHierarchy(task.id);
+				} else {
+					return '<a href="' + task.hyperlink + '" target="_blank">' + getTaskHierarchy(task.id) + '</a>';
+				}
+			};
+		}
+
+		// より詳細なセレクターを使用し、複数の方法で非表示化を試みる
+		const gridCell = document.querySelector('#gantt_here > div > div.gantt_layout_cell.gantt_layout.gantt_layout_x.gantt_layout_cell_border_transparent.gantt_layout_cell_border_bottom > div.gantt_layout_cell.grid_cell.gantt_layout_outer_scroll.gantt_layout_outer_scroll_vertical.gantt_layout_outer_scroll.gantt_layout_outer_scroll_horizontal.gantt_layout_cell_border_right');
+		
+		if (gridCell) {
+			if (isPrintMode) {
+				// 複数のプロパティを使用して確実に非表示にする
+				gridCell.style.cssText = `
+					width: 0 !important;
+					max-width: 0 !important;
+					min-width: 0 !important;
+					padding: 0 !important;
+					margin: 0 !important;
+					overflow: hidden !important;
+					display: none !important;
+				`;
+			} else {
+				// すべてのスタイルをリセット
+				gridCell.style.cssText = '';
+			}
+		}
+		
+		// ganttのレイアウトを強制的に再計算
+		gantt.setSizes();
+		
+		// ガントチャートを再描画
+		gantt.render();
 	});
 </script>
 
