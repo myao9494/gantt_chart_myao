@@ -1081,13 +1081,13 @@
 	});  
 
 	function change_detector(event){
-	    if (event.key === "Enter") {
-	        filter_data = search_box.value;
-	        gantt.refreshData();
-	        setTimeout(function() {
-	            gantt.setSizes();
-	        }, 0);
-	    }
+		if (event.key === "Enter") {
+			filter_data = search_box.value;
+			gantt.refreshData();
+			setTimeout(function() {
+				gantt.setSizes();
+			}, 0);
+		}
 	}
 
 	function compare_input(id) {
@@ -1124,13 +1124,13 @@
 	});  
 
 	function change_detector_2(event){
-	    if (event.key === "Enter") {
-	        filter_data_2 = search_box_2.value;
-	        gantt.refreshData();
-	        setTimeout(function() {
-	            gantt.setSizes();
-	        }, 0);
-	    }
+		if (event.key === "Enter") {
+			filter_data_2 = search_box_2.value;
+			gantt.refreshData();
+			setTimeout(function() {
+				gantt.setSizes();
+			}, 0);
+		}
 	}
 
 	function compare_input_2(id) {
@@ -1201,6 +1201,18 @@
 			
 			sizeInput.value = newSize;
 			updateGanttSize();
+		}
+	});
+
+	// キーボードイベントの処理を追加
+	document.addEventListener('keydown', function(e) {
+		if (e.key === 'Escape') {
+			// 選択されているタスクをすべて解除
+			gantt.eachSelectedTask(function(taskId) {
+				gantt.unselectTask(taskId);
+			});
+			// データを再描画
+			gantt.refreshData();
 		}
 	});
 </script>
