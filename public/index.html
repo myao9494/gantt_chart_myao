@@ -21,6 +21,7 @@
 		}
 		/* 休日 */
 		.gantt_task_cell.week_end {
+			
 			background-color: #e3ecf9;
 		}
 		.gantt_task_row.gantt_selected .gantt_task_cell.week_end {
@@ -38,13 +39,16 @@
 			height: 80%;
 		}
 
-		.pro .gantt_side_content {
+		/* .pro .gantt_side_content {
 			color: rgb(0, 0, 0);
-			font-size: 10px;
+			font-size: 12px;
+		} */
+		.gantt_side_content {
+			color: rgb(0, 0, 0);
+			font-size: 11px;
 		}
-
 		.pro .gantt_task_content {
-			font-size: 9px;
+			font-size: 10px;
 			color: rgb(137, 132, 6);
 			width: 100%;
 			top: -5px;
@@ -128,7 +132,7 @@
 		.gantt_control .filter-button,
 		.gantt_control label,
 		.gantt_control .gantt_button {
-		font-size: 11px; /* フォントサイズを10pxに統一 */
+		font-size: 12px; /* フォントサイズを10pxに統一 */
 		margin: 0;
 		}
 		.button-group {
@@ -142,7 +146,7 @@
 			background-color: #f0f0f0;
 			border: 1px solid #ccc;
 			cursor: pointer;
-			font-size: 10px; /* フォントサイズを10pxに変更 */
+			font-size: 12px; /* フォントサイズを10pxに変更 */
 			height: 25px;
 			line-height: 1;
 		}
@@ -162,7 +166,7 @@
 <!-- フォーム -->
 <!-- <input type='button' class="input_export" value='Sort by Order' onclick='gantt.sort("start_date", false);'> -->
 <form class="gantt_control">
-	<a href="http://localhost:5001/view/personal/top.dio.svg" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
+	<a href="http://localhost:5001/excalidraw-server/house/top.excalidraw" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
 	<a href="http://localhost:5001/view/My_Reminder_App/gaiyo_zu.dio.svg" target="_blank" style="margin-left: 10px; text-decoration: none; color: #0066cc; font-weight: bold;">予定</a>
 	<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
 	<label class='searchEl'>task検索: <input id='search' type='field' placeholder='Search tasks...' style='width:100px' /></label>
