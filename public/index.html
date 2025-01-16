@@ -44,6 +44,18 @@
 			font-size: 12px;
 		} */
 		.gantt_side_content {
+			display: none; /* デフォルトで非表示に */
+		}
+		/* taskとMSの場合に表示 */
+		.task .gantt_side_content,
+		.ms .gantt_side_content {
+			display: block;
+			color: rgb(0, 0, 0);
+			font-size: 11px;
+		}
+		/* 印刷モード時は全て表示 */
+		body.print-mode .gantt_side_content {
+			display: block;
 			color: rgb(0, 0, 0);
 			font-size: 11px;
 		}
@@ -1228,6 +1240,9 @@
 		isPrintMode = !isPrintMode;
 		this.classList.toggle('active');
 		
+		// bodyにprint-modeクラスを追加/削除
+		document.body.classList.toggle('print-mode', isPrintMode);
+		
 		const ganttContainer = document.getElementById('gantt_here');
 		const gridCell = document.querySelector('.gantt_layout_cell.grid_cell');
 		const timelineCell = document.querySelector('.gantt_layout_cell.timeline_cell');
@@ -1310,6 +1325,13 @@
 					return '<span style="color: black; text-decoration: none;">' + task.text + '</span>';
 				}
 			};
+
+			// 印刷モード時はすべてのgantt_side_contentを表示
+			document.querySelectorAll('.gantt_side_content').forEach(function(element) {
+				element.style.display = 'block';
+				element.style.color = 'rgb(0, 0, 0)';
+				element.style.fontSize = '11px';
+			});
 		} else {
 			// 通常モードのテンプレートを復元
 			gantt.templates.task_text = function(start, end, task){
@@ -1331,6 +1353,15 @@
 					return '<a href="' + task.hyperlink + '" target="_blank">' + getTaskHierarchy(task.id) + '</a>';
 				}
 			};
+
+			// 通常モードではtaskの場合のみgantt_side_contentを表示
+			document.querySelectorAll('.gantt_side_content').forEach(function(element) {
+				if (element.closest('.task') || element.closest('.ms')) {
+					element.style.display = 'block';
+				} else {
+					element.style.display = 'none';
+				}
+			});
 		}
 		
 		// レイアウトの再計算と再描画
@@ -1344,6 +1375,18 @@
 				gantt.render();
 			}
 		}, 100);
+	});
+
+	// また、ganttの初期化時にもイベントを追加
+	gantt.attachEvent("onTaskLoading", function(task){
+		if (isPrintMode) {
+			document.querySelectorAll('.gantt_side_content').forEach(function(element) {
+				element.style.display = 'block';
+				element.style.color = 'rgb(0, 0, 0)';
+				element.style.fontSize = '11px';
+			});
+		}
+		return true;
 	});
 </script>
 
