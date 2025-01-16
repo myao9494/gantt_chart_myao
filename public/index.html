@@ -514,16 +514,17 @@
 	// }
 
 	gantt.config.lightbox.sections = [
-		// {
-		// 	name: "parent",
-		// 	height: 30,
-		// 	type: "template",
-		// 	map_to: "parent",
-		// 	template: function(task){
-		// 		var parentName = getParentTaskName(task.id);
-		// 		return "親タスク: " + (parentName === "トップレベルタスク" ? "" : parentName);
-		// 	}
-		// },
+		{
+			name: "hierarchy",
+			height: 30,
+			type: "template",
+			map_to: "hierarchy_path",
+			template: function(task) {
+				var hierarchy = getTaskHierarchy(task.id);
+				task.hierarchy_path = hierarchy;
+				return "<div class='hierarchy-path'>" + hierarchy + "</div>";
+			}
+		},
 		{name: "description", height: 35, map_to: "text", type: "textarea", focus: true},
 		{name: "hyperlink", height: 30, map_to: "hyperlink", type: "textarea"},
 		{name: "ToDo", height: 60, map_to: "ToDo", type: "textarea"},
@@ -701,26 +702,33 @@
 	// 	};
 
 	function getTaskHierarchy(taskId) {
+		console.log("getTaskHierarchy called with taskId:", taskId);
+		var task = gantt.getTask(taskId);
+		console.log("Current task:", task);
+		
 		var hierarchy = [];
-		var currentTaskId = taskId; // 現在のタスクIDを保持
-
-		// 最下のタスクから開始
-		var task = gantt.getTask(currentTaskId);
-		if (task) {
-			hierarchy.push("[" + task.id + "]" + task.text); // 最初のタスクを追加
-		}
-
-		// 親タスクを遡る
-		while(task && task.parent) {
-			task = gantt.getTask(task.parent);
-			if (task) {
-				hierarchy.push("[" + task.id + "]" + task.text);
+		
+		while (task) {
+			console.log("Parent task id:", task.parent);
+			console.log("Root id:", gantt.config.root_id);
+			
+			// 現在のタスク情報を配列の先頭に追加
+			hierarchy.unshift("[" + task.id + "]" + task.text);
+			
+			// 親タスクが存在し、ルートでない場合は親タスクを取得
+			if (task.parent && task.parent !== gantt.config.root_id) {
+				task = gantt.getTask(task.parent);
+				console.log("Parent task:", task);
+			} else {
+				break;
 			}
 		}
-
-		// 階層をそのままの順序で結合
-		return hierarchy.join(" > ");
-		}
+		
+		// 階層を " > " で結合
+		var result = hierarchy.join(" > ");
+		console.log("Final hierarchy:", result);
+		return result;
+	}
 
 	// gantt.templates.rightside_text = function(start, end, task){
 	// 	return getTaskHierarchy(task.id);
@@ -1386,6 +1394,52 @@
 				element.style.fontSize = '11px';
 			});
 		}
+		return true;
+	});
+
+	// 階層表示用のラベルを追加
+	gantt.locale.labels.section_hierarchy = "階層";
+
+	// スタイルを追加
+	var styleSheet = document.createElement("style");
+	styleSheet.textContent = `
+		.hierarchy-path {
+			padding: 8px;
+			background-color: #f5f5f5;
+			border: 1px solid #ddd;
+			border-radius: 3px;
+			font-size: 12px;
+			color: #666;
+			margin: 5px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: block !important;
+			visibility: visible !important;
+		}
+		.gantt_cal_light {
+			padding-top: 5px;
+		}
+		.gantt_cal_ltext {
+			margin-top: 5px;
+		}
+	`;
+	document.head.appendChild(styleSheet);
+
+	// lightboxが開かれる時のイベントを追加
+	gantt.attachEvent("onLightbox", function(task_id){
+		var task = gantt.getTask(task_id);
+		var hierarchy = getTaskHierarchy(task_id);
+		var hierarchyDiv = document.querySelector(".hierarchy-path");
+		if (hierarchyDiv) {
+			hierarchyDiv.innerHTML = hierarchy;
+		}
+	});
+
+	// タスクが開かれる前のイベントを追加
+	gantt.attachEvent("onBeforeLightbox", function(id) {
+		var task = gantt.getTask(id);
+		task.hierarchy_path = getTaskHierarchy(id);
 		return true;
 	});
 </script>
