@@ -1203,26 +1203,28 @@
 	// var nodesSnapshot = document.evaluate('//*[@id="gantt_here"]/div/div[1]/div[1]/div/div/div[1]/div[2]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
 	// nodesSnapshot.snapshotItem(0).click();
 
-	// サイズ変更機能を修正
+	// サイズ変更機能を最適化
 	function updateGanttSize() {
-		const sizeInput = document.getElementById('size-input');
-		const scale = sizeInput.value / 100;
-		
-		// ganttチャートのコンテナを取得
-		const ganttContainer = document.getElementById('gantt_here');
-		
-		// スケールと幅を適用
-		ganttContainer.style.transform = `scale(${scale})`;
-		ganttContainer.style.width = `${(100 / scale)}%`;
-		ganttContainer.style.transformOrigin = 'top left';
-		
-		// コンテナの高さを調整（スケールを考慮）
-		const baseHeight = window.innerHeight - 52;
-		ganttContainer.style.height = `${baseHeight / scale}px`;
-		
-		// ganttチャートを再描画
-		gantt.render();
-		gantt.setSizes();
+		// requestAnimationFrameを使用してレンダリングを最適化
+		requestAnimationFrame(() => {
+			const sizeInput = document.getElementById('size-input');
+			const scale = sizeInput.value / 100;
+			const ganttContainer = document.getElementById('gantt_here');
+			
+			// バッチ処理でDOMの更新をまとめる
+			ganttContainer.style.cssText = `
+				transform: scale(${scale});
+				width: ${(100 / scale)}%;
+				transform-origin: top left;
+				height: ${(window.innerHeight - 52) / scale}px;
+			`;
+			
+			// レイアウトの強制再計算を避けるため、一度にまとめて実行
+			requestAnimationFrame(() => {
+				gantt.render();
+				gantt.setSizes();
+			});
+		});
 	}
 
 	// DOMContentLoadedイベントで初期化を行う
@@ -1264,49 +1266,40 @@
 	// 印刷モードの状態管理
 	let isPrintMode = false;
 
-	// 印刷モードトグルボタンのイベントリスナーを修正
+	// 印刷モードトグルボタンのイベントリスナーを最適化
 	document.getElementById('printModeToggle').addEventListener('click', function() {
 		isPrintMode = !isPrintMode;
 		this.classList.toggle('active');
-		
 		document.body.classList.toggle('print-mode', isPrintMode);
 		
-		if (isPrintMode) {
-			// 印刷モードの設定
-			gantt.config.show_grid = false;
-			gantt.config.scroll_size = 0;
-			
-			// テンプレートの更新
-			updateTemplatesForPrintMode(true);
-			
-			// グリッド幅を0に設定
-			gantt.config.grid_width = 0;
-		} else {
-			// 通常モードの復元
-			gantt.config.show_grid = true;
-			gantt.config.scroll_size = 20;
-			
-			// テンプレートの更新
-			updateTemplatesForPrintMode(false);
-			
-			// グリッド幅を元に戻す
-			gantt.config.grid_width = 280;
-		}
+		// 設定をバッチで更新
+		const config = {
+			show_grid: !isPrintMode,
+			scroll_size: isPrintMode ? 0 : 20,
+			grid_width: isPrintMode ? 0 : 280
+		};
 		
-		// レイアウトの再計算
-		gantt.render();
+		Object.assign(gantt.config, config);
 		
-		// 少し遅延させてサイズを再計算
-		setTimeout(function() {
-			gantt.setSizes();
-			// スケールを適用
+		// テンプレートの更新
+		updateTemplatesForPrintMode(isPrintMode);
+		
+		// レイアウトの更新を最適化
+		requestAnimationFrame(() => {
+			gantt.render();
+			
+			// スケール適用を最適化
 			const scale = document.getElementById('size-input').value / 100;
 			const ganttContainer = document.getElementById('gantt_here');
 			if (ganttContainer) {
-				ganttContainer.style.transform = `scale(${scale})`;
-				ganttContainer.style.width = `${(100 / scale)}%`;
+				ganttContainer.style.cssText = `
+					transform: scale(${scale});
+					width: ${(100 / scale)}%;
+				`;
 			}
-		}, 100);
+			
+			gantt.setSizes();
+		});
 	});
 
 	// テンプレート更新用の関数を追加
@@ -1331,7 +1324,7 @@
 						return "";
 					} else {
 						return '<a href="' + task.hyperlink + '" target="_blank">' + 
-							   "[" + task.id + "]" + task.text + '</a>';
+								"[" + task.id + "]" + task.text + '</a>';
 					}
 				}
 			};
