@@ -1266,20 +1266,41 @@
 	// 印刷モードの状態管理
 	let isPrintMode = false;
 
-	// 印刷モードトグルボタンのイベントリスナーを最適化
+	// グローバルスコープで設定を保存する変数を修正
+	let savedConfig = {
+		show_grid: true,
+		scroll_size: 20,
+		grid_width: 280,
+		columns: null  // カラム設定を保存するために追加
+	};
+
+	// 印刷モードトグルボタンのイベントリスナーを修正
 	document.getElementById('printModeToggle').addEventListener('click', function() {
 		isPrintMode = !isPrintMode;
 		this.classList.toggle('active');
 		document.body.classList.toggle('print-mode', isPrintMode);
 		
-		// 設定をバッチで更新
-		const config = {
-			show_grid: !isPrintMode,
-			scroll_size: isPrintMode ? 0 : 20,
-			grid_width: isPrintMode ? 0 : 280
-		};
-		
-		Object.assign(gantt.config, config);
+		if (isPrintMode) {
+			// 現在の設定を保存
+			savedConfig = {
+				show_grid: gantt.config.show_grid,
+				scroll_size: gantt.config.scroll_size,
+				grid_width: gantt.config.grid_width,
+				columns: [...gantt.config.columns]  // カラム設定を複製して保存
+			};
+			
+			// 印刷モード時の設定を適用
+			gantt.config.show_grid = false;
+			gantt.config.scroll_size = 0;
+			gantt.config.grid_width = 0;
+			gantt.config.columns = [];  // カラムを非表示
+		} else {
+			// 保存していた設定を完全に復元
+			gantt.config.show_grid = savedConfig.show_grid;
+			gantt.config.scroll_size = savedConfig.scroll_size;
+			gantt.config.grid_width = savedConfig.grid_width;
+			gantt.config.columns = savedConfig.columns;  // カラム設定を復元
+		}
 		
 		// テンプレートの更新
 		updateTemplatesForPrintMode(isPrintMode);
@@ -1287,22 +1308,11 @@
 		// レイアウトの更新を最適化
 		requestAnimationFrame(() => {
 			gantt.render();
-			
-			// スケール適用を最適化
-			const scale = document.getElementById('size-input').value / 100;
-			const ganttContainer = document.getElementById('gantt_here');
-			if (ganttContainer) {
-				ganttContainer.style.cssText = `
-					transform: scale(${scale});
-					width: ${(100 / scale)}%;
-				`;
-			}
-			
 			gantt.setSizes();
 		});
 	});
 
-	// テンプレート更新用の関数を追加
+	// テンプレート更新用の関数を修正
 	function updateTemplatesForPrintMode(isPrintMode) {
 		if (isPrintMode) {
 			gantt.templates.task_text = function(start, end, task) {
@@ -1310,10 +1320,10 @@
 			};
 			
 			gantt.templates.rightside_text = function(start, end, task) {
-				var text = task.text;
-				return task.hyperlink ? 
-					'<span style="color: black; text-decoration: none;">' + text + '</span>' : 
-					text;
+				var currentTaskInfo = `[${task.id}] ${task.text}`;
+				var parentInfo = getParentInfo(task.id);
+				var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
+				return '<span style="color: black; text-decoration: none;">' + displayText + '</span>';
 			};
 		} else {
 			gantt.templates.task_text = function(start, end, task) {
@@ -1330,10 +1340,15 @@
 			};
 			
 			gantt.templates.rightside_text = function(start, end, task) {
-				var text = getTaskHierarchy(task.id);
-				return task.hyperlink ? 
-					'<a href="' + task.hyperlink + '" target="_blank">' + text + '</a>' : 
-					text;
+				var currentTaskInfo = `[${task.id}] ${task.text}`;
+				var parentInfo = getParentInfo(task.id);
+				var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
+				
+				if (task.hyperlink === "") {
+					return displayText;
+				} else {
+					return '<a href="' + task.hyperlink + '" target="_blank">' + displayText + '</a>';
+				}
 			};
 		}
 	}
