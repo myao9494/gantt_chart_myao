@@ -196,7 +196,7 @@
 	<!-- サイズ調整入力欄を追加 -->
 	<div class="size-input-container">
 		<label for="size-input">size(%): </label>
-		<input type="number" id="size-input" value="100" min="10" max="200" step="2" onchange="updateGanttSize()">
+		<input type="number" id="size-input" value="96" min="10" max="200" step="2" onchange="updateGanttSize()">
 	</div>
 	<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
 	<label class='searchEl'>task検索: <input id='search' type='field' placeholder='Search tasks...' style='width:100px' /></label>
@@ -953,6 +953,11 @@
 	// init
 	gantt.init("gantt_here");
 	gantt.load("/data");
+	
+	// データロード完了後にサイズを更新
+	gantt.attachEvent("onLoadEnd", function(){
+		updateGanttSize();
+	});
 
 	// スクロール
 	var scroll_state, click, original_mouse_position;
@@ -1211,7 +1216,13 @@
 		gantt.render();
 		gantt.setSizes();
 	}
-	
+
+	// DOMContentLoadedイベントで初期化を行う
+	document.addEventListener('DOMContentLoaded', function() {
+		// 初期表示時にzoomを90%に設定
+		updateGanttSize();
+	});
+
 	// ホイールイベントでのズーム機能を追加
 	document.getElementById('gantt_here').addEventListener('wheel', function(e) {
 		if (e.ctrlKey) {
