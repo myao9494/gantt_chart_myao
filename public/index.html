@@ -737,12 +737,20 @@
 	
 	// タスクのバーの右側のテキスト設定
 	gantt.templates.rightside_text = function(start, end, task){
-		if (task.hyperlink === ""){
-			return getTaskHierarchy(task.id);}
-		else {
-			return '<a href="' + task.hyperlink + '" target="_blank">' + getTaskHierarchy(task.id) + '</a>';}
-		};
-    // return task.text + " " + task.duration + "<b>日</b>";};
+		var currentTaskInfo = `[${task.id}] ${task.text}`;
+		var parentInfo = getParentInfo(task.id);
+		var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
+		
+		if (task.hyperlink === "") {
+			return displayText;
+		} else {
+			if (isPrintMode) {
+				return '<span style="color: black; text-decoration: none;">' + displayText + '</span>';
+			} else {
+				return '<a href="' + task.hyperlink + '" target="_blank">' + displayText + '</a>';
+			}
+		}
+	};
 
 	// タスクのバーのテキスト設定
 	gantt.templates.task_text = function(start, end, task){
@@ -1451,6 +1459,16 @@
 		task.hierarchy_path = getTaskHierarchy(id);
 		return true;
 	});
+
+	// 親タスクの情報を取得する関数を追加
+	function getParentInfo(taskId) {
+		var task = gantt.getTask(taskId);
+		if (task.parent && task.parent !== gantt.config.root_id) {
+			var parentTask = gantt.getTask(task.parent);
+			return `[${parentTask.id}] ${parentTask.text}`;
+		}
+		return "";
+	}
 </script>
 
 </body>
