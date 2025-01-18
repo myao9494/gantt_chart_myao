@@ -1209,12 +1209,12 @@
 		const scale = sizeInput.value / 100;
 		
 		// ganttのスケール設定を更新
-		gantt.config.scale_height = Math.round(60 * scale); // スケールの高さを調整
-		gantt.config.row_height = Math.round(27 * scale); // 行の高さを調整
-		gantt.config.min_column_width = Math.round(30 * scale); // 列の最小幅を調整
+		gantt.config.scale_height = Math.round(60 * scale);
+		gantt.config.row_height = Math.round(27 * scale);
+		gantt.config.min_column_width = Math.round(30 * scale);
 		
-		// フォントサイズを調整
-		const fontSize = Math.max(8, Math.round(12 * scale)); // 最小フォントサイズを8pxに制限
+		// フォントサイズを調整（最小サイズを8pxに制限）
+		const baseFontSize = Math.max(8, Math.round(12 * scale));
 		
 		// スタイルを動的に更新
 		let styleElement = document.getElementById('gantt-scale-style');
@@ -1225,11 +1225,48 @@
 		}
 		
 		styleElement.textContent = `
-			.gantt_scale_cell, .gantt_grid_head_cell, .gantt_task_cell, .gantt_grid_data {
-				font-size: ${fontSize}px !important;
+			/* 基本的なフォントサイズ */
+			.gantt_scale_cell, 
+			.gantt_grid_head_cell, 
+			.gantt_task_cell, 
+			.gantt_grid_data,
+			.gantt_row,
+			.gantt_cell,
+			.gantt_grid_data .gantt_cell.gantt_last_cell,
+			.gantt_grid_scale .gantt_grid_head_cell,
+			.gantt_grid_data .gantt_row.odd:hover, 
+			.gantt_grid_data .gantt_row:hover {
+				font-size: ${baseFontSize}px !important;
 			}
+			
+			/* タスクコンテンツのフォントサイズ */
 			.gantt_task_content {
 				font-size: ${Math.max(8, Math.round(10 * scale))}px !important;
+			}
+			
+			/* サイドコンテンツ（右側のテキスト）のフォントサイズ */
+			.gantt_side_content {
+				font-size: ${Math.max(8, Math.round(11 * scale))}px !important;
+			}
+			
+			/* タスクの後ろに表示される予定のフォントサイズ */
+			.gantt_task_cell::after {
+				font-size: ${Math.max(8, Math.round(11 * scale))}px !important;
+			}
+			
+			/* 階層パスのフォントサイズ */
+			.hierarchy-path {
+				font-size: ${Math.max(8, Math.round(12 * scale))}px !important;
+			}
+			
+			/* ライトボックス（編集ウィンドウ）のフォントサイズ */
+			.gantt_cal_light,
+			.gantt_cal_light .gantt_cal_ltext .gantt_section_time,
+			.gantt_cal_light .gantt_cal_larea,
+			.gantt_cal_light .gantt_cal_ltext textarea,
+			.gantt_cal_light select,
+			.gantt_cal_light input {
+				font-size: ${Math.max(8, Math.round(12 * scale))}px !important;
 			}
 		`;
 		
@@ -1335,10 +1372,8 @@
 			};
 			
 			gantt.templates.rightside_text = function(start, end, task) {
-				var currentTaskInfo = `[${task.id}] ${task.text}`;
-				var parentInfo = getParentInfo(task.id);
-				var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
-				return '<span style="color: black; text-decoration: none;">' + displayText + '</span>';
+				// 印刷モードでは[id]と親の情報を除いたシンプルな表示
+				return '<span style="color: black; text-decoration: none;">' + task.text + '</span>';
 			};
 		} else {
 			gantt.templates.task_text = function(start, end, task) {
