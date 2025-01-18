@@ -196,7 +196,7 @@
 	<!-- サイズ調整入力欄を追加 -->
 	<div class="size-input-container">
 		<label for="size-input">size(%): </label>
-		<input type="number" id="size-input" value="96" min="10" max="200" step="2" onchange="updateGanttSize()">
+		<input type="number" id="size-input" value="100" min="10" max="200" step="2" onchange="updateGanttSize()">
 	</div>
 	<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
 	<label class='searchEl'>task検索: <input id='search' type='field' placeholder='Search tasks...' style='width:100px' /></label>
@@ -241,7 +241,7 @@
 
 </form>
 
-<div id="gantt_here" style='width:100%; height:calc(100vh - 52px); transform-origin: top left;'></div>
+<div id="gantt_here" style='width:100%; height:calc(100vh - 52px);'></div>
 <!-- <div id="gantt_here" style="width: 100%; height: 100vh;"></div> -->
 
 <script type="text/javascript">
@@ -1205,42 +1205,57 @@
 
 	// サイズ変更機能を最適化
 	function updateGanttSize() {
-		// requestAnimationFrameを使用してレンダリングを最適化
-		requestAnimationFrame(() => {
-			const sizeInput = document.getElementById('size-input');
-			const scale = sizeInput.value / 100;
-			const ganttContainer = document.getElementById('gantt_here');
-			
-			// バッチ処理でDOMの更新をまとめる
-			ganttContainer.style.cssText = `
-				transform: scale(${scale});
-				width: ${(100 / scale)}%;
-				transform-origin: top left;
-				height: ${(window.innerHeight - 52) / scale}px;
-			`;
-			
-			// レイアウトの強制再計算を避けるため、一度にまとめて実行
-			requestAnimationFrame(() => {
-				gantt.render();
-				gantt.setSizes();
-			});
-		});
+		const sizeInput = document.getElementById('size-input');
+		const scale = sizeInput.value / 100;
+		
+		// ganttのスケール設定を更新
+		gantt.config.scale_height = Math.round(60 * scale); // スケールの高さを調整
+		gantt.config.row_height = Math.round(27 * scale); // 行の高さを調整
+		gantt.config.min_column_width = Math.round(30 * scale); // 列の最小幅を調整
+		
+		// フォントサイズを調整
+		const fontSize = Math.max(8, Math.round(12 * scale)); // 最小フォントサイズを8pxに制限
+		
+		// スタイルを動的に更新
+		let styleElement = document.getElementById('gantt-scale-style');
+		if (!styleElement) {
+			styleElement = document.createElement('style');
+			styleElement.id = 'gantt-scale-style';
+			document.head.appendChild(styleElement);
+		}
+		
+		styleElement.textContent = `
+			.gantt_scale_cell, .gantt_grid_head_cell, .gantt_task_cell, .gantt_grid_data {
+				font-size: ${fontSize}px !important;
+			}
+			.gantt_task_content {
+				font-size: ${Math.max(8, Math.round(10 * scale))}px !important;
+			}
+		`;
+		
+		// ganttチャートのサイズを更新
+		const ganttContainer = document.getElementById('gantt_here');
+		ganttContainer.style.height = 'calc(100vh - 52px)';
+		ganttContainer.style.width = '100%';
+		
+		// レイアウトを更新
+		gantt.render();
 	}
 
 	// DOMContentLoadedイベントで初期化を行う
 	document.addEventListener('DOMContentLoaded', function() {
-		// 初期表示時にzoomを90%に設定
+		const sizeInput = document.getElementById('size-input');
+		sizeInput.value = 100; // デフォルト値を設定
 		updateGanttSize();
 	});
 
-	// ホイールイベントでのズーム機能を追加
+	// ホイールイベントでのズーム機能
 	document.getElementById('gantt_here').addEventListener('wheel', function(e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
 			const sizeInput = document.getElementById('size-input');
 			const currentSize = parseInt(sizeInput.value);
 			
-			// Windowsの場合、wheelDeltaYを使用
 			const delta = e.wheelDelta ? -e.wheelDelta : e.deltaY;
 			const newSize = delta > 0 
 				? Math.max(10, currentSize - 2)
