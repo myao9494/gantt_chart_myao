@@ -3,11 +3,11 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>nyanko_test</title>
 	<script src="/js/dhtmlxgantt.js"></script>
+	<script src="/js/dhtmlxgantt_undo.js"></script>
 	<script src="/holidays.js"></script>
 	<script src="/event.js"></script>
 	<script src="/schedule.js"></script>
 	<!-- <script type="text/javascript" src="/js/kaslab.js" charset="UTF-8"></script> -->
-	<!-- <link href="/css/dhtmlxgantt.css" rel="stylesheet"> -->
 	<link href="/skins/dhtmlxgantt_broadway_mod.css" rel="stylesheet">
 	<link href="/css/controls_styles.css" rel="stylesheet">
 
@@ -191,6 +191,8 @@
 <!-- フォーム -->
 <!-- <input type='button' class="input_export" value='Sort by Order' onclick='gantt.sort("start_date", false);'> -->
 <form class="gantt_control">
+	<!-- <input value="元に戻す (Cmd+Z)" type="button" onclick='gantt.undo()' style='margin:0 15px;'>
+	<input value="やり直す (Cmd+Shift+Z)" type="button" onclick='gantt.redo()' style='margin:0 15px;'> -->
 	<a href="http://localhost:5001/excalidraw-server/house/top.excalidraw" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
 	<a href="http://localhost:5001/view/My_Reminder_App/gaiyo_zu.dio.svg" target="_blank" style="margin-left: 10px; text-decoration: none; color: #0066cc; font-weight: bold;">予定</a>
 	<!-- サイズ調整入力欄を追加 -->
@@ -837,6 +839,34 @@
 		};
 	}
 
+	// undo/redoの設定
+	gantt.config.undo = true;
+	gantt.config.undo_steps = 10;
+	gantt.config.undo_actions = {
+		update: "update",
+		remove: "remove",
+		add: "add"
+	};
+	gantt.config.undo_types = {
+		link: "link",
+		task: "task"
+	};
+
+	// キーボードショートカットの設定
+	gantt.keys.edit_save = false; // デフォルトのキーボードショートカットを無効化
+
+	gantt.attachEvent("onKeyDown", function(e){
+		if (e.ctrlKey && e.which == 90) { // Ctrl+Z
+			gantt.undo();
+			return false;
+		}
+		if (e.ctrlKey && e.which == 89) { // Ctrl+Y
+			gantt.redo();
+			return false;
+		}
+		return true;
+	});
+
 	// キーボードナビゲーション
 	// gantt.message({
 	// 	text: "<p>Keyboard shortcuts:</p>" +
@@ -929,7 +959,47 @@
 	var kikan = "限定期間";
 	var progress = "未完了";
 
+
+
 	// 設定
+	gantt.keys.edit_save = false;
+
+	// キーボードショートカットの設定
+
+	// documentのキーボードイベントハンドラ
+	document.addEventListener('keydown', function(e) {
+		// CtrlキーまたはCommandキー
+		const modifierPressed = e.ctrlKey || e.metaKey;
+
+		if (modifierPressed && e.key.toLowerCase() === 'z') {
+			if (e.shiftKey) { // Command+Shift+Z
+				e.preventDefault();
+				gantt.redo();
+			} else { // Command+Z
+				e.preventDefault();
+				gantt.undo();
+			}
+		}
+	});
+
+	// ganttのキーボードイベントハンドラ
+	gantt.attachEvent("onKeyDown", function(e){
+		// CtrlキーまたはCommandキー
+		const modifierPressed = e.ctrlKey || e.metaKey;
+
+		if (modifierPressed && (e.keyCode === 90 || e.which === 90)) {
+			if (e.shiftKey) { // Command+Shift+Z
+				gantt.redo();
+				return false;
+			} else { // Command+Z
+				gantt.undo();
+				return false;
+			}
+		}
+		return true;
+	});
+
+	// 一般設定
 	gantt.config.order_branch = true;/*!*/
 	gantt.config.order_branch_free = true;/*!*/
 	gantt.config.date_format="%Y-%m-%d";

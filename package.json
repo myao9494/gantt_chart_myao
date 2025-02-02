@@ -8,6 +8,7 @@
     "body-parser": "^1.15.0",
     "cookie-session": "^2.0.0",
     "date-format-lite": "^0.7.4",
+    "dhtmlx-gantt": "^9.0.3",
     "express": "^4.13.4",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.46",
