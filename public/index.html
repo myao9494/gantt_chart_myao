@@ -193,7 +193,7 @@
 <form class="gantt_control">
 	<!-- <input value="元に戻す (Cmd+Z)" type="button" onclick='gantt.undo()' style='margin:0 15px;'>
 	<input value="やり直す (Cmd+Shift+Z)" type="button" onclick='gantt.redo()' style='margin:0 15px;'> -->
-	<a href="http://localhost:5001/excalidraw-server/house/top.excalidraw" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
+	<a href="http://localhost:3001/?filepath=/Users/sudoupousei/000_work/HOME/home.excalidraw" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
 	<a href="http://localhost:5001/view/My_Reminder_App/gaiyo_zu.dio.svg" target="_blank" style="margin-left: 10px; text-decoration: none; color: #0066cc; font-weight: bold;">予定</a>
 	<!-- サイズ調整入力欄を追加 -->
 	<div class="size-input-container">
@@ -853,7 +853,7 @@
 	};
 
 	// キーボードショートカットの設定
-	gantt.keys.edit_save = false; // デフォルトのキーボードショートカットを無効化
+	gantt.keys.edit_save = 13; // Enterキーで保存
 
 	gantt.attachEvent("onKeyDown", function(e){
 		if (e.ctrlKey && e.which == 90) { // Ctrl+Z
@@ -962,7 +962,7 @@
 
 
 	// 設定
-	gantt.keys.edit_save = false;
+	gantt.keys.edit_save = 13; // Enterキーで保存
 
 	// キーボードショートカットの設定
 

@@ -131,8 +131,8 @@
     "previousSelectedElementIds": {},
     "resizingElement": null,
     "scrolledOutside": false,
-    "scrollX": -94.44444694636783,
-    "scrollY": 7.77777798381853,
+    "scrollX": 0,
+    "scrollY": 0,
     "selectedElementIds": {},
     "selectedGroupIds": {},
     "selectedElementsAreBeingDragged": false,
@@ -166,7 +166,7 @@
     "offsetLeft": 7.9947919845581055,
     "offsetTop": 57.99479293823242,
     "width": 1841.788330078125,
-    "height": 983.3333740234375
+    "height": 985.5469360351562
   },
   "files": {}
 }
