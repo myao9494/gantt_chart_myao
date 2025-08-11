@@ -6,7 +6,7 @@ require("date-format-lite");
 
 var port = 1337;
 var app = express();
-var mysql = require('promise-mysql');
+var mysql = require('mysql2/promise');
 
 var cookieSession = require("cookie-session");
 app.set('trust proxy', 1)
@@ -26,10 +26,14 @@ app.use(
 // { if (err) { console.error(err.message); } console.log('Connected to the ocs_athlete database.'); }); 
 
 var db = mysql.createPool({
-	host: 'localhost',
+	host: '127.0.0.1',
+	port: 3306,
 	user: 'root',
 	password: '',
-	database: 'gantt_howto_node'
+	database: 'gantt_howto_node',
+	waitForConnections: true,
+	connectionLimit: 10,
+	queueLimit: 0
 });
 
 // momentの依存関係を条件付きで読み込む
@@ -72,13 +76,10 @@ app.listen(port, function () {
 	console.log("Server is running on port " + port + "...");
 });
 
-app.get("/data", function (req, res) {
-	Promise.all([
-		db.query("SELECT * FROM gantt_tasks ORDER BY sortorder ASC"),
-		db.query("SELECT * FROM gantt_links")
-	]).then(function (results) {
-		var tasks = results[0],
-			links = results[1];
+app.get("/data", async function (req, res) {
+	try {
+		const [tasks] = await db.query("SELECT * FROM gantt_tasks ORDER BY sortorder ASC");
+		const [links] = await db.query("SELECT * FROM gantt_links");
 
 		for (var i = 0; i < tasks.length; i++) {
 			// start_dateをMomentオブジェクトに変換（タイムゾーンの変更なし）
@@ -114,9 +115,9 @@ app.get("/data", function (req, res) {
 			collections: {links: links}
 		});
 
-	}).catch(function (error) {
+	} catch (error) {
 		sendResponse(res, "error", null, error);
-	});
+	}
 });
 
 
