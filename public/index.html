@@ -1013,7 +1013,7 @@
 	function clone_task(id){
 		var task = gantt.getTask(id);
 		var clone = gantt.copy(task);
-		clone.id = +(new Date());
+		delete clone.id; // IDを削除してデータベースのAUTO_INCREMENTに任せる
 		// console.log("task",task,"clone",clone);
 		gantt.addTask(clone, clone.parent, clone.$index)
 	}
