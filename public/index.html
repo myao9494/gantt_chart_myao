@@ -268,6 +268,8 @@
     <!-- 印刷用ボタンを追加 -->
     <button type="button" id="printModeToggle" class="filter-button">印刷モード</button>
     <button type="button" id="moveTasksButton" class="filter-button" title="未完了タスクの開始日を移動">task自動移動</button>
+    <button type="button" id="exportCsvButton" class="filter-button">DBデータ保存</button>
+    <button type="button" id="importCsvButton" class="filter-button">データ読み込み</button>
 
 </form>
 
@@ -1177,6 +1179,88 @@
 		}
 		return true;
 	});
+
+	var exportCsvButton = document.getElementById('exportCsvButton');
+	var importCsvButton = document.getElementById('importCsvButton');
+
+	if (exportCsvButton) {
+		exportCsvButton.addEventListener('click', async function () {
+			try {
+				var response = await fetch('/data/backup', { method: 'POST' });
+				if (!response.ok) {
+					var payload = null;
+					try {
+						payload = await response.json();
+					} catch (jsonError) {
+						payload = null;
+					}
+					var message = payload && payload.error ? payload.error : 'サーバーエラーが発生しました';
+					throw new Error(message);
+				}
+				var result = await response.json();
+				var successText = 'バックアップを保存しました。';
+				if (result && result.files) {
+					var fileList = [result.files.taskFilename, result.files.linkFilename].filter(Boolean);
+					if (fileList.length) {
+						successText += ' (' + fileList.join(', ') + ')';
+					}
+				}
+				if (gantt && typeof gantt.message === 'function') {
+					gantt.message({ type: 'success', text: successText });
+				}
+			} catch (error) {
+				console.error(error);
+				if (gantt && typeof gantt.message === 'function') {
+					gantt.message({ type: 'error', text: 'バックアップに失敗しました: ' + error.message });
+				}
+			}
+		});
+	}
+
+	if (importCsvButton) {
+		importCsvButton.addEventListener('click', async function () {
+			try {
+				var response = await fetch('/data/import/directory', { method: 'POST' });
+				var payload = null;
+				try {
+					payload = await response.json();
+				} catch (jsonError) {
+					payload = null;
+				}
+				if (!response.ok) {
+					var message = payload && payload.error ? payload.error : 'サーバーエラーが発生しました';
+					throw new Error(message);
+				}
+				var summary = payload && payload.summary ? payload.summary : null;
+				var successDetails = [];
+				if (summary) {
+					if (summary.taskFile) {
+						successDetails.push('タスク: ' + summary.taskFile + '（' + summary.tasksInserted + '件）');
+					}
+					if (summary.linkFile) {
+						successDetails.push('リンク: ' + summary.linkFile + '（' + summary.linksInserted + '件）');
+					}
+					if (summary.skippedLinks) {
+						successDetails.push('リンクCSVは見つかりませんでした');
+					}
+					if (summary.ignoredFiles && summary.ignoredFiles.length) {
+						successDetails.push('未対応ファイル: ' + summary.ignoredFiles.join(', '));
+					}
+				}
+				var successText = successDetails.length ? 'データ読み込みフォルダから読み込みました。' + successDetails.join(' / ') : 'データ読み込みフォルダからデータを読み込みました。';
+				if (gantt && typeof gantt.message === 'function') {
+					gantt.message({ type: 'success', text: successText });
+				}
+				gantt.clearAll();
+				gantt.load('/data');
+			} catch (error) {
+				console.error(error);
+				if (gantt && typeof gantt.message === 'function') {
+					gantt.message({ type: 'error', text: 'データ読み込みに失敗しました: ' + error.message });
+				}
+			}
+		});
+	}
 
 	// ローカルストレージの利用
 	// var initialData = {
