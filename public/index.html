@@ -267,6 +267,7 @@
 
     <!-- 印刷用ボタンを追加 -->
     <button type="button" id="printModeToggle" class="filter-button">印刷モード</button>
+    <button type="button" id="moveTasksButton" class="filter-button" title="未完了タスクの開始日を移動">タスク移動</button>
 
 </form>
 
@@ -1505,6 +1506,131 @@
 			gantt.setSizes();
 		});
 	});
+
+	const moveTasksButton = document.getElementById('moveTasksButton');
+	if (moveTasksButton) {
+		moveTasksButton.addEventListener('click', function() {
+			const todayStart = gantt.date.day_start(new Date());
+			const recentMonday = getMostRecentMonday(todayStart);
+			const modifiedTaskIds = [];
+
+			const runInBatch = typeof gantt.batchUpdate === 'function'
+				? function(callback) { gantt.batchUpdate(callback); }
+				: function(callback) { callback(); };
+
+			runInBatch(function() {
+				gantt.eachTask(function(task) {
+					if (!task) {
+						return;
+					}
+
+					const taskProgress = parseFloat(task.progress);
+					if (!Number.isNaN(taskProgress) && Math.abs(taskProgress - 1) < 1e-6) {
+						return;
+					}
+
+					const kindLabel = resolveKindLabel(task.kind_task);
+					let targetStart = null;
+
+					switch (kindLabel) {
+						case 'task':
+							targetStart = todayStart;
+							break;
+						case 'pro':
+							targetStart = recentMonday;
+							break;
+						default:
+							return;
+					}
+
+					const currentStart = normalizeToDayStart(task.start_date);
+					if (currentStart && currentStart.getTime() === targetStart.getTime()) {
+						return;
+					}
+
+					const normalizedDuration = normalizeDuration(task.duration);
+						task.start_date = new Date(targetStart.getTime());
+					task.end_date = calculateEndDate(task.start_date, normalizedDuration);
+					task.duration = normalizedDuration;
+					if (gantt.config && gantt.config.auto_scheduling) {
+						task.auto_scheduling = true;
+					}
+					gantt.updateTask(task.id);
+					modifiedTaskIds.push(task.id);
+				});
+			});
+
+			if (modifiedTaskIds.length > 0) {
+				gantt.message(modifiedTaskIds.length + '件のタスクを移動しました。');
+			} else {
+				gantt.message('移動対象のタスクがありません。');
+			}
+		});
+	}
+
+	function resolveKindLabel(kindValue) {
+		if (!Array.isArray(gantt.kind_tasks)) {
+			return null;
+		}
+		const kindItem = gantt.kind_tasks.find(function(item) {
+			return String(item.key) === String(kindValue);
+		});
+		return kindItem ? kindItem.label : null;
+	}
+
+	function normalizeToDayStart(value) {
+		if (!value) {
+			return null;
+		}
+		let dateValue = value instanceof Date ? new Date(value.getTime()) : null;
+		if (!dateValue && typeof value === 'string' && typeof gantt.date.parseDate === 'function') {
+			dateValue = gantt.date.parseDate(value, gantt.config.date_format);
+		}
+		if (!dateValue) {
+			dateValue = new Date(value);
+		}
+		if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) {
+			return null;
+		}
+		return gantt.date.day_start(dateValue);
+	}
+
+	function normalizeDuration(value) {
+		const parsed = parseFloat(value);
+		if (Number.isNaN(parsed) || parsed < 0) {
+			return 0;
+		}
+		return parsed;
+	}
+
+	function calculateEndDate(startDate, duration) {
+		if (!(startDate instanceof Date) || Number.isNaN(startDate.getTime())) {
+			return null;
+		}
+		if (typeof gantt.calculateEndDate === 'function') {
+			const result = gantt.calculateEndDate({
+				start_date: startDate,
+				duration: duration
+			});
+			if (result instanceof Date && !Number.isNaN(result.getTime())) {
+				return result;
+			}
+		}
+		if (duration === 0) {
+			return new Date(startDate.getTime());
+		}
+		const fallback = new Date(startDate.getTime());
+		fallback.setDate(fallback.getDate() + duration);
+		return gantt.date.day_start(fallback);
+	}
+
+	function getMostRecentMonday(baseDate) {
+		const reference = new Date(baseDate.getTime());
+		const day = reference.getDay();
+		const diff = (day + 6) % 7; // Monday=0, Sunday=6
+		reference.setDate(reference.getDate() - diff);
+		return gantt.date.day_start(reference);
+	}
 
 	// テンプレート更新用の関数を修正
 	function updateTemplatesForPrintMode(isPrintMode) {
