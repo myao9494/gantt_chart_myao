@@ -134,7 +134,8 @@ app.post("/data/task", function (req, res) { // adds new task to database
 			[task.text, task.start_date, task.duration, task.progress, task.parent,task.kind_task,task.ToDo,task.task_schedule,task.folder,task.url_adress,task.mail,task.memo,task.hyperlink,task.color,task.textColor,task.owner_id, orderIndex,task.edit_date]);
 		})
 		.then(function (result) {
-			sendResponse(res, "inserted", result.insertId);
+			var insertResult = Array.isArray(result) ? result[0] : result;
+			sendResponse(res, "inserted", insertResult && insertResult.insertId, null, req.body.id);
 		})
 		.catch(function (error) {
 			sendResponse(res, "error", null, error);
@@ -212,7 +213,7 @@ app.post("/data/link", function (req, res) {
 	db.query("INSERT INTO gantt_links(source, target, type) VALUES (?,?,?)",
 		[link.source, link.target, link.type])
 		.then(function (result) {
-			sendResponse(res, "inserted", result.insertId);
+			sendResponse(res, "inserted", result.insertId, null, req.body.id);
 		})
 		.catch(function (error) {
 			sendResponse(res, "error", null, error);
@@ -279,7 +280,7 @@ function getLink(data) {
 	};
 }
 
-function sendResponse(res, action, tid, error) {
+function sendResponse(res, action, tid, error, sid) {
 
 	if (action == "error")
 		console.log(error);
@@ -287,8 +288,12 @@ function sendResponse(res, action, tid, error) {
 	var result = {
 		action: action
 	};
-	if (tid !== undefined && tid !== null)
+	if (tid !== undefined && tid !== null) {
 		result.tid = tid;
+		result.id = tid;
+	}
+	if (sid !== undefined && sid !== null)
+		result.sid = sid;
 
 	res.send(result);
 }

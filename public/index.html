@@ -641,6 +641,7 @@
 		task.duration = 1;
 		task.start_date = today;
 		task.edit_date = formatDate;
+		task.hideId = true;
 		// task.parent = gantt.config.root_id
 		return true;
 	});
@@ -659,6 +660,14 @@
 	// タスク追加時に一番前に移動させる
 	gantt.attachEvent("onAfterTaskAdd", function(id,task){
 		gantt.moveTask(task.id, 0,task.parent);
+	});
+
+	gantt.attachEvent("onTaskIdChange", function(oldId, newId){
+		if (gantt.isTaskExists(newId)) {
+			var updatedTask = gantt.getTask(newId);
+			updatedTask.hideId = false;
+			gantt.refreshTask(newId);
+		}
 	});
 
 	// 左側欄の設定
@@ -776,6 +785,13 @@
 	// 		return getAllParentTexts(task.id);
 	// 	};
 
+	function getTaskIdPrefix(task) {
+		if (!task || task.hideId) {
+			return "";
+		}
+		return "[" + task.id + "]";
+	}
+
 	function getTaskHierarchy(taskId) {
 		// console.log("getTaskHierarchy called with taskId:", taskId);
 		var task = gantt.getTask(taskId);
@@ -788,7 +804,7 @@
 			// console.log("Root id:", gantt.config.root_id);
 			
 			// 現在のタスク情報を配列の先頭に追加
-			hierarchy.unshift("[" + task.id + "]" + task.text);
+			hierarchy.unshift(getTaskIdPrefix(task) + task.text);
 			
 			// 親タスクが存在し、ルートでない場合は親タスクを取得
 			if (task.parent && task.parent !== gantt.config.root_id) {
@@ -812,7 +828,8 @@
 	
 	// タスクのバーの右側のテキスト設定
 	gantt.templates.rightside_text = function(start, end, task){
-		var currentTaskInfo = `[${task.id}] ${task.text}`;
+		var idPrefix = getTaskIdPrefix(task);
+		var currentTaskInfo = idPrefix ? `${idPrefix} ${task.text}` : task.text;
 		var parentInfo = getParentInfo(task.id);
 		var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
 		
@@ -829,17 +846,18 @@
 
 	// タスクのバーのテキスト設定
 	gantt.templates.task_text = function(start, end, task){
-		if (task.hyperlink === "" ){
-			return "[" + task.id + "]" + task.text;}
-		else {
-			if (task.kind_task==="1"||task.kind_task==="3"){
-				// return '<a href="' + task.hyperlink + `" target="_blank">L</a>`;
-				return ""
-				}
-			else{
-				return '<a href="' + task.hyperlink + '" target="_blank">' + "[" + task.id + "]"  + task.text + '</a>';}
-				}
-		};
+		var idPrefix = getTaskIdPrefix(task);
+		var label = idPrefix ? idPrefix + task.text : task.text;
+		if (task.hyperlink === "") {
+			return label;
+		} else {
+			if (task.kind_task === "1" || task.kind_task === "3") {
+				return "";
+			} else {
+				return '<a href="' + task.hyperlink + '" target="_blank">' + label + '</a>';
+			}
+		}
+	};
 
 
 	// スケールの設定
@@ -1142,6 +1160,23 @@
 	var dp = new gantt.dataProcessor("/data");
 	dp.init(gantt);
 	dp.setTransactionMode("REST");
+	dp.attachEvent("onAfterUpdate", function(sid, action, tid){
+		if (action === "inserted") {
+			var finalId = sid;
+			if (tid && sid !== tid) {
+				gantt.changeTaskId(sid, tid);
+				finalId = tid;
+			} else if (tid) {
+				finalId = tid;
+			}
+			if (gantt.isTaskExists(finalId)) {
+				var savedTask = gantt.getTask(finalId);
+				savedTask.hideId = false;
+				gantt.refreshTask(finalId);
+			}
+		}
+		return true;
+	});
 
 	// ローカルストレージの利用
 	// var initialData = {
@@ -1656,20 +1691,22 @@
 			};
 		} else {
 			gantt.templates.task_text = function(start, end, task) {
+				var idPrefix = getTaskIdPrefix(task);
+				var label = idPrefix ? idPrefix + task.text : task.text;
 				if (task.hyperlink === "") {
-					return "[" + task.id + "]" + task.text;
+					return label;
 				} else {
 					if (task.kind_task === "1" || task.kind_task === "3") {
 						return "";
 					} else {
-						return '<a href="' + task.hyperlink + '" target="_blank">' + 
-								"[" + task.id + "]" + task.text + '</a>';
+						return '<a href="' + task.hyperlink + '" target="_blank">' + label + '</a>';
 					}
 				}
 			};
 			
 			gantt.templates.rightside_text = function(start, end, task) {
-				var currentTaskInfo = `[${task.id}] ${task.text}`;
+				var idPrefix = getTaskIdPrefix(task);
+				var currentTaskInfo = idPrefix ? `${idPrefix} ${task.text}` : task.text;
 				var parentInfo = getParentInfo(task.id);
 				var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
 				
@@ -1741,7 +1778,8 @@
 		var task = gantt.getTask(taskId);
 		if (task.parent && task.parent !== gantt.config.root_id) {
 			var parentTask = gantt.getTask(task.parent);
-			return `[${parentTask.id}] ${parentTask.text}`;
+			var idPrefix = getTaskIdPrefix(parentTask);
+			return idPrefix ? `${idPrefix} ${parentTask.text}` : parentTask.text;
 		}
 		return "";
 	}
