@@ -1635,6 +1635,14 @@
 		return gantt.date.day_start(reference);
 	}
 
+	function getMostRecentSunday(baseDate) {
+		const reference = new Date(baseDate.getTime());
+		const day = reference.getDay();
+		const diff = day === 0 ? 7 : day; // ensure we always move to the previous Sunday
+		reference.setDate(reference.getDate() - diff);
+		return gantt.date.day_start(reference);
+	}
+
 	// テンプレート更新用の関数を修正
 	function updateTemplatesForPrintMode(isPrintMode) {
 		if (isPrintMode) {
