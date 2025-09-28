@@ -205,7 +205,7 @@
 		}
 		
 		#size-input {
-			width: 50px;
+			width: 40px;
 			text-align: center;
 		}
 	</style>
@@ -221,53 +221,53 @@
 	<!-- <input value="元に戻す (Cmd+Z)" type="button" onclick='gantt.undo()' style='margin:0 15px;'>
 	<input value="やり直す (Cmd+Shift+Z)" type="button" onclick='gantt.redo()' style='margin:0 15px;'> -->
 	<a href="http://localhost:3001/?filepath=/Users/sudoupousei/000_work/HOME/home.excalidraw" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
-	<a href="http://localhost:5001/view/My_Reminder_App/gaiyo_zu.dio.svg" target="_blank" style="margin-left: 10px; text-decoration: none; color: #0066cc; font-weight: bold;">予定</a>
+	<!-- <a href="http://localhost:5001/view/My_Reminder_App/gaiyo_zu.dio.svg" target="_blank" style="margin-left: 10px; text-decoration: none; color: #0066cc; font-weight: bold;">予定</a> -->
 	<!-- サイズ調整入力欄を追加 -->
 	<div class="size-input-container">
-		<label for="size-input">size(%): </label>
-		<input type="number" id="size-input" value="100" min="10" max="200" step="2" onchange="updateGanttSize()">
+		<label for="size-input">size(%)<br>
+		<input type="number" id="size-input" value="100" min="10" max="200" step="2" onchange="updateGanttSize()"></label>
 	</div>
 	<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
-	<label class='searchEl'>task検索: <input id='search' type='field' placeholder='Search tasks...' style='width:100px' /></label>
-	<label class='searchEl_2'>pro検索: <input id='search_2' type='field' placeholder='Search pro...' style='width:100px' /></label>
+	<label class='searchEl'><input id='search' type='field' placeholder='Search tasks...' style='width:72px' /></label>
+	<label class='searchEl_2'><input id='search_2' type='field' placeholder='Search pro...' style='width:72px' /></label>
 
 	<!-- 展開と縮める -->
-	<label for="show_owners">展開:</label>
-	<input type="button" value="open all" onclick="window.openAll()" >
-	<input type="button" value="close all" onclick="window.closeAll()">
+	<label for="show_owners">
+	<input type="button" value="open" onclick="window.openAll()" >
+	<input type="button" value="close" onclick="window.closeAll()"></label>
 	<!-- 期間限定表示 -->
-	<label for="kikans">表示:</label>
+	<label for="kikans">表示期間:</label>
 	<div class="button-group">
 		<button type="button" id="kikanToggle" class="filter-button active" data-filter="kikan" data-value="限定期間">限定期間</button>
 	</div>
 	<label class='kikan_nisu'><input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width: 20px; text-align:center;' /></label>
 	<label class='kikan_nisu2' style="display: flex; align-items: center;"> ~ <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width: 20px; text-align:center; margin-left: 5px;' /></label>
 	<!-- 完了、未完了 -->
-	<label for="progresses">完/未:</label>
+	<label for="progresses">
 	<div class="button-group">
 		<button type="button" id="progressToggle" class="filter-button active" data-filter="progress" data-value="未完了">未完了</button>
-	</div>
+	</div></label>
 	<!-- <label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label> -->
-	<label for="show_kind_tasks">種類:</label>
+	<label for="show_kind_tasks">
 	<div class="button-group">
 		<button type="button" class="filter-button active" data-filter="kind" data-value="All">全て</button>
 		<button type="button" class="filter-button" data-filter="kind" data-value="task">task</button>
 		<button type="button" class="filter-button" data-filter="kind" data-value="pro">pro</button>
 		<!-- <button type="button" class="filter-button" data-filter="kind" data-value="MS">MS</button> -->
-	</div>
-	<label for="show_owners">所有者:</label>
+	</div></label>
+	<label for="show_owners">
 	<select onchange=show_owners(this.value)><option value="All" selected>All</option><option value="自分">自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
-
+	</label>
 	<!-- ズーム用 -->
-	<label for="show_owners">期間:</label>
-	<button type="button" id="scale1" class="gantt_button" value="day">日</button>
-	<button type="button" id="scale3" class="gantt_button" value="month">月</button>
-	<button type="button" id="scale4" class="gantt_button" value="quarter">四半期</button>
-	<button type="button" id="scale5" class="gantt_button" value="year">年</button>
-
+	<label for="show_owners">
+	<button type="button" id="scale1" class="gantt_button" value="day" style='width: 40px;' >日</button>
+	<button type="button" id="scale3" class="gantt_button" value="month"  style='width: 40px;'>月</button>
+	<button type="button" id="scale4" class="gantt_button" value="quarter" style='width: 40px;'>四</button>
+	<button type="button" id="scale5" class="gantt_button" value="year" style='width: 40px;'>年</button>
+	</label>
     <!-- 印刷用ボタンを追加 -->
     <button type="button" id="printModeToggle" class="filter-button">印刷モード</button>
-    <button type="button" id="moveTasksButton" class="filter-button" title="未完了タスクの開始日を移動">タスク移動</button>
+    <button type="button" id="moveTasksButton" class="filter-button" title="未完了タスクの開始日を移動">task自動移動</button>
 
 </form>
 
@@ -1544,6 +1544,9 @@
 					}
 
 					const currentStart = normalizeToDayStart(task.start_date);
+					if (currentStart && currentStart.getTime() > todayStart.getTime()) {
+						return;
+					}
 					if (currentStart && currentStart.getTime() === targetStart.getTime()) {
 						return;
 					}
