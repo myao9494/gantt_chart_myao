@@ -1,10 +1,30 @@
-# CLAUDE.md
+# AGENT.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## プロジェクト概要
 
 DHTMLX Ganttライブラリを使用したWebベースのガントチャートアプリケーションです。タスク、マイルストーン、進捗管理を含むプロジェクト管理機能を提供します。Node.js/Expressバックエンドと、データ永続化のためのMySQLデータベースを使用しています。
+
+## ドキュメントのwebsite
+
+以下のサイトがドキュメントのサイトです。関数やサンプルなどを適宜検索して、コーディングすること。
+
+### DHTMLX GanttのAPIのドキュメント
+
+https://docs.dhtmlx.com/gantt/api__refs__gantt.html
+
+### DHTMLX Ganttのgithub
+
+https://github.com/DHTMLX/gantt
+
+### samle
+
+https://docs.dhtmlx.com/gantt/samples/?sample=%2701_initialization/01_basic_init.html%27&filter=%27%27
+
+### DHTMLX Gantt product page
+
+https://dhtmlx.com/docs/products/dhtmlxGantt/
 
 ## 開発コマンド
 

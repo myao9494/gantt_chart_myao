@@ -163,6 +163,33 @@
 			line-height: 1;
 		}
 
+		.gantt_cal_light .gantt_custom_button {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			padding: 2px 10px;
+			border: 1px solid #c7c7c7;
+			border-radius: 4px;
+			background-color: #f7f7f7;
+			cursor: pointer;
+			color: #000;
+			font-size: 12px;
+			font-weight: 600;
+		}
+
+		.gantt_cal_light .gantt_custom_button:hover {
+			background-color: #e5e5e5;
+		}
+
+		.gantt_cal_light .gantt_custom_button_today {
+			display: none;
+		}
+
+		.gantt_cal_light .gantt_custom_button_label {
+			color: #000;
+			margin: 0;
+		}
+
 		.filter-button.active,
 		.gantt_button.active {
 			background-color: #007bff;
@@ -540,7 +567,7 @@
 			{ key: "2", label: "pro" },
 			{ key: "3", label: "MS" }
      	])},
-		{name: "time", type: "duration", map_to: "auto"},
+	{name: "time", type: "duration", map_to: "auto", button: "today"},
 		{name: "barColor", height: 22, map_to: "color", type: "select", options: colors},
 		{name: "textColor", height: 22, map_to: "textColor", type: "select", options: colors},
 		{name: "edit_date", height: 35, map_to: "edit_date", type: "textarea"},
@@ -559,7 +586,52 @@
 	gantt.locale.labels.section_hyperlink = "hyperlink"
 	gantt.locale.labels.section_edit_date = "edit_date"
 	// gantt.locale.labels.section_end_date = "end_date"
+	gantt.locale.labels.button_today = "今日の日付に";
 
+	if (gantt.form_blocks && gantt.form_blocks.duration) {
+		const originalDurationButtonClick = typeof gantt.form_blocks.duration.button_click === "function"
+			? gantt.form_blocks.duration.button_click.bind(gantt.form_blocks.duration)
+			: null;
+		gantt.form_blocks.duration.button_click = function(index, button, sectionHeader, sectionBody) {
+			const buttonWrapper = (button && typeof button.closest === "function") ? button.closest(".gantt_custom_button") : null;
+			const hasTodayMarker = buttonWrapper && buttonWrapper.querySelector(".gantt_custom_button_today");
+			if (hasTodayMarker) {
+				const timeSection = gantt.getLightboxSection("time");
+				if (!timeSection || typeof timeSection.getValue !== "function" || typeof timeSection.setValue !== "function") {
+					return;
+				}
+				const current = timeSection.getValue();
+				const today = gantt.date.day_start(new Date());
+				const rawDuration = current && current.duration ? parseFloat(current.duration) : null;
+				const duration = rawDuration && !isNaN(rawDuration) ? rawDuration : (gantt.config.duration_step || 1);
+				const endDate = typeof gantt.calculateEndDate === "function"
+					? gantt.calculateEndDate({ start_date: today, duration: duration })
+					: gantt.date.add(new Date(today), duration, gantt.config.duration_unit || "day");
+				timeSection.setValue({
+					start_date: today,
+					end_date: endDate,
+					duration: duration
+				});
+				const lightboxTaskId = gantt.getState().lightbox;
+				if (lightboxTaskId) {
+					const task = gantt.getTask(lightboxTaskId);
+					task.start_date = new Date(today);
+					task.end_date = new Date(endDate);
+					task.duration = duration;
+					if (gantt.config.auto_scheduling) {
+						task.auto_scheduling = true;
+					}
+				}
+				if (typeof gantt.refreshLightbox === "function") {
+					gantt.refreshLightbox();
+				}
+				return;
+			}
+			if (originalDurationButtonClick) {
+				return originalDurationButtonClick(index, button, sectionHeader, sectionBody);
+			}
+		};
+	}
 
 	// タスク追加時の初期値の設定
 	gantt.attachEvent("onTaskCreated", function(task){
