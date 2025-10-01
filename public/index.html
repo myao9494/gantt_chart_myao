@@ -2,6 +2,8 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>nyanko_test</title>
+	<link rel="icon" type="image/x-icon" href="/Image/favicon.ico">
+	<link rel="shortcut icon" type="image/x-icon" href="/Image/favicon.ico">
 	<script src="/js/dhtmlxgantt.js"></script>
 	<script src="/js/dhtmlxgantt_undo.js"></script>
 	<script src="/holidays.js"></script>
@@ -1185,6 +1187,9 @@
 
 	if (exportCsvButton) {
 		exportCsvButton.addEventListener('click', async function () {
+			if (!window.confirm('DBデータを保存します。よろしいですか？')) {
+				return;
+			}
 			try {
 				var response = await fetch('/data/backup', { method: 'POST' });
 				if (!response.ok) {
@@ -1219,6 +1224,9 @@
 
 	if (importCsvButton) {
 		importCsvButton.addEventListener('click', async function () {
+			if (!window.confirm('データを読み込みます。現在の表示内容は更新されますがよろしいですか？')) {
+				return;
+			}
 			try {
 				var response = await fetch('/data/import/directory', { method: 'POST' });
 				var payload = null;
