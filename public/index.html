@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>nyanko_test</title>
@@ -15,20 +16,24 @@
 
 
 	<style type="text/css">
-		html, body{
-			height:100%;
-			padding:0px;
-			margin:0px;
+		html,
+		body {
+			height: 100%;
+			padding: 0px;
+			margin: 0px;
 			overflow: hidden;
 		}
+
 		/* 休日 */
 		.gantt_task_cell.week_end {
-			
+
 			background-color: #e3ecf9;
 		}
+
 		.gantt_task_row.gantt_selected .gantt_task_cell.week_end {
 			background-color: #e3ecf9;
 		}
+
 		/* 色分け */
 		.pro {
 			border: 2px solid #f6e889;
@@ -46,8 +51,10 @@
 			font-size: 12px;
 		} */
 		.gantt_side_content {
-			display: none; /* デフォルトで非表示に */
+			display: none;
+			/* デフォルトで非表示に */
 		}
+
 		/* taskとMSの場合に表示 */
 		.task .gantt_side_content,
 		.ms .gantt_side_content {
@@ -55,12 +62,14 @@
 			color: rgb(0, 0, 0);
 			font-size: 11px;
 		}
+
 		/* 印刷モード時は全て表示 */
 		body.print-mode .gantt_side_content {
 			display: block;
 			color: rgb(0, 0, 0);
 			font-size: 11px;
 		}
+
 		.pro .gantt_task_content {
 			font-size: 10px;
 			color: rgb(137, 132, 6);
@@ -95,10 +104,22 @@
 			height: 80%;
 		}
 
-		.weekend{ background: #95c8dc33 !important;}
-		.event{ background: #b8fff24d !important;}
-		.yotei_moji_nasi{ background: rgb(250 145 145 / 44%) !important;}
-		.kusa{ background: rgba(152, 215, 140, 0.402) !important;}
+		.weekend {
+			background: #95c8dc33 !important;
+		}
+
+		.event {
+			background: #b8fff24d !important;
+		}
+
+		.yotei_moji_nasi {
+			background: rgb(250 145 145 / 44%) !important;
+		}
+
+		.kusa {
+			background: rgba(152, 215, 140, 0.402) !important;
+		}
+
 		/* .yotei_test::before {
 			content: "«";
 			background: #00ff0000 !important;
@@ -111,34 +132,40 @@
 			-webkit-font-smoothing: antialiased;
 			background: #ededed;
 			text-align: center;
-			padding: 5px 0; /* パディングを縮小 */
+			padding: 5px 0;
+			/* パディングを縮小 */
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			gap: 5px; /* ギャップを縮小 */
-			min-height: 35px; /* ぽんぽこのファビコンの高さに合わせる */
+			gap: 5px;
+			/* ギャップを縮小 */
+			min-height: 35px;
+			/* ぽんぽこのファビコンの高さに合わせる */
 		}
 
 		/* フォーム内の要素のスタイルを調整 */
 		.gantt_control * {
 			margin: 0;
 			padding: 0;
-			font-size: 12px; /* フォントサイズを小さくする */
+			font-size: 12px;
+			/* フォントサイズを小さくする */
 			line-height: 1;
 		}
 
 		/* 入力フィールドのスタイルを調整 */
 		.gantt_control input[type="field"],
 		.gantt_control select {
-			height: 20px; /* 高さを小さくする */
+			height: 20px;
+			/* 高さを小さくする */
 			padding: 0 5px;
 		}
 
 		/* ボタンのスタイルを調整 */
-		.gantt_control input[type="radio"] + label {
+		.gantt_control input[type="radio"]+label {
 			padding: 2px 5px;
 			height: 25px;
 		}
+
 		.gantt_control input[type="button"],
 		.gantt_control input[type="file"],
 		.gantt_control input[type="checkbox"],
@@ -146,9 +173,11 @@
 		.gantt_control .filter-button,
 		.gantt_control label,
 		.gantt_control .gantt_button {
-		font-size: 12px; /* フォントサイズを10pxに統一 */
-		margin: 0;
+			font-size: 12px;
+			/* フォントサイズを10pxに統一 */
+			margin: 0;
 		}
+
 		.button-group {
 			display: inline-flex;
 			margin-right: 5px;
@@ -160,7 +189,8 @@
 			background-color: #f0f0f0;
 			border: 1px solid #ccc;
 			cursor: pointer;
-			font-size: 12px; /* フォントサイズを10pxに変更 */
+			font-size: 12px;
+			/* フォントサイズを10pxに変更 */
 			height: 25px;
 			line-height: 1;
 		}
@@ -205,7 +235,7 @@
 			align-items: center;
 			gap: 5px;
 		}
-		
+
 		#size-input {
 			width: 40px;
 			text-align: center;
@@ -217,299 +247,316 @@
 <body>
 
 
-<!-- フォーム -->
-<!-- <input type='button' class="input_export" value='Sort by Order' onclick='gantt.sort("start_date", false);'> -->
-<form class="gantt_control">
-	<!-- <input value="元に戻す (Cmd+Z)" type="button" onclick='gantt.undo()' style='margin:0 15px;'>
+	<!-- フォーム -->
+	<!-- <input type='button' class="input_export" value='Sort by Order' onclick='gantt.sort("start_date", false);'> -->
+	<form class="gantt_control">
+		<!-- <input value="元に戻す (Cmd+Z)" type="button" onclick='gantt.undo()' style='margin:0 15px;'>
 	<input value="やり直す (Cmd+Shift+Z)" type="button" onclick='gantt.redo()' style='margin:0 15px;'> -->
-	<a href="http://localhost:3001/?filepath=/Users/sudoupousei/000_work/HOME/home.excalidraw" target="_blank"><img src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
-	<!-- <a href="http://localhost:5001/view/My_Reminder_App/gaiyo_zu.dio.svg" target="_blank" style="margin-left: 10px; text-decoration: none; color: #0066cc; font-weight: bold;">予定</a> -->
-	<!-- サイズ調整入力欄を追加 -->
-	<div class="size-input-container">
-		<label for="size-input">size(%)<br>
-		<input type="number" id="size-input" value="100" min="10" max="200" step="2" onchange="updateGanttSize()"></label>
-	</div>
-	<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
-	<label class='searchEl'><input id='search' type='field' placeholder='Search tasks...' style='width:72px' /></label>
-	<label class='searchEl_2'><input id='search_2' type='field' placeholder='Search pro...' style='width:72px' /></label>
+		<a href="http://localhost:3001/?filepath=/Users/sudoupousei/000_work/HOME/home.excalidraw" target="_blank"><img
+				src="Image/ぽんぽこ.jpeg" alt="Image" style="height: 35px;"></a>
+		<!-- <a href="http://localhost:5001/view/My_Reminder_App/gaiyo_zu.dio.svg" target="_blank" style="margin-left: 10px; text-decoration: none; color: #0066cc; font-weight: bold;">予定</a> -->
+		<!-- サイズ調整入力欄を追加 -->
+		<div class="size-input-container">
+			<label for="size-input">size(%)<br>
+				<input type="number" id="size-input" value="100" min="10" max="200" step="2"
+					onchange="updateGanttSize()"></label>
+		</div>
+		<!-- <strong style="color: rgb(30, 0, 255); font-size: 20px;"> Belief and Evidence → Confidence  </strong> -->
+		<label class='searchEl'><input id='search' type='field' placeholder='Search tasks...'
+				style='width:72px' /></label>
+		<label class='searchEl_2'><input id='search_2' type='field' placeholder='Search pro...'
+				style='width:72px' /></label>
 
-	<!-- 展開と縮める -->
-	<label for="show_owners">
-	<input type="button" value="open" onclick="window.openAll()" >
-	<input type="button" value="close" onclick="window.closeAll()"></label>
-	<!-- 期間限定表示 -->
-	<label for="kikans">表示期間:</label>
-	<div class="button-group">
-		<button type="button" id="kikanToggle" class="filter-button active" data-filter="kikan" data-value="限定期間">限定期間</button>
-	</div>
-	<label class='kikan_nisu'><input id='kikan_nisu' type='field' value="0" placeholder='input...' oninput=change_detector_3() style='width: 20px; text-align:center;' /></label>
-	<label class='kikan_nisu2' style="display: flex; align-items: center;"> ~ <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width: 20px; text-align:center; margin-left: 5px;' /></label>
-	<!-- 完了、未完了 -->
-	<label for="progresses">
-	<div class="button-group">
-		<button type="button" id="progressToggle" class="filter-button active" data-filter="progress" data-value="未完了">未完了</button>
-	</div></label>
-	<!-- <label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label> -->
-	<label for="show_kind_tasks">
-	<div class="button-group">
-		<button type="button" class="filter-button active" data-filter="kind" data-value="All">全て</button>
-		<button type="button" class="filter-button" data-filter="kind" data-value="task">task</button>
-		<button type="button" class="filter-button" data-filter="kind" data-value="pro">pro</button>
-		<!-- <button type="button" class="filter-button" data-filter="kind" data-value="MS">MS</button> -->
-	</div></label>
-	<label for="show_owners">
-	<select onchange=show_owners(this.value)><option value="All" selected>All</option><option value="自分">自分</option><option value="待">待</option><option value="サイン取">サイン取</option><option value="他">他</option></select>
-	</label>
-	<!-- ズーム用 -->
-	<label for="show_owners">
-	<button type="button" id="scale1" class="gantt_button" value="day" style='width: 40px;' >日</button>
-	<button type="button" id="scale3" class="gantt_button" value="month"  style='width: 40px;'>月</button>
-	<button type="button" id="scale4" class="gantt_button" value="quarter" style='width: 40px;'>四</button>
-	<button type="button" id="scale5" class="gantt_button" value="year" style='width: 40px;'>年</button>
-	</label>
-    <!-- 印刷用ボタンを追加 -->
-    <button type="button" id="printModeToggle" class="filter-button">印刷モード</button>
-    <button type="button" id="moveTasksButton" class="filter-button" title="未完了タスクの開始日を移動">task自動移動</button>
-    <button type="button" id="exportCsvButton" class="filter-button">DBデータ保存</button>
-    <button type="button" id="importCsvButton" class="filter-button">データ読み込み</button>
+		<!-- 展開と縮める -->
+		<label for="show_owners">
+			<input type="button" value="open" onclick="window.openAll()">
+			<input type="button" value="close" onclick="window.closeAll()"></label>
+		<!-- 期間限定表示 -->
+		<label for="kikans">表示期間:</label>
+		<div class="button-group">
+			<button type="button" id="kikanToggle" class="filter-button active" data-filter="kikan"
+				data-value="限定期間">限定期間</button>
+		</div>
+		<label class='kikan_nisu'><input id='kikan_nisu' type='field' value="0" placeholder='input...'
+				oninput=change_detector_3() style='width: 20px; text-align:center;' /></label>
+		<label class='kikan_nisu2' style="display: flex; align-items: center;"> ~ <input id='kikan_nisu2' type='field'
+				value="0" placeholder='input...' oninput=change_detector_4()
+				style='width: 20px; text-align:center; margin-left: 5px;' /></label>
+		<!-- 完了、未完了 -->
+		<label for="progresses">
+			<div class="button-group">
+				<button type="button" id="progressToggle" class="filter-button active" data-filter="progress"
+					data-value="未完了">未完了</button>
+			</div>
+		</label>
+		<!-- <label class='kikan_nisu2'>~  <input id='kikan_nisu2' type='field' value="0" placeholder='input...' oninput=change_detector_4() style='width:30px; text-align:center;' /></label> -->
+		<label for="show_kind_tasks">
+			<div class="button-group">
+				<button type="button" class="filter-button active" data-filter="kind" data-value="All">全て</button>
+				<button type="button" class="filter-button" data-filter="kind" data-value="task">task</button>
+				<button type="button" class="filter-button" data-filter="kind" data-value="pro">pro</button>
+				<!-- <button type="button" class="filter-button" data-filter="kind" data-value="MS">MS</button> -->
+			</div>
+		</label>
+		<label for="show_owners">
+			<select onchange=show_owners(this.value)>
+				<option value="All" selected>All</option>
+				<option value="自分">自分</option>
+				<option value="待">待</option>
+				<option value="サイン取">サイン取</option>
+				<option value="他">他</option>
+			</select>
+		</label>
+		<!-- ズーム用 -->
+		<label for="show_owners">
+			<button type="button" id="scale1" class="gantt_button" value="day" style='width: 40px;'>日</button>
+			<button type="button" id="scale3" class="gantt_button" value="month" style='width: 40px;'>月</button>
+			<button type="button" id="scale4" class="gantt_button" value="quarter" style='width: 40px;'>四</button>
+			<button type="button" id="scale5" class="gantt_button" value="year" style='width: 40px;'>年</button>
+		</label>
+		<!-- 印刷用ボタンを追加 -->
+		<button type="button" id="printModeToggle" class="filter-button">印刷モード</button>
+		<button type="button" id="moveTasksButton" class="filter-button" title="未完了タスクの開始日を移動">task自動移動</button>
+		<button type="button" id="exportCsvButton" class="filter-button">DBデータ保存</button>
+		<button type="button" id="importCsvButton" class="filter-button">データ読み込み</button>
 
-</form>
+	</form>
 
-<div id="gantt_here" style='width:100%; height:calc(100vh - 52px);'></div>
-<!-- <div id="gantt_here" style="width: 100%; height: 100vh;"></div> -->
+	<div id="gantt_here" style='width:100%; height:calc(100vh - 52px);'></div>
+	<!-- <div id="gantt_here" style="width: 100%; height: 100vh;"></div> -->
 
-<script type="text/javascript">
-	// 展開、縮める
-	window.closeAll = function closeAll(){
-		gantt.eachTask(function(task){
-			task.$open = false;
-		});
-		gantt.render();
+	<script type="text/javascript">
+		// 展開、縮める
+		window.closeAll = function closeAll() {
+			gantt.eachTask(function (task) {
+				task.$open = false;
+			});
+			gantt.render();
 		}
-		
-	window.openAll = function openAll(){
-		gantt.eachTask(function(task){
+
+		window.openAll = function openAll() {
+			gantt.eachTask(function (task) {
+				task.$open = true;
+			});
+			gantt.render();
+		}
+
+		gantt.attachEvent("onTaskLoading", function (task) {
 			task.$open = true;
+			return true;
 		});
-		gantt.render();
-	}
 
-	gantt.attachEvent("onTaskLoading", function(task){
-		task.$open = true;
-		return true;
-	});
+		// フィルター
 
-	// フィルター
-
-	function show_kind_tasks(selected_kind_task){
-		show_kind_task = selected_kind_task;
-		gantt.render();
-	}
-
-	function show_owners(selected_owner){
-		show_owner = selected_owner;
-		gantt.render();
-	}
-
-	function progresses(selected_progress){
-		progress = selected_progress;
-		gantt.render();
-	}
-
-	function kikans(selected_kikan){
-		kikan = selected_kikan;
-		gantt.render();
-	}
-
-	// 週末(期間の計算に入れたい場合)
-
-	// gantt.config.work_time = true; 
-
-	// for (var i = 0; i < holidays.length; i++) {
-	// 	gantt.setWorkTime({
-	// 		date: holidays[i],
-	// 		hours: false
-	// 	});
-	// }
-
-	// var weekScaleTemplate = function (date) {
-	// 	var dateToStr = gantt.date.date_to_str("%d %M");
-	// 	var weekNum = gantt.date.date_to_str("(week %W)");
-	// 	var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
-	// 	return dateToStr(date) + " - " + dateToStr(endDate) + " " + weekNum(date);
-	// };
-
-
-	// 週末(色だけ変えたい場合)
-	function isInArray(array, value) {
-  	return !!array.find(item => {return item.getTime() == value.getTime()});
-	}
-
-	// cssでセルの色や予定を入れる
-	gantt.templates.timeline_cell_class = function(task,date){
-    // taskで設定したスケジュールを入れる
-    if (!!task.task_schedule){
-        var li_komoku = task.task_schedule.split("___")
-        try {
-        for (var i = 0; i < li_komoku.length; i++) {
-            var li = li_komoku[i].split(",")
-            var dt_li = li[0].split("-")
-            var dt = new Date(Number(dt_li[0]), Number(dt_li[1]) - 1, Number(dt_li[2]))
-            if(date.getTime() == dt.getTime()){
-                css_moji(li[1])
-                css_back(li[1])
-                return escapeForCssClass(li[1]);
-            }
-            if(Number(li[2]) > 1){
-                for (let j = 1; j< Number(li[2]) ; j++){
-                    if(date.getTime() == new Date(Number(dt_li[0]), Number(dt_li[1]) - 1, Number(dt_li[2]) + j).getTime()){
-                        return "yotei_moji_nasi"
-                    }
-                }
-            }
-        };
-		} catch(e) {
-				console.log( e.message );
+		function show_kind_tasks(selected_kind_task) {
+			show_kind_task = selected_kind_task;
+			gantt.render();
 		}
-    }
 
-    // 編集した日時に草をはやす
-    if (!!task.edit_date){
-        const li_a = task.edit_date.split(",")
-        if (task.kind_task == 1 ){
-            for (var k = 0; k < li_a.length ; k++){
-                const aaa = li_a[k].split("-")
-                if(aaa.length==3){
-                    if (date.getTime() == (new Date(aaa[0], aaa[1] - 1, aaa[2])).getTime()){
-                        return "kusa"
-                    };
-                };
-            };
-        };
-    };
-		// スケジュール.jsで設定したスケジュールを入れる
-		// if (list_yotei.length!=0){
-		// 	for (var i = 0; i < list_yotei.length; i++) {
-		// 		if(task.id== list_yotei[i][0] && date.getTime() == list_yotei[i][2].getTime()){
-		// 			css_moji(list_yotei[i][1])
-		// 			css_back(list_yotei[i][1])
-		// 			return list_yotei[i][1]
-		// 		}
-		// 		if(list_yotei[i][3] > 1){
-		// 			for (let j = 1; j< list_yotei[i][3] ; j++){
-		// 				if(task.id== list_yotei[i][0] && date.getTime() == (new Date(list_yotei[i][2]).setDate(new Date(list_yotei[i][2]).getDate()+j))){
-		// 					return "yotei_moji_nasi"
-		// 				}
-		// 			}
-		// 		}
-		// 	};
+		function show_owners(selected_owner) {
+			show_owner = selected_owner;
+			gantt.render();
+		}
+
+		function progresses(selected_progress) {
+			progress = selected_progress;
+			gantt.render();
+		}
+
+		function kikans(selected_kikan) {
+			kikan = selected_kikan;
+			gantt.render();
+		}
+
+		// 週末(期間の計算に入れたい場合)
+
+		// gantt.config.work_time = true; 
+
+		// for (var i = 0; i < holidays.length; i++) {
+		// 	gantt.setWorkTime({
+		// 		date: holidays[i],
+		// 		hours: false
+		// 	});
 		// }
-	
+
+		// var weekScaleTemplate = function (date) {
+		// 	var dateToStr = gantt.date.date_to_str("%d %M");
+		// 	var weekNum = gantt.date.date_to_str("(week %W)");
+		// 	var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
+		// 	return dateToStr(date) + " - " + dateToStr(endDate) + " " + weekNum(date);
+		// };
 
 
-		// event.jsで設定したイベントの色を変える
-		if(isInArray(events, date)){
-		return "event";
+		// 週末(色だけ変えたい場合)
+		function isInArray(array, value) {
+			return !!array.find(item => { return item.getTime() == value.getTime() });
 		}
-		// 週末の色を帰る
-		if(date.getDay()==0||date.getDay()==6||isInArray(holidays, date)){
-			return "weekend";
+
+		// cssでセルの色や予定を入れる
+		gantt.templates.timeline_cell_class = function (task, date) {
+			// taskで設定したスケジュールを入れる
+			if (!!task.task_schedule) {
+				var li_komoku = task.task_schedule.split("___")
+				try {
+					for (var i = 0; i < li_komoku.length; i++) {
+						var li = li_komoku[i].split(",")
+						var dt_li = li[0].split("-")
+						var dt = new Date(Number(dt_li[0]), Number(dt_li[1]) - 1, Number(dt_li[2]))
+						if (date.getTime() == dt.getTime()) {
+							css_moji(li[1])
+							css_back(li[1])
+							return escapeForCssClass(li[1]);
+						}
+						if (Number(li[2]) > 1) {
+							for (let j = 1; j < Number(li[2]); j++) {
+								if (date.getTime() == new Date(Number(dt_li[0]), Number(dt_li[1]) - 1, Number(dt_li[2]) + j).getTime()) {
+									return "yotei_moji_nasi"
+								}
+							}
+						}
+					};
+				} catch (e) {
+					console.log(e.message);
+				}
+			}
+
+			// 編集した日時に草をはやす
+			if (!!task.edit_date) {
+				const li_a = task.edit_date.split(",")
+				if (task.kind_task == 1) {
+					for (var k = 0; k < li_a.length; k++) {
+						const aaa = li_a[k].split("-")
+						if (aaa.length == 3) {
+							if (date.getTime() == (new Date(aaa[0], aaa[1] - 1, aaa[2])).getTime()) {
+								return "kusa"
+							};
+						};
+					};
+				};
+			};
+			// スケジュール.jsで設定したスケジュールを入れる
+			// if (list_yotei.length!=0){
+			// 	for (var i = 0; i < list_yotei.length; i++) {
+			// 		if(task.id== list_yotei[i][0] && date.getTime() == list_yotei[i][2].getTime()){
+			// 			css_moji(list_yotei[i][1])
+			// 			css_back(list_yotei[i][1])
+			// 			return list_yotei[i][1]
+			// 		}
+			// 		if(list_yotei[i][3] > 1){
+			// 			for (let j = 1; j< list_yotei[i][3] ; j++){
+			// 				if(task.id== list_yotei[i][0] && date.getTime() == (new Date(list_yotei[i][2]).setDate(new Date(list_yotei[i][2]).getDate()+j))){
+			// 					return "yotei_moji_nasi"
+			// 				}
+			// 			}
+			// 		}
+			// 	};
+			// }
+
+
+
+			// event.jsで設定したイベントの色を変える
+			if (isInArray(events, date)) {
+				return "event";
+			}
+			// 週末の色を帰る
+			if (date.getDay() == 0 || date.getDay() == 6 || isInArray(holidays, date)) {
+				return "weekend";
+			}
+		};
+
+		// エスケープが必要な文字を安全な形に変換
+		function escapeForCssClass(str) {
+			// エスケープが必要な文字をアンダースコア "_" に置き換える
+			return str.replace(/[().#:\[\]@=~,% ]/g, '_');
 		}
-	};
-
-	// エスケープが必要な文字を安全な形に変換
-	function escapeForCssClass(str) {
-		// エスケープが必要な文字をアンダースコア "_" に置き換える
-		return str.replace(/[().#:\[\]@=~,% ]/g, '_');
-	}
 
 
-	function css_moji(yotei) {
-		var escapedYotei = escapeForCssClass(yotei);
-		var styleSheetElement = document.createElement('style'),
-		sheet             = null,
-		selector          = '.' + escapedYotei + '::after',
-		propertyValue     = 'content: "▼' + escapedYotei + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
-		cssRuleString     = selector + ' { ' + propertyValue + ' }';
-		document.head.appendChild(styleSheetElement);
-		sheet = styleSheetElement.sheet;
-		if (sheet.insertRule) {
-			sheet.insertRule(cssRuleString, sheet.cssRules.length);
-		} else {
-			sheet.addRule(selector, propertyValue);
-		}
-	};
+		function css_moji(yotei) {
+			var escapedYotei = escapeForCssClass(yotei);
+			var styleSheetElement = document.createElement('style'),
+				sheet = null,
+				selector = '.' + escapedYotei + '::after',
+				propertyValue = 'content: "▼' + escapedYotei + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
+			cssRuleString = selector + ' { ' + propertyValue + ' }';
+			document.head.appendChild(styleSheetElement);
+			sheet = styleSheetElement.sheet;
+			if (sheet.insertRule) {
+				sheet.insertRule(cssRuleString, sheet.cssRules.length);
+			} else {
+				sheet.addRule(selector, propertyValue);
+			}
+		};
 
-	function css_back(yotei) {
-		var escapedYotei = escapeForCssClass(yotei);
-		var styleSheetElement = document.createElement('style'),
-		sheet             = null,
-		selector          = '.' + escapedYotei ,
-		propertyValue     = 'background: rgb(250 145 145 / 44%);';
-		cssRuleString     = selector + ' { ' + propertyValue + ' }';
-		document.head.appendChild(styleSheetElement);
-		sheet = styleSheetElement.sheet;
-		if (sheet.insertRule) {
-			sheet.insertRule(cssRuleString, sheet.cssRules.length);
-		} else {
-			sheet.addRule(selector, propertyValue);
-		}
-	};
+		function css_back(yotei) {
+			var escapedYotei = escapeForCssClass(yotei);
+			var styleSheetElement = document.createElement('style'),
+				sheet = null,
+				selector = '.' + escapedYotei,
+				propertyValue = 'background: rgb(250 145 145 / 44%);';
+			cssRuleString = selector + ' { ' + propertyValue + ' }';
+			document.head.appendChild(styleSheetElement);
+			sheet = styleSheetElement.sheet;
+			if (sheet.insertRule) {
+				sheet.insertRule(cssRuleString, sheet.cssRules.length);
+			} else {
+				sheet.addRule(selector, propertyValue);
+			}
+		};
 
 
 
-	// for (var i = 0; i < list_yotei.length; i++) {
-	// 	var styleSheetElement = document.createElement('style'),
-	// 	sheet             = null,
-	// 	selector          = '.' + list_yotei[i][1] + '::after',
-	// 	propertyValue     = 'content: "▼' + list_yotei[i][1] + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
-	// 	cssRuleString     = selector + ' { ' + propertyValue + ' }';
+		// for (var i = 0; i < list_yotei.length; i++) {
+		// 	var styleSheetElement = document.createElement('style'),
+		// 	sheet             = null,
+		// 	selector          = '.' + list_yotei[i][1] + '::after',
+		// 	propertyValue     = 'content: "▼' + list_yotei[i][1] + '";position: absolute;top: 15px;font-size: 11px;z-index: 1;';
+		// 	cssRuleString     = selector + ' { ' + propertyValue + ' }';
 
-	// 	document.head.appendChild(styleSheetElement);
+		// 	document.head.appendChild(styleSheetElement);
 
-	// 	sheet = styleSheetElement.sheet;
+		// 	sheet = styleSheetElement.sheet;
 
-	// 	if (sheet.insertRule) {
-	// 		sheet.insertRule(cssRuleString, sheet.cssRules.length);
-	// 	} else {
-	// 		sheet.addRule(selector, propertyValue);
-	// 	}
-	// };
+		// 	if (sheet.insertRule) {
+		// 		sheet.insertRule(cssRuleString, sheet.cssRules.length);
+		// 	} else {
+		// 		sheet.addRule(selector, propertyValue);
+		// 	}
+		// };
 
-	// for (var i = 0; i < list_yotei.length; i++) {
-	// 	var styleSheetElement = document.createElement('style'),
-	// 	sheet             = null,
-	// 	selector          = '.' + list_yotei[i][1] ,
-	// 	propertyValue     = 'background: rgb(250 145 145 / 44%);';
-	// 	cssRuleString     = selector + ' { ' + propertyValue + ' }';
+		// for (var i = 0; i < list_yotei.length; i++) {
+		// 	var styleSheetElement = document.createElement('style'),
+		// 	sheet             = null,
+		// 	selector          = '.' + list_yotei[i][1] ,
+		// 	propertyValue     = 'background: rgb(250 145 145 / 44%);';
+		// 	cssRuleString     = selector + ' { ' + propertyValue + ' }';
 
-	// 	document.head.appendChild(styleSheetElement);
+		// 	document.head.appendChild(styleSheetElement);
 
-	// 	sheet = styleSheetElement.sheet;
+		// 	sheet = styleSheetElement.sheet;
 
-	// 	if (sheet.insertRule) {
-	// 		sheet.insertRule(cssRuleString, sheet.cssRules.length);
-	// 	} else {
-	// 		sheet.addRule(selector, propertyValue);
-	// 	}
-	// };
+		// 	if (sheet.insertRule) {
+		// 		sheet.insertRule(cssRuleString, sheet.cssRules.length);
+		// 	} else {
+		// 		sheet.addRule(selector, propertyValue);
+		// 	}
+		// };
 
-	// プラグイン
-	gantt.plugins({
-		keyboard_navigation: true,
-		undo: true,
-		marker: true,
-		multiselect: true
-	});
+		// プラグイン
+		gantt.plugins({
+			keyboard_navigation: true,
+			undo: true,
+			marker: true,
+			multiselect: true
+		});
 
-	// nowの線
-	var dateToStr = gantt.date.date_to_str(gantt.config.task_date);
- 
-	var id = gantt.addMarker({ 
-		start_date: new Date(), 
-		css: "today", 
-		text: "Now",
-		title:dateToStr(new Date())
+		// nowの線
+		var dateToStr = gantt.date.date_to_str(gantt.config.task_date);
+
+		var id = gantt.addMarker({
+			start_date: new Date(),
+			css: "today",
+			text: "Now",
+			title: dateToStr(new Date())
 		});
 		// setInterval(function(){
 		// 	var today = gantt.getMarker(id);
@@ -518,995 +565,1003 @@
 		// 	gantt.updateMarker(id);
 		// }, 1000*60);
 
-	// 色をつける
-	gantt.locale.labels.section_barColor = "Color";
-	gantt.locale.labels.section_textColor = "Text Color";
+		// 色をつける
+		gantt.locale.labels.section_barColor = "Color";
+		gantt.locale.labels.section_textColor = "Text Color";
 
-	var colors = [
-		{key: "", label: "Default"},
-		{key: "#4B008270", label: "Indigo"},
-		{key: "#FFFFF070", label: "Ivory"},
-		{key: "#F0E68C70", label: "Khaki"},
-		{key: "#B0C4DE70", label: "LightSteelBlue"},
-		{key: "#32CD3270", label: "LimeGreen"},
-		{key: "#7B68EE70", label: "MediumSlateBlue"},
-		{key: "#FFA50070", label: "Orange"},
-		{key: "#FF450070", label: "OrangeRed"}
-	];
+		var colors = [
+			{ key: "", label: "Default" },
+			{ key: "#4B008270", label: "Indigo" },
+			{ key: "#FFFFF070", label: "Ivory" },
+			{ key: "#F0E68C70", label: "Khaki" },
+			{ key: "#B0C4DE70", label: "LightSteelBlue" },
+			{ key: "#32CD3270", label: "LimeGreen" },
+			{ key: "#7B68EE70", label: "MediumSlateBlue" },
+			{ key: "#FFA50070", label: "Orange" },
+			{ key: "#FF450070", label: "OrangeRed" }
+		];
 
-	// lightboxウインド(追加した時に出てくるpopup)
+		// lightboxウインド(追加した時に出てくるpopup)
 
-	// function getParentTaskName(taskId) {
-	// 	var task = gantt.getTask(taskId);
-	// 	if (task && task.parent !== undefined && task.parent !== null && task.parent !== 0) {
-	// 		var parentTask = gantt.getTask(task.parent);
-	// 		if (parentTask) {
-	// 			return parentTask.text; // 親タスクの名前を返す
-	// 		}
-	// 	}
-	// 	return ""; // 親タスクがない場合は空文字列を返す
-	// }
+		// function getParentTaskName(taskId) {
+		// 	var task = gantt.getTask(taskId);
+		// 	if (task && task.parent !== undefined && task.parent !== null && task.parent !== 0) {
+		// 		var parentTask = gantt.getTask(task.parent);
+		// 		if (parentTask) {
+		// 			return parentTask.text; // 親タスクの名前を返す
+		// 		}
+		// 	}
+		// 	return ""; // 親タスクがない場合は空文字列を返す
+		// }
 
-	gantt.config.lightbox.sections = [
-		{
-			name: "hierarchy",
-			height: 22,
-			type: "template",
-			map_to: "hierarchy_path",
-			template: function(task) {
-				var hierarchy = getTaskHierarchy(task.id);
-				task.hierarchy_path = hierarchy;
-				return "<div class='hierarchy-path'>" + hierarchy + "</div>";
-			}
-		},
-		{name: "description", height: 35, map_to: "text", type: "textarea", focus: true},
-		{name: "hyperlink", height: 30, map_to: "hyperlink", type: "textarea"},
-		{name: "ToDo", height: 60, map_to: "ToDo", type: "textarea"},
-		{name: "memo", height: 60, map_to: "memo", type: "textarea"},
-		{name: "task_schedule", height: 60, map_to: "task_schedule", type: "textarea"},
-		// {name: "folder", height: 35, map_to: "folder", type: "textarea"},
-		// {name: "url_adress", height: 35, map_to: "url_adress", type: "textarea"},
-		// {name: "mail", height: 35, map_to: "mail", type: "textarea"},
-	    {name: "kind", height:22, map_to:"kind_task", type:"select", options:gantt.serverList("kind_task", [
-			{ key: "1", label: "task" },
-			{ key: "2", label: "pro" },
-			{ key: "3", label: "MS" }
-     	])},
-	{name: "time", type: "duration", map_to: "auto", button: "today"},
-		{name: "barColor", height: 22, map_to: "color", type: "select", options: colors},
-		{name: "textColor", height: 22, map_to: "textColor", type: "select", options: colors},
-		{name: "edit_date", height: 35, map_to: "edit_date", type: "textarea"},
-		// {name: "end_date", height: 22, map_to: "end_date", type: "textarea"},
-	];
+		gantt.config.lightbox.sections = [
+			{
+				name: "hierarchy",
+				height: 22,
+				type: "template",
+				map_to: "hierarchy_path",
+				template: function (task) {
+					var hierarchy = getTaskHierarchy(task.id);
+					task.hierarchy_path = hierarchy;
+					return "<div class='hierarchy-path'>" + hierarchy + "</div>";
+				}
+			},
+			{ name: "description", height: 35, map_to: "text", type: "textarea", focus: true },
+			{ name: "hyperlink", height: 30, map_to: "hyperlink", type: "textarea" },
+			{ name: "ToDo", height: 60, map_to: "ToDo", type: "textarea" },
+			{ name: "memo", height: 60, map_to: "memo", type: "textarea" },
+			{ name: "task_schedule", height: 60, map_to: "task_schedule", type: "textarea" },
+			// {name: "folder", height: 35, map_to: "folder", type: "textarea"},
+			// {name: "url_adress", height: 35, map_to: "url_adress", type: "textarea"},
+			// {name: "mail", height: 35, map_to: "mail", type: "textarea"},
+			{
+				name: "kind", height: 22, map_to: "kind_task", type: "select", options: gantt.serverList("kind_task", [
+					{ key: "1", label: "task" },
+					{ key: "2", label: "pro" },
+					{ key: "3", label: "MS" }
+				])
+			},
+			{ name: "time", type: "duration", map_to: "auto", button: "today" },
+			{ name: "barColor", height: 22, map_to: "color", type: "select", options: colors },
+			{ name: "textColor", height: 22, map_to: "textColor", type: "select", options: colors },
+			{ name: "edit_date", height: 35, map_to: "edit_date", type: "textarea" },
+			// {name: "end_date", height: 22, map_to: "end_date", type: "textarea"},
+		];
 
-	gantt.locale.labels.section_parent = "parent";
-	gantt.locale.labels.section_kind = "kind_task"
-	gantt.locale.labels.section_ToDo = "ToDo"
-	gantt.locale.labels.section_task_schedule = "task_schedule"
-	gantt.locale.labels.section_folder = "folder"
-	gantt.locale.labels.section_url_adress = "url_adress"
-	gantt.locale.labels.section_mail = "mail"
-	// gantt.locale.labels.section_owner_id = "owner_id"
-	gantt.locale.labels.section_memo = "memo"
-	gantt.locale.labels.section_hyperlink = "hyperlink"
-	gantt.locale.labels.section_edit_date = "edit_date"
-	// gantt.locale.labels.section_end_date = "end_date"
-	gantt.locale.labels.button_today = "今日の日付に";
+		gantt.locale.labels.section_parent = "parent";
+		gantt.locale.labels.section_kind = "kind_task"
+		gantt.locale.labels.section_ToDo = "ToDo"
+		gantt.locale.labels.section_task_schedule = "task_schedule"
+		gantt.locale.labels.section_folder = "folder"
+		gantt.locale.labels.section_url_adress = "url_adress"
+		gantt.locale.labels.section_mail = "mail"
+		// gantt.locale.labels.section_owner_id = "owner_id"
+		gantt.locale.labels.section_memo = "memo"
+		gantt.locale.labels.section_hyperlink = "hyperlink"
+		gantt.locale.labels.section_edit_date = "edit_date"
+		// gantt.locale.labels.section_end_date = "end_date"
+		gantt.locale.labels.button_today = "今日の日付に";
 
-	if (gantt.form_blocks && gantt.form_blocks.duration) {
-		const originalDurationButtonClick = typeof gantt.form_blocks.duration.button_click === "function"
-			? gantt.form_blocks.duration.button_click.bind(gantt.form_blocks.duration)
-			: null;
-		gantt.form_blocks.duration.button_click = function(index, button, sectionHeader, sectionBody) {
-			const buttonWrapper = (button && typeof button.closest === "function") ? button.closest(".gantt_custom_button") : null;
-			const hasTodayMarker = buttonWrapper && buttonWrapper.querySelector(".gantt_custom_button_today");
-			if (hasTodayMarker) {
-				const timeSection = gantt.getLightboxSection("time");
-				if (!timeSection || typeof timeSection.getValue !== "function" || typeof timeSection.setValue !== "function") {
+		if (gantt.form_blocks && gantt.form_blocks.duration) {
+			const originalDurationButtonClick = typeof gantt.form_blocks.duration.button_click === "function"
+				? gantt.form_blocks.duration.button_click.bind(gantt.form_blocks.duration)
+				: null;
+			gantt.form_blocks.duration.button_click = function (index, button, sectionHeader, sectionBody) {
+				const buttonWrapper = (button && typeof button.closest === "function") ? button.closest(".gantt_custom_button") : null;
+				const hasTodayMarker = buttonWrapper && buttonWrapper.querySelector(".gantt_custom_button_today");
+				if (hasTodayMarker) {
+					const timeSection = gantt.getLightboxSection("time");
+					if (!timeSection || typeof timeSection.getValue !== "function" || typeof timeSection.setValue !== "function") {
+						return;
+					}
+					const current = timeSection.getValue();
+					const today = gantt.date.day_start(new Date());
+					const rawDuration = current && current.duration ? parseFloat(current.duration) : null;
+					const duration = rawDuration && !isNaN(rawDuration) ? rawDuration : (gantt.config.duration_step || 1);
+					const endDate = typeof gantt.calculateEndDate === "function"
+						? gantt.calculateEndDate({ start_date: today, duration: duration })
+						: gantt.date.add(new Date(today), duration, gantt.config.duration_unit || "day");
+					timeSection.setValue({
+						start_date: today,
+						end_date: endDate,
+						duration: duration
+					});
+					const lightboxTaskId = gantt.getState().lightbox;
+					if (lightboxTaskId) {
+						const task = gantt.getTask(lightboxTaskId);
+						task.start_date = new Date(today);
+						task.end_date = new Date(endDate);
+						task.duration = duration;
+						if (gantt.config.auto_scheduling) {
+							task.auto_scheduling = true;
+						}
+					}
+					if (typeof gantt.refreshLightbox === "function") {
+						gantt.refreshLightbox();
+					}
 					return;
 				}
-				const current = timeSection.getValue();
-				const today = gantt.date.day_start(new Date());
-				const rawDuration = current && current.duration ? parseFloat(current.duration) : null;
-				const duration = rawDuration && !isNaN(rawDuration) ? rawDuration : (gantt.config.duration_step || 1);
-				const endDate = typeof gantt.calculateEndDate === "function"
-					? gantt.calculateEndDate({ start_date: today, duration: duration })
-					: gantt.date.add(new Date(today), duration, gantt.config.duration_unit || "day");
-				timeSection.setValue({
-					start_date: today,
-					end_date: endDate,
-					duration: duration
-				});
-				const lightboxTaskId = gantt.getState().lightbox;
-				if (lightboxTaskId) {
-					const task = gantt.getTask(lightboxTaskId);
-					task.start_date = new Date(today);
-					task.end_date = new Date(endDate);
-					task.duration = duration;
-					if (gantt.config.auto_scheduling) {
-						task.auto_scheduling = true;
-					}
+				if (originalDurationButtonClick) {
+					return originalDurationButtonClick(index, button, sectionHeader, sectionBody);
 				}
-				if (typeof gantt.refreshLightbox === "function") {
-					gantt.refreshLightbox();
-				}
-				return;
-			}
-			if (originalDurationButtonClick) {
-				return originalDurationButtonClick(index, button, sectionHeader, sectionBody);
-			}
-		};
-	}
-
-	// タスク追加時の初期値の設定
-	gantt.attachEvent("onTaskCreated", function(task){
-		let today = new Date();
-		let formatDate = today.getFullYear() + "-" + (today.getMonth() + 1)  + "-" + today.getDate();
-		task.duration = 1;
-		task.start_date = today;
-		task.edit_date = formatDate;
-		task.hideId = true;
-		// task.parent = gantt.config.root_id
-		return true;
-	});
-
-	gantt.attachEvent("onAfterTaskUpdate", function(id,task){
-		let today = new Date();
-		let formatDate = today.getFullYear() + "-" + (today.getMonth() + 1)  + "-" + today.getDate();
-		if (!!task.edit_date){
-			if (task.edit_date.split(",").indexOf(formatDate) == -1){
-				task.edit_date = task.edit_date + "," + formatDate
 			};
-		};
-		return true;
-	});
-
-	// タスク追加時に一番前に移動させる
-	gantt.attachEvent("onAfterTaskAdd", function(id,task){
-		gantt.moveTask(task.id, 0,task.parent);
-	});
-
-	gantt.attachEvent("onTaskIdChange", function(oldId, newId){
-		if (gantt.isTaskExists(newId)) {
-			var updatedTask = gantt.getTask(newId);
-			updatedTask.hideId = false;
-			gantt.refreshTask(newId);
 		}
-	});
 
-	// 左側欄の設定
-	var show_kind_task = "All";
-	var show_owner = "All";
-	var progress = "未完了";
-	var kikan = "限定期間";
+		// タスク追加時の初期値の設定
+		gantt.attachEvent("onTaskCreated", function (task) {
+			let today = new Date();
+			let formatDate = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+			task.duration = 1;
+			task.start_date = today;
+			task.edit_date = formatDate;
+			task.hideId = true;
+			// task.parent = gantt.config.root_id
+			return true;
+		});
 
-	// find owner's name, background colour and text colour
-	function find_by_id(owner_id) {
-	for (var i = 0; i < gantt.owners.length; i++){
-		if (gantt.owners[i].key == owner_id) return gantt.owners[i];
-	}
-	return gantt.owners[0]
-	};
+		gantt.attachEvent("onAfterTaskUpdate", function (id, task) {
+			let today = new Date();
+			let formatDate = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+			if (!!task.edit_date) {
+				if (task.edit_date.split(",").indexOf(formatDate) == -1) {
+					task.edit_date = task.edit_date + "," + formatDate
+				};
+			};
+			return true;
+		});
 
-	// find kind_task's name, background colour and text colour
-	function find_by_id_kind_task(kind_task) {
-	for (var i = 0; i < gantt.kind_tasks.length; i++){
-		if (gantt.kind_tasks[i].key == kind_task) return gantt.kind_tasks[i];
-	}
-	return gantt.kind_tasks[0]
-	};
+		// タスク追加時に一番前に移動させる
+		gantt.attachEvent("onAfterTaskAdd", function (id, task) {
+			gantt.moveTask(task.id, 0, task.parent);
+		});
 
-	gantt.owners = [
-	{ key: 0, label: "自分"},
-	{ key: 10, label: "待" },
-	{ key: 20, label: "サイン取" },
-	{ key: 30, label: "他"},
-	];
+		gantt.attachEvent("onTaskIdChange", function (oldId, newId) {
+			if (gantt.isTaskExists(newId)) {
+				var updatedTask = gantt.getTask(newId);
+				updatedTask.hideId = false;
+				gantt.refreshTask(newId);
+			}
+		});
 
-	gantt.kind_tasks = [
+		// 左側欄の設定
+		var show_kind_task = "All";
+		var show_owner = "All";
+		var progress = "未完了";
+		var kikan = "限定期間";
+
+		// find owner's name, background colour and text colour
+		function find_by_id(owner_id) {
+			for (var i = 0; i < gantt.owners.length; i++) {
+				if (gantt.owners[i].key == owner_id) return gantt.owners[i];
+			}
+			return gantt.owners[0]
+		};
+
+		// find kind_task's name, background colour and text colour
+		function find_by_id_kind_task(kind_task) {
+			for (var i = 0; i < gantt.kind_tasks.length; i++) {
+				if (gantt.kind_tasks[i].key == kind_task) return gantt.kind_tasks[i];
+			}
+			return gantt.kind_tasks[0]
+		};
+
+		gantt.owners = [
+			{ key: 0, label: "自分" },
+			{ key: 10, label: "待" },
+			{ key: 20, label: "サイン取" },
+			{ key: 30, label: "他" },
+		];
+
+		gantt.kind_tasks = [
 			{ key: 1, label: "task" },
 			{ key: 2, label: "pro" },
 			{ key: 3, label: "MS" },
 		];
 
 
-	var textEditor = {type: "text", map_to: "text"};
-	// var dateEditor = {type: "date", map_to: "start_date", min: new Date(2018, 0, 1), max: new Date(2019, 0, 1)};
-	var durationEditor = {type: "number", map_to: "duration", min:0, max: 100};
-	var kind_task = {type: "select", map_to: "kind_task", options:gantt.serverList("kind_task", gantt.kind_task)};
-	var owner_id = {type: "select", map_to: "owner_id", options:gantt.serverList("owner_id", gantt.owners)};
+		var textEditor = { type: "text", map_to: "text" };
+		// var dateEditor = {type: "date", map_to: "start_date", min: new Date(2018, 0, 1), max: new Date(2019, 0, 1)};
+		var durationEditor = { type: "number", map_to: "duration", min: 0, max: 100 };
+		var kind_task = { type: "select", map_to: "kind_task", options: gantt.serverList("kind_task", gantt.kind_task) };
+		var owner_id = { type: "select", map_to: "owner_id", options: gantt.serverList("owner_id", gantt.owners) };
 
-	// var textFilter = "<div class='searchEl'>タスク名 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></div>";
+		// var textFilter = "<div class='searchEl'>タスク名 <input id='search' type='field' placeholder='Search tasks...' oninput=change_detector() style='width:150px' /></div>";
 
-	gantt.config.columns=[
-		// {name: "text" , tree: true, width: 230 , editor: textEditor, resize: true},
-		{name: "text" , tree: true, width: 280 , resize: true},
-		// {name:"start_date", label:"開始", align: "center", width: 80 },
-		// {
-		// name: "kind_task", label: "種別", align: "center", 
-		// 	template: function (obj) {
-		// 		if (obj.kind_task == 1) {
-		// 			return "task"
-		// 		}
-		// 		if (obj.kind_task == 2) {
-		// 			return "pro"
-		// 		}
-		// 			return "MS"
-		// 		},
-		// editor: kind_task
-		// },
-		// {name:"duration",   label:"期間",  align: "center", width: 50 , editor: durationEditor},
-		{name: "owner_id", label: 'owner', width: 50, resize: true, 
-			template: function (task_object) {
-				if (task_object.owner_id) return (find_by_id (task_object.owner_id)).label;
-				else return gantt.owners[0].label
+		gantt.config.columns = [
+			// {name: "text" , tree: true, width: 230 , editor: textEditor, resize: true},
+			{ name: "text", tree: true, width: 280, resize: true },
+			// {name:"start_date", label:"開始", align: "center", width: 80 },
+			// {
+			// name: "kind_task", label: "種別", align: "center", 
+			// 	template: function (obj) {
+			// 		if (obj.kind_task == 1) {
+			// 			return "task"
+			// 		}
+			// 		if (obj.kind_task == 2) {
+			// 			return "pro"
+			// 		}
+			// 			return "MS"
+			// 		},
+			// editor: kind_task
+			// },
+			// {name:"duration",   label:"期間",  align: "center", width: 50 , editor: durationEditor},
+			{
+				name: "owner_id", label: 'owner', width: 50, resize: true,
+				template: function (task_object) {
+					if (task_object.owner_id) return (find_by_id(task_object.owner_id)).label;
+					else return gantt.owners[0].label
 				},
-			editor: owner_id
-		},
-		{name:"add",        label:"add" , width: 35 },
-		{name:"clone", label:"clone", width:60, template: function(task){
-  			return "<input type=button value='copy' onclick=clone_task("+task.id+")>"}
-		},
-	];
-
-	// 色付け
-
-	gantt.templates.task_class = function (start, end, task) {
-		switch (task.kind_task) {
-			case "1":
-				return "task";
-				break;
-			case "2":
-				return "pro";
-				break;
-			case "3":
-				return "ms";
-				break;
-		}
-	};
-
-
-	// function getAllParentTexts(taskId) {
-	// 	var texts = [];
-	// 	while(taskId) {
-	// 		var task = gantt.getTask(taskId);
-	// 		if (!task) break; // タスクが見つからない場合、ループを抜ける
-
-	// 		// タスクのテキストを配列に追加
-	// 		if (task.text) {
-	// 			texts.push(task.text);
-	// 		}
-
-	// 		// 親タスクに移動
-	// 		taskId = task.parent;
-	// 	}
-
-	// 	// 最上位のタスクから順にテキストを結合
-	// 	return texts.reverse().join(" > ");
-	// 	}
-
-	// 	gantt.templates.rightside_text = function(start, end, task){
-	// 		return getAllParentTexts(task.id);
-	// 	};
-
-	function getTaskIdPrefix(task) {
-		if (!task || task.hideId) {
-			return "";
-		}
-		return "[" + task.id + "]";
-	}
-
-	function getTaskHierarchy(taskId) {
-		// console.log("getTaskHierarchy called with taskId:", taskId);
-		var task = gantt.getTask(taskId);
-		// console.log("Current task:", task);
-		
-		var hierarchy = [];
-		
-		while (task) {
-			// console.log("Parent task id:", task.parent);
-			// console.log("Root id:", gantt.config.root_id);
-			
-			// 現在のタスク情報を配列の先頭に追加
-			hierarchy.unshift(getTaskIdPrefix(task) + task.text);
-			
-			// 親タスクが存在し、ルートでない場合は親タスクを取得
-			if (task.parent && task.parent !== gantt.config.root_id) {
-				task = gantt.getTask(task.parent);
-				// console.log("Parent task:", task);
-			} else {
-				break;
-			}
-		}
-		
-		// 階層を " > " で結合
-		var result = hierarchy.join(" > ");
-		// console.log("Final hierarchy:", result);
-		return result;
-	}
-
-	// gantt.templates.rightside_text = function(start, end, task){
-	// 	return getTaskHierarchy(task.id);
-	// };
-
-	
-	function generateLinkUrl(url) {
-		if (!url) return "";
-		// http, https, mailto 等で始まる場合はそのまま
-		if (/^[a-z]+:/i.test(url)) {
-			return url;
-		}
-		// それ以外はローカルパスとみなしてAPI経由で開く
-		return "http://localhost:8001/api/open-path?path=" + encodeURIComponent(url);
-	}
-
-	// タスクのバーの右側のテキスト設定
-	gantt.templates.rightside_text = function(start, end, task){
-		var idPrefix = getTaskIdPrefix(task);
-		var currentTaskInfo = idPrefix ? `${idPrefix} ${task.text}` : task.text;
-		var parentInfo = getParentInfo(task.id);
-		var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
-		
-		if (task.hyperlink === "") {
-			return displayText;
-		} else {
-			if (isPrintMode) {
-				return '<span style="color: black; text-decoration: none;">' + displayText + '</span>';
-			} else {
-				// return '<a href="' + task.hyperlink + '" target="_blank">' + displayText + '</a>';
-				return '<a href="' + generateLinkUrl(task.hyperlink) + '" target="_blank">' + displayText + '</a>';
-			}
-		}
-	};
-
-	// タスクのバーのテキスト設定
-	gantt.templates.task_text = function(start, end, task){
-		var idPrefix = getTaskIdPrefix(task);
-		var label = idPrefix ? idPrefix + task.text : task.text;
-		if (task.hyperlink === "") {
-			return label;
-		} else {
-			if (task.kind_task === "1" || task.kind_task === "3") {
-				return "";
-			} else {
-				// return '<a href="' + task.hyperlink + '" target="_blank">' + label + '</a>';
-				return '<a href="' + generateLinkUrl(task.hyperlink) + '" target="_blank">' + label + '</a>';
-			}
-		}
-	};
-
-
-	// スケールの設定
-	var zoomConfig = {
-		levels: [
-			{
-				name:"day",
-				scale_height: 60,
-				min_column_width:80,
-				scales:[
-					{unit: "month", format: "%F, %Y"},
-					{unit: "day", step: 1, format: "%j %D"}
-				]
+				editor: owner_id
 			},
+			{ name: "add", label: "add", width: 35 },
 			{
-				name:"month",
-				scale_height: 60,
-				min_column_width:30,
-				scales:[
-					{unit: "month", format: "%F, %Y"},
-					// {unit: "week", format: "Week #%W"},
-					{unit: "day", step: 1, format: "%j"},
-					{unit: "day", step: 1, format: "%D"}
-				]
+				name: "clone", label: "clone", width: 60, template: function (task) {
+					return "<input type=button value='copy' onclick=clone_task(" + task.id + ")>"
+				}
 			},
-			{
-				name:"quarter",
-				scale_height: 70,
-				min_column_width:26,
-				scales:[
-					{unit: "year", step: 1, format: "%Y"},
-					{unit: "month", format: "%F"},
-					{
-						unit: "quarter", step: 1, format: function (date) {
-							var dateToStr = gantt.date.date_to_str("%M");
-							var endDate = gantt.date.add(gantt.date.add(date, 3, "month"), -1, "day");
-							return dateToStr(date) + " - " + dateToStr(endDate);
-						}
-					},
-					{unit: "week", format: "#%W"},
-				]
-			},
-			{
-				name:"year",
-				scale_height: 60,
-				min_column_width: 60,
-				scales:[
-					{unit: "year", step: 1, format: "%Y"},
-					{unit: "month", format: "%F"},
-				]
+		];
+
+		// 色付け
+
+		gantt.templates.task_class = function (start, end, task) {
+			switch (task.kind_task) {
+				case "1":
+					return "task";
+					break;
+				case "2":
+					return "pro";
+					break;
+				case "3":
+					return "ms";
+					break;
 			}
-		]
-	};
-
-	gantt.ext.zoom.init(zoomConfig);
-	gantt.ext.zoom.setLevel("month");
-	gantt.ext.zoom.attachEvent("onAfterZoom", function(level, config){
-		document.querySelector(".gantt_button[value='" + config.name + "']").classList.add("active");
-	});
-
-	var buttons = document.querySelectorAll(".gantt_button");
-	for (var i = 0; i < buttons.length; i++) {
-		buttons[i].onclick = function (event) {
-			gantt.ext.zoom.setLevel(event.target.value);
-			// クリックされたボタンにアクティブクラスを追加し、他のボタンから削除
-			buttons.forEach(function(btn) {
-				btn.classList.remove("active");
-			});
-			event.target.classList.add("active");
 		};
-	}
 
-	// undo/redoの設定
-	gantt.config.undo = true;
-	gantt.config.undo_steps = 10;
-	gantt.config.undo_actions = {
-		update: "update",
-		remove: "remove",
-		add: "add"
-	};
-	gantt.config.undo_types = {
-		link: "link",
-		task: "task"
-	};
 
-	// キーボードショートカットの設定
-	gantt.keys.edit_save = 13; // Enterキーで保存
+		// function getAllParentTexts(taskId) {
+		// 	var texts = [];
+		// 	while(taskId) {
+		// 		var task = gantt.getTask(taskId);
+		// 		if (!task) break; // タスクが見つからない場合、ループを抜ける
 
-	gantt.attachEvent("onKeyDown", function(e){
-		if (e.ctrlKey && e.which == 90) { // Ctrl+Z
-			gantt.undo();
-			return false;
+		// 		// タスクのテキストを配列に追加
+		// 		if (task.text) {
+		// 			texts.push(task.text);
+		// 		}
+
+		// 		// 親タスクに移動
+		// 		taskId = task.parent;
+		// 	}
+
+		// 	// 最上位のタスクから順にテキストを結合
+		// 	return texts.reverse().join(" > ");
+		// 	}
+
+		// 	gantt.templates.rightside_text = function(start, end, task){
+		// 		return getAllParentTexts(task.id);
+		// 	};
+
+		function getTaskIdPrefix(task) {
+			if (!task || task.hideId) {
+				return "";
+			}
+			return "[" + task.id + "]";
 		}
-		if (e.ctrlKey && e.which == 89) { // Ctrl+Y
-			gantt.redo();
-			return false;
+
+		function getTaskHierarchy(taskId) {
+			// console.log("getTaskHierarchy called with taskId:", taskId);
+			var task = gantt.getTask(taskId);
+			// console.log("Current task:", task);
+
+			var hierarchy = [];
+
+			while (task) {
+				// console.log("Parent task id:", task.parent);
+				// console.log("Root id:", gantt.config.root_id);
+
+				// 現在のタスク情報を配列の先頭に追加
+				hierarchy.unshift(getTaskIdPrefix(task) + task.text);
+
+				// 親タスクが存在し、ルートでない場合は親タスクを取得
+				if (task.parent && task.parent !== gantt.config.root_id) {
+					task = gantt.getTask(task.parent);
+					// console.log("Parent task:", task);
+				} else {
+					break;
+				}
+			}
+
+			// 階層を " > " で結合
+			var result = hierarchy.join(" > ");
+			// console.log("Final hierarchy:", result);
+			return result;
 		}
-		return true;
-	});
 
-	// キーボードナビゲーション
-	// gantt.message({
-	// 	text: "<p>Keyboard shortcuts:</p>" +
-	// 	"<b>Global</b>" +
-	// 	"<ul>" +
-	// 	"<li><b>Tab</b> - select gantt</li>" +
-	// 	"<li><b>Alt + Up/Down/Left/Right</b> - scroll gantt</li>" +
-	// 	"<li><b>Ctrl + Enter</b> - create new task</li>" +
-	// 	"<li><b>Ctrl + Z</b> - undo</li>" +
-	// 	"<li><b>Ctrl + R</b> - redo</li>" +
-	// 	"</ul>" +
-	// 	"<b>Header Cells</b>" +
-	// 	"<ul>" +
-	// 	"<li><b>Left/Right</b> - navigate over cells</li>" +
+		// gantt.templates.rightside_text = function(start, end, task){
+		// 	return getTaskHierarchy(task.id);
+		// };
 
-	// 	"<li><b>Home/End</b> - navigate to the first/last column</li>" +
-	// 	"<li><b>Down</b> - navigate to task rows</li>" +
-	// 	"<li><b>Space/Enter</b> - click header</li>" +
-	// 	"</ul>" +
-	// 	"<b>Task cells</b>" +
-	// 	"<ul>" +
-	// 	"<li><b>Up/Down/Left/Right</b> - navigate cells</li>" +
-	// 	"<li><b>PageDown/PageUp</b> - navigate to the first/last cell in column</li>" +
-	// 	"<li><b>Home/End</b> - navigate to the first/last cell in row</li>" +
-	// 	"<li><b>Space</b> - select task</li>" +
-	// 	"<li><b>Ctrl + Enter</b> - create new task</li>" +
-	// 	"<li><b>Delete</b> - delete selected task</li>" +
-	// 	"<li><b>Enter</b> - open the lightbox</li>" +
-	// 	"<li><b>Ctrl + Left/Right</b> - expand, collapse tree</li>" +
-	// 	"</ul>",
-	// 	expire: -1
-	// });
 
-	// フィルターボタンのイベントリスナー
-	document.addEventListener('DOMContentLoaded', function() {
-		document.querySelectorAll('.filter-button').forEach(button => {
-			button.addEventListener('click', function() {
-				const filterType = this.dataset.filter;
-				const filterValue = this.dataset.value;
-				
-				if (filterType === 'kikan' || filterType === 'progress') {
-					if (this.classList.contains('active')) {
-						this.classList.remove('active');
-						this.textContent = 'ALL';
-						this.dataset.value = 'All';
-						if (filterType === 'kikan') {
-							kikan = 'All';
+		function generateLinkUrl(url) {
+			if (!url) return "";
+			url = url.trim();
+			// http, https, mailto 等で始まる場合はそのまま
+			if (/^[a-z]+:/i.test(url)) {
+				return url;
+			}
+			// それ以外はローカルパスとみなしてAPI経由で開く
+			return "http://localhost:8001/api/open-path?path=" + encodeURIComponent(url);
+		}
+
+		// タスクのバーの右側のテキスト設定
+		gantt.templates.rightside_text = function (start, end, task) {
+			var idPrefix = getTaskIdPrefix(task);
+			var currentTaskInfo = idPrefix ? `${idPrefix} ${task.text}` : task.text;
+			var parentInfo = getParentInfo(task.id);
+			var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
+
+			if (task.hyperlink === "") {
+				return displayText;
+			} else {
+				if (isPrintMode) {
+					return '<span style="color: black; text-decoration: none;">' + displayText + '</span>';
+				} else {
+					// return '<a href="' + task.hyperlink + '" target="_blank">' + displayText + '</a>';
+					return '<a href="' + generateLinkUrl(task.hyperlink) + '" target="_blank">' + displayText + '</a>';
+				}
+			}
+		};
+
+		// タスクのバーのテキスト設定
+		gantt.templates.task_text = function (start, end, task) {
+			var idPrefix = getTaskIdPrefix(task);
+			var label = idPrefix ? idPrefix + task.text : task.text;
+			if (task.hyperlink === "") {
+				return label;
+			} else {
+				if (task.kind_task === "1" || task.kind_task === "3") {
+					return "";
+				} else {
+					// return '<a href="' + task.hyperlink + '" target="_blank">' + label + '</a>';
+					return '<a href="' + generateLinkUrl(task.hyperlink) + '" target="_blank">' + label + '</a>';
+				}
+			}
+		};
+
+
+		// スケールの設定
+		var zoomConfig = {
+			levels: [
+				{
+					name: "day",
+					scale_height: 60,
+					min_column_width: 80,
+					scales: [
+						{ unit: "month", format: "%F, %Y" },
+						{ unit: "day", step: 1, format: "%j %D" }
+					]
+				},
+				{
+					name: "month",
+					scale_height: 60,
+					min_column_width: 30,
+					scales: [
+						{ unit: "month", format: "%F, %Y" },
+						// {unit: "week", format: "Week #%W"},
+						{ unit: "day", step: 1, format: "%j" },
+						{ unit: "day", step: 1, format: "%D" }
+					]
+				},
+				{
+					name: "quarter",
+					scale_height: 70,
+					min_column_width: 26,
+					scales: [
+						{ unit: "year", step: 1, format: "%Y" },
+						{ unit: "month", format: "%F" },
+						{
+							unit: "quarter", step: 1, format: function (date) {
+								var dateToStr = gantt.date.date_to_str("%M");
+								var endDate = gantt.date.add(gantt.date.add(date, 3, "month"), -1, "day");
+								return dateToStr(date) + " - " + dateToStr(endDate);
+							}
+						},
+						{ unit: "week", format: "#%W" },
+					]
+				},
+				{
+					name: "year",
+					scale_height: 60,
+					min_column_width: 60,
+					scales: [
+						{ unit: "year", step: 1, format: "%Y" },
+						{ unit: "month", format: "%F" },
+					]
+				}
+			]
+		};
+
+		gantt.ext.zoom.init(zoomConfig);
+		gantt.ext.zoom.setLevel("month");
+		gantt.ext.zoom.attachEvent("onAfterZoom", function (level, config) {
+			document.querySelector(".gantt_button[value='" + config.name + "']").classList.add("active");
+		});
+
+		var buttons = document.querySelectorAll(".gantt_button");
+		for (var i = 0; i < buttons.length; i++) {
+			buttons[i].onclick = function (event) {
+				gantt.ext.zoom.setLevel(event.target.value);
+				// クリックされたボタンにアクティブクラスを追加し、他のボタンから削除
+				buttons.forEach(function (btn) {
+					btn.classList.remove("active");
+				});
+				event.target.classList.add("active");
+			};
+		}
+
+		// undo/redoの設定
+		gantt.config.undo = true;
+		gantt.config.undo_steps = 10;
+		gantt.config.undo_actions = {
+			update: "update",
+			remove: "remove",
+			add: "add"
+		};
+		gantt.config.undo_types = {
+			link: "link",
+			task: "task"
+		};
+
+		// キーボードショートカットの設定
+		gantt.keys.edit_save = 13; // Enterキーで保存
+
+		gantt.attachEvent("onKeyDown", function (e) {
+			if (e.ctrlKey && e.which == 90) { // Ctrl+Z
+				gantt.undo();
+				return false;
+			}
+			if (e.ctrlKey && e.which == 89) { // Ctrl+Y
+				gantt.redo();
+				return false;
+			}
+			return true;
+		});
+
+		// キーボードナビゲーション
+		// gantt.message({
+		// 	text: "<p>Keyboard shortcuts:</p>" +
+		// 	"<b>Global</b>" +
+		// 	"<ul>" +
+		// 	"<li><b>Tab</b> - select gantt</li>" +
+		// 	"<li><b>Alt + Up/Down/Left/Right</b> - scroll gantt</li>" +
+		// 	"<li><b>Ctrl + Enter</b> - create new task</li>" +
+		// 	"<li><b>Ctrl + Z</b> - undo</li>" +
+		// 	"<li><b>Ctrl + R</b> - redo</li>" +
+		// 	"</ul>" +
+		// 	"<b>Header Cells</b>" +
+		// 	"<ul>" +
+		// 	"<li><b>Left/Right</b> - navigate over cells</li>" +
+
+		// 	"<li><b>Home/End</b> - navigate to the first/last column</li>" +
+		// 	"<li><b>Down</b> - navigate to task rows</li>" +
+		// 	"<li><b>Space/Enter</b> - click header</li>" +
+		// 	"</ul>" +
+		// 	"<b>Task cells</b>" +
+		// 	"<ul>" +
+		// 	"<li><b>Up/Down/Left/Right</b> - navigate cells</li>" +
+		// 	"<li><b>PageDown/PageUp</b> - navigate to the first/last cell in column</li>" +
+		// 	"<li><b>Home/End</b> - navigate to the first/last cell in row</li>" +
+		// 	"<li><b>Space</b> - select task</li>" +
+		// 	"<li><b>Ctrl + Enter</b> - create new task</li>" +
+		// 	"<li><b>Delete</b> - delete selected task</li>" +
+		// 	"<li><b>Enter</b> - open the lightbox</li>" +
+		// 	"<li><b>Ctrl + Left/Right</b> - expand, collapse tree</li>" +
+		// 	"</ul>",
+		// 	expire: -1
+		// });
+
+		// フィルターボタンのイベントリスナー
+		document.addEventListener('DOMContentLoaded', function () {
+			document.querySelectorAll('.filter-button').forEach(button => {
+				button.addEventListener('click', function () {
+					const filterType = this.dataset.filter;
+					const filterValue = this.dataset.value;
+
+					if (filterType === 'kikan' || filterType === 'progress') {
+						if (this.classList.contains('active')) {
+							this.classList.remove('active');
+							this.textContent = 'ALL';
+							this.dataset.value = 'All';
+							if (filterType === 'kikan') {
+								kikan = 'All';
+							} else {
+								progress = 'All';
+							}
 						} else {
-							progress = 'All';
+							this.classList.add('active');
+							if (filterType === 'kikan') {
+								this.textContent = '限定期間';
+								this.dataset.value = '限定期間';
+								kikan = '限定期間';
+							} else {
+								this.textContent = '未完了';
+								this.dataset.value = '未完了';
+								progress = '未完了';
+							}
 						}
 					} else {
-						this.classList.add('active');
-						if (filterType === 'kikan') {
-							this.textContent = '限定期間';
-							this.dataset.value = '限定期間';
-							kikan = '限定期間';
-						} else {
-							this.textContent = '未完了';
-							this.dataset.value = '未完了';
-							progress = '未完了';
+						// 親要素の存在チェックを追加
+						const buttonGroup = this.closest('.button-group');
+						if (buttonGroup) {
+							buttonGroup.querySelectorAll('.filter-button').forEach(btn => {
+								btn.classList.remove('active');
+							});
+							this.classList.add('active');
+
+							switch (filterType) {
+								case 'kind':
+									show_kind_task = filterValue;
+									break;
+							}
 						}
 					}
-				} else {
-					// 親要素の存在チェックを追加
-					const buttonGroup = this.closest('.button-group');
-					if (buttonGroup) {
-						buttonGroup.querySelectorAll('.filter-button').forEach(btn => {
-							btn.classList.remove('active');
-						});
-						this.classList.add('active');
-						
-						switch(filterType) {
-							case 'kind':
-								show_kind_task = filterValue;
-								break;
-						}
-					}
-				}
-				
-				gantt.refreshData();
-				
-				setTimeout(function() {
-					gantt.setSizes();
-				}, 0);
+
+					gantt.refreshData();
+
+					setTimeout(function () {
+						gantt.setSizes();
+					}, 0);
+				});
 			});
 		});
-	});
 
-	// 初期状態の設定
-	var kikan = "限定期間";
-	var progress = "未完了";
-
+		// 初期状態の設定
+		var kikan = "限定期間";
+		var progress = "未完了";
 
 
-	// 設定
-	gantt.keys.edit_save = 13; // Enterキーで保存
 
-	// キーボードショートカットの設定
+		// 設定
+		gantt.keys.edit_save = 13; // Enterキーで保存
 
-	// documentのキーボードイベントハンドラ
-	document.addEventListener('keydown', function(e) {
-		// CtrlキーまたはCommandキー
-		const modifierPressed = e.ctrlKey || e.metaKey;
+		// キーボードショートカットの設定
 
-		if (modifierPressed && e.key.toLowerCase() === 'z') {
-			if (e.shiftKey) { // Command+Shift+Z
-				e.preventDefault();
-				gantt.redo();
-			} else { // Command+Z
-				e.preventDefault();
-				gantt.undo();
+		// documentのキーボードイベントハンドラ
+		document.addEventListener('keydown', function (e) {
+			// CtrlキーまたはCommandキー
+			const modifierPressed = e.ctrlKey || e.metaKey;
+
+			if (modifierPressed && e.key.toLowerCase() === 'z') {
+				if (e.shiftKey) { // Command+Shift+Z
+					e.preventDefault();
+					gantt.redo();
+				} else { // Command+Z
+					e.preventDefault();
+					gantt.undo();
+				}
 			}
+		});
+
+		// ganttのキーボードイベントハンドラ
+		gantt.attachEvent("onKeyDown", function (e) {
+			// CtrlキーまたはCommandキー
+			const modifierPressed = e.ctrlKey || e.metaKey;
+
+			if (modifierPressed && (e.keyCode === 90 || e.which === 90)) {
+				if (e.shiftKey) { // Command+Shift+Z
+					gantt.redo();
+					return false;
+				} else { // Command+Z
+					gantt.undo();
+					return false;
+				}
+			}
+			return true;
+		});
+
+		// 一般設定
+		gantt.config.order_branch = true;/*!*/
+		gantt.config.order_branch_free = true;/*!*/
+		gantt.config.date_format = "%Y-%m-%d";
+		gantt.config.sort = true;
+		gantt.config.open_tree_initially = true;
+		gantt.config.keyboard_navigation_cells = true;
+		// 行の高さ
+		gantt.config.row_height = 27
+
+		// タスクのコピー
+		function clone_task(id) {
+			var task = gantt.getTask(id);
+			var clone = gantt.copy(task);
+			delete clone.id; // IDを削除してデータベースのAUTO_INCREMENTに任せる
+			// console.log("task",task,"clone",clone);
+			gantt.addTask(clone, clone.parent, clone.$index)
 		}
-	});
 
-	// ganttのキーボードイベントハンドラ
-	gantt.attachEvent("onKeyDown", function(e){
-		// CtrlキーまたはCommandキー
-		const modifierPressed = e.ctrlKey || e.metaKey;
+		// ライトボックスが開いたときに description フィールドにフォーカスを当てる
+		gantt.attachEvent("onLightbox", function (task_id) {
+			setTimeout(function () {
+				var descriptionField = document.querySelector(".gantt_cal_ltext textarea");
+				if (descriptionField) {
+					descriptionField.focus();
+				}
+			}, 0);
+		});
 
-		if (modifierPressed && (e.keyCode === 90 || e.which === 90)) {
-			if (e.shiftKey) { // Command+Shift+Z
-				gantt.redo();
-				return false;
-			} else { // Command+Z
-				gantt.undo();
-				return false;
-			}
+		// init
+		gantt.init("gantt_here");
+		gantt.load("/data");
+
+		// データロード完了後にサイズを更新
+		gantt.attachEvent("onLoadEnd", function () {
+			updateGanttSize();
+		});
+
+		// スクロール
+		var scroll_state, click, original_mouse_position;
+		var timeline_area = document.getElementsByClassName("gantt_task_bg")[0]
+		var timeline_area_2 = document.getElementsByClassName("gantt_task_scale")[0]
+
+
+		timeline_area.onmousedown = function (event) {
+			click = true;
+			scroll_state = gantt.getScrollState().x;
+			original_mouse_position = event.clientX;
 		}
-		return true;
-	});
-
-	// 一般設定
-	gantt.config.order_branch = true;/*!*/
-	gantt.config.order_branch_free = true;/*!*/
-	gantt.config.date_format="%Y-%m-%d";
-	gantt.config.sort = true;
-	gantt.config.open_tree_initially = true;
-	gantt.config.keyboard_navigation_cells = true;
-	// 行の高さ
-	gantt.config.row_height = 27
-
-	// タスクのコピー
-	function clone_task(id){
-		var task = gantt.getTask(id);
-		var clone = gantt.copy(task);
-		delete clone.id; // IDを削除してデータベースのAUTO_INCREMENTに任せる
-		// console.log("task",task,"clone",clone);
-		gantt.addTask(clone, clone.parent, clone.$index)
-	}
-
-	// ライトボックスが開いたときに description フィールドにフォーカスを当てる
-	gantt.attachEvent("onLightbox", function(task_id){
-		setTimeout(function(){
-			var descriptionField = document.querySelector(".gantt_cal_ltext textarea");
-			if (descriptionField) {
-				descriptionField.focus();
-			}
-		}, 0);
-	});
-
-	// init
-	gantt.init("gantt_here");
-	gantt.load("/data");
-	
-	// データロード完了後にサイズを更新
-	gantt.attachEvent("onLoadEnd", function(){
-		updateGanttSize();
-	});
-
-	// スクロール
-	var scroll_state, click, original_mouse_position;
-	var timeline_area = document.getElementsByClassName("gantt_task_bg")[0]
-	var timeline_area_2 = document.getElementsByClassName("gantt_task_scale")[0]
-	
-
-	timeline_area.onmousedown = function(event){
-		click = true;
-		scroll_state = gantt.getScrollState().x;
-		original_mouse_position = event.clientX;
-	}
-	timeline_area_2.onmousedown = function(event){
-		click = true;
-		scroll_state = gantt.getScrollState().x;
-		original_mouse_position = event.clientX;
-	}
-
-	window.onmouseup = function(event){
-		click = false;
-	}
-
-	gantt.attachEvent("onMouseMove", function (id, e){
-		var scroll_value = scroll_state + original_mouse_position - e.clientX
-		if (click) { gantt.scrollTo(scroll_value, null);
+		timeline_area_2.onmousedown = function (event) {
+			click = true;
+			scroll_state = gantt.getScrollState().x;
+			original_mouse_position = event.clientX;
 		}
-	});
 
-	
-	// DBを利用
-	var dp = new gantt.dataProcessor("/data");
-	dp.init(gantt);
-	dp.setTransactionMode("REST");
-	dp.attachEvent("onAfterUpdate", function(sid, action, tid){
-		if (action === "inserted") {
-			var finalId = sid;
-			if (tid && sid !== tid) {
-				gantt.changeTaskId(sid, tid);
-				finalId = tid;
-			} else if (tid) {
-				finalId = tid;
-			}
-			if (gantt.isTaskExists(finalId)) {
-				var savedTask = gantt.getTask(finalId);
-				savedTask.hideId = false;
-				gantt.refreshTask(finalId);
-			}
+		window.onmouseup = function (event) {
+			click = false;
 		}
-		return true;
-	});
 
-	var exportCsvButton = document.getElementById('exportCsvButton');
-	var importCsvButton = document.getElementById('importCsvButton');
-
-	if (exportCsvButton) {
-		exportCsvButton.addEventListener('click', async function () {
-			if (!window.confirm('DBデータを保存します。よろしいですか？')) {
-				return;
+		gantt.attachEvent("onMouseMove", function (id, e) {
+			var scroll_value = scroll_state + original_mouse_position - e.clientX
+			if (click) {
+				gantt.scrollTo(scroll_value, null);
 			}
-			try {
-				var response = await fetch('/data/backup', { method: 'POST' });
-				if (!response.ok) {
+		});
+
+
+		// DBを利用
+		var dp = new gantt.dataProcessor("/data");
+		dp.init(gantt);
+		dp.setTransactionMode("REST");
+		dp.attachEvent("onAfterUpdate", function (sid, action, tid) {
+			if (action === "inserted") {
+				var finalId = sid;
+				if (tid && sid !== tid) {
+					gantt.changeTaskId(sid, tid);
+					finalId = tid;
+				} else if (tid) {
+					finalId = tid;
+				}
+				if (gantt.isTaskExists(finalId)) {
+					var savedTask = gantt.getTask(finalId);
+					savedTask.hideId = false;
+					gantt.refreshTask(finalId);
+				}
+			}
+			return true;
+		});
+
+		var exportCsvButton = document.getElementById('exportCsvButton');
+		var importCsvButton = document.getElementById('importCsvButton');
+
+		if (exportCsvButton) {
+			exportCsvButton.addEventListener('click', async function () {
+				if (!window.confirm('DBデータを保存します。よろしいですか？')) {
+					return;
+				}
+				try {
+					var response = await fetch('/data/backup', { method: 'POST' });
+					if (!response.ok) {
+						var payload = null;
+						try {
+							payload = await response.json();
+						} catch (jsonError) {
+							payload = null;
+						}
+						var message = payload && payload.error ? payload.error : 'サーバーエラーが発生しました';
+						throw new Error(message);
+					}
+					var result = await response.json();
+					var successText = 'バックアップを保存しました。';
+					if (result && result.files) {
+						var fileList = [result.files.taskFilename, result.files.linkFilename].filter(Boolean);
+						if (fileList.length) {
+							successText += ' (' + fileList.join(', ') + ')';
+						}
+					}
+					if (gantt && typeof gantt.message === 'function') {
+						gantt.message({ type: 'success', text: successText });
+					}
+				} catch (error) {
+					console.error(error);
+					if (gantt && typeof gantt.message === 'function') {
+						gantt.message({ type: 'error', text: 'バックアップに失敗しました: ' + error.message });
+					}
+				}
+			});
+		}
+
+		if (importCsvButton) {
+			importCsvButton.addEventListener('click', async function () {
+				if (!window.confirm('データを読み込みます。現在の表示内容は更新されますがよろしいですか？')) {
+					return;
+				}
+				try {
+					var response = await fetch('/data/import/directory', { method: 'POST' });
 					var payload = null;
 					try {
 						payload = await response.json();
 					} catch (jsonError) {
 						payload = null;
 					}
-					var message = payload && payload.error ? payload.error : 'サーバーエラーが発生しました';
-					throw new Error(message);
-				}
-				var result = await response.json();
-				var successText = 'バックアップを保存しました。';
-				if (result && result.files) {
-					var fileList = [result.files.taskFilename, result.files.linkFilename].filter(Boolean);
-					if (fileList.length) {
-						successText += ' (' + fileList.join(', ') + ')';
+					if (!response.ok) {
+						var message = payload && payload.error ? payload.error : 'サーバーエラーが発生しました';
+						throw new Error(message);
+					}
+					var summary = payload && payload.summary ? payload.summary : null;
+					var successDetails = [];
+					if (summary) {
+						if (summary.taskFile) {
+							successDetails.push('タスク: ' + summary.taskFile + '（' + summary.tasksInserted + '件）');
+						}
+						if (summary.linkFile) {
+							successDetails.push('リンク: ' + summary.linkFile + '（' + summary.linksInserted + '件）');
+						}
+						if (summary.skippedLinks) {
+							successDetails.push('リンクCSVは見つかりませんでした');
+						}
+						if (summary.ignoredFiles && summary.ignoredFiles.length) {
+							successDetails.push('未対応ファイル: ' + summary.ignoredFiles.join(', '));
+						}
+					}
+					var successText = successDetails.length ? 'データ読み込みフォルダから読み込みました。' + successDetails.join(' / ') : 'データ読み込みフォルダからデータを読み込みました。';
+					if (gantt && typeof gantt.message === 'function') {
+						gantt.message({ type: 'success', text: successText });
+					}
+					gantt.clearAll();
+					gantt.load('/data');
+				} catch (error) {
+					console.error(error);
+					if (gantt && typeof gantt.message === 'function') {
+						gantt.message({ type: 'error', text: 'データ読み込みに失敗しました: ' + error.message });
 					}
 				}
-				if (gantt && typeof gantt.message === 'function') {
-					gantt.message({ type: 'success', text: successText });
-				}
-			} catch (error) {
-				console.error(error);
-				if (gantt && typeof gantt.message === 'function') {
-					gantt.message({ type: 'error', text: 'バックアップに失敗しました: ' + error.message });
-				}
-			}
-		});
-	}
+			});
+		}
 
-	if (importCsvButton) {
-		importCsvButton.addEventListener('click', async function () {
-			if (!window.confirm('データを読み込みます。現在の表示内容は更新されますがよろしいですか？')) {
-				return;
-			}
-			try {
-				var response = await fetch('/data/import/directory', { method: 'POST' });
-				var payload = null;
-				try {
-					payload = await response.json();
-				} catch (jsonError) {
-					payload = null;
-				}
-				if (!response.ok) {
-					var message = payload && payload.error ? payload.error : 'サーバーエラーが発生しました';
-					throw new Error(message);
-				}
-				var summary = payload && payload.summary ? payload.summary : null;
-				var successDetails = [];
-				if (summary) {
-					if (summary.taskFile) {
-						successDetails.push('タスク: ' + summary.taskFile + '（' + summary.tasksInserted + '件）');
-					}
-					if (summary.linkFile) {
-						successDetails.push('リンク: ' + summary.linkFile + '（' + summary.linksInserted + '件）');
-					}
-					if (summary.skippedLinks) {
-						successDetails.push('リンクCSVは見つかりませんでした');
-					}
-					if (summary.ignoredFiles && summary.ignoredFiles.length) {
-						successDetails.push('未対応ファイル: ' + summary.ignoredFiles.join(', '));
-					}
-				}
-				var successText = successDetails.length ? 'データ読み込みフォルダから読み込みました。' + successDetails.join(' / ') : 'データ読み込みフォルダからデータを読み込みました。';
-				if (gantt && typeof gantt.message === 'function') {
-					gantt.message({ type: 'success', text: successText });
-				}
-				gantt.clearAll();
-				gantt.load('/data');
-			} catch (error) {
-				console.error(error);
-				if (gantt && typeof gantt.message === 'function') {
-					gantt.message({ type: 'error', text: 'データ読み込みに失敗しました: ' + error.message });
-				}
-			}
-		});
-	}
+		// ローカルストレージの利用
+		// var initialData = {
+		// 	data: localStorage["task"] ? JSON.parse(localStorage["task"]) : [],
+		// 	links: localStorage["link"] ? JSON.parse(localStorage["link"]) : []
+		// }
 
-	// ローカルストレージの利用
-	// var initialData = {
-	// 	data: localStorage["task"] ? JSON.parse(localStorage["task"]) : [],
-	// 	links: localStorage["link"] ? JSON.parse(localStorage["link"]) : []
-	// }
+		// gantt.parse(initialData);
 
-	// gantt.parse(initialData);
+		// var dp = gantt.createDataProcessor(function(mode, taskState, data, rowId) {
+		// 	var workData = [];
 
-	// var dp = gantt.createDataProcessor(function(mode, taskState, data, rowId) {
-	// 	var workData = [];
+		// 	if (localStorage[mode]) {
+		// 		workData = JSON.parse(localStorage[mode]);
+		// 	}
 
-	// 	if (localStorage[mode]) {
-	// 		workData = JSON.parse(localStorage[mode]);
-	// 	}
+		// 	switch(taskState) {
+		// 		case "create":
+		// 			workData.push(data);
+		// 		break;
+		// 		case "update":
+		// 			var itemIndex = workData.findIndex(function(entry, index) {
+		// 				return entry.id == rowId;
+		// 			});
+		// 			workData[itemIndex] = data;
+		// 		break;
+		// 		break;
+		// 		case "delete":
+		// 			var itemIndex = workData.findIndex(function(entry, index) {
+		// 				return entry.id == rowId;
+		// 			});
+		// 			workData.splice(itemIndex, 1);
+		// 		break;
+		// 	}
 
-	// 	switch(taskState) {
-	// 		case "create":
-	// 			workData.push(data);
-	// 		break;
-	// 		case "update":
-	// 			var itemIndex = workData.findIndex(function(entry, index) {
-	// 				return entry.id == rowId;
-	// 			});
-	// 			workData[itemIndex] = data;
-	// 		break;
-	// 		break;
-	// 		case "delete":
-	// 			var itemIndex = workData.findIndex(function(entry, index) {
-	// 				return entry.id == rowId;
-	// 			});
-	// 			workData.splice(itemIndex, 1);
-	// 		break;
-	// 	}
-		
-	// 	localStorage[mode] = JSON.stringify(workData);
-	// });
+		// 	localStorage[mode] = JSON.stringify(workData);
+		// });
 
-	// フィルター
+		// フィルター
 
-	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
-		if (show_kind_task == "All") return true;
-		if ((find_by_id_kind_task(task.kind_task)).label.toLowerCase() == show_kind_task.toLowerCase()) return true;
-		return false;
-	});
-
-	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
-		if (show_owner == "All") return true;
-		if ((find_by_id(task.owner_id)).label.toLowerCase() == show_owner.toLowerCase()) return true;
-		return false;
-	});
-
-
-
-	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
-		if (progress == "All") return true;
-		// if (show_owner_2 == "Default" && task.progress != 1 &&  task.start_date >= new Date(bdt) &&  task.start_date <= new Date(adt)) return true;
-		if (progress == "未完了" && task.progress != 1) return true;
-		return false;	
-	});
-
-	var kikan_date;
-	var kikan_nisu_box = document.getElementById("kikan_nisu");
-	gantt.attachEvent("onDataRender", function(){
-		kikan_nisu_box = document.getElementById("kikan_nisu");
-	});
-	function change_detector_3(){
-		kikan_date = kikan_nisu_box.value;
-		gantt.refreshData();
-		gantt.ext.zoom.setLevel("month");
-		setTimeout(function() {
-			gantt.setSizes();
-		}, 0);
-	}
-
-	var kikan_date2;
-	var kikan_nisu_box2 = document.getElementById("kikan_nisu2");
-	gantt.attachEvent("onDataRender", function(){
-		kikan_nisu_box2 = document.getElementById("kikan_nisu2");
-	});  
-
-	function change_detector_4(){
-		kikan_date2 = kikan_nisu_box2.value;
-		gantt.refreshData();
-		gantt.ext.zoom.setLevel("month");
-		setTimeout(function() {
-			gantt.setSizes();
-		}, 0);
-	}
-	// var bdt = new Date().setDate(new Date().getDate() - 30);
-	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
-		var adt = new Date().setDate(new Date().getDate() + (parseInt(kikan_date,10)-1));
-		var adt2 = new Date().setDate(new Date().getDate() + (parseInt(kikan_date2,10)));
-		if (kikan == "All") return true;
-		// if (kikan == "Default" &&  task.start_date >= new Date(bdt) &&  task.start_date <= new Date(adt)) return true;
-		// if (kikan == "限定期間" && task.start_date <= new Date(adt)) return true;
-		// if (kikan == "限定期間" && task.start_date <= new Date(adt2) && task.start_date >= new Date(adt)) return true;
-		// return false;
-		if (kikan_date != "0") {
-			if (kikan == "限定期間" && task.start_date <= new Date(adt2) && task.start_date >= new Date(adt)) return true;
-			return false;} 
-		else {
-			if (kikan == "限定期間" && task.start_date <= new Date(adt2)) return true;
+		gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
+			if (show_kind_task == "All") return true;
+			if ((find_by_id_kind_task(task.kind_task)).label.toLowerCase() == show_kind_task.toLowerCase()) return true;
 			return false;
-		}
-	});
+		});
 
-	// HTMLで設定した初期の値を読みこんで表示させる
-	change_detector_3();
-	change_detector_4();
+		gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
+			if (show_owner == "All") return true;
+			if ((find_by_id(task.owner_id)).label.toLowerCase() == show_owner.toLowerCase()) return true;
+			return false;
+		});
 
-	var filter_data = "";
-	var search_box = document.getElementById("search");
-	gantt.attachEvent("onDataRender", function(){
-	search_box = document.getElementById("search");
-	});  
 
-	function change_detector(event){
-		if (event.key === "Enter") {
-			filter_data = search_box.value;
+
+		gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
+			if (progress == "All") return true;
+			// if (show_owner_2 == "Default" && task.progress != 1 &&  task.start_date >= new Date(bdt) &&  task.start_date <= new Date(adt)) return true;
+			if (progress == "未完了" && task.progress != 1) return true;
+			return false;
+		});
+
+		var kikan_date;
+		var kikan_nisu_box = document.getElementById("kikan_nisu");
+		gantt.attachEvent("onDataRender", function () {
+			kikan_nisu_box = document.getElementById("kikan_nisu");
+		});
+		function change_detector_3() {
+			kikan_date = kikan_nisu_box.value;
 			gantt.refreshData();
-			setTimeout(function() {
+			gantt.ext.zoom.setLevel("month");
+			setTimeout(function () {
 				gantt.setSizes();
 			}, 0);
 		}
-	}
 
-	function compare_input(id) {
-		var match = false;
-		// check children's text
-		if (gantt.hasChild(id)) {
-			gantt.eachTask(function(child_object){
-				if (compare_input(child_object.id, filter_data)) match = true;
-			}, id);
-		}  
+		var kikan_date2;
+		var kikan_nisu_box2 = document.getElementById("kikan_nisu2");
+		gantt.attachEvent("onDataRender", function () {
+			kikan_nisu_box2 = document.getElementById("kikan_nisu2");
+		});
 
-		// check task's text
-		if (gantt.getTask(id).text.toLowerCase().indexOf(filter_data.toLowerCase()) >= 0)
-			match = true;
-
-	return match;
-	}
-
-	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
-		if (compare_input(id)) {
-			return true;
-		}
-
-		return false;
-	});
-
-	// 新しいイベントリスナーを追加
-	search_box.addEventListener("keyup", change_detector);
-
-	var filter_data_2 = "";
-	var search_box_2 = document.getElementById("search_2");
-	gantt.attachEvent("onDataRender", function(){
-	search_box_2 = document.getElementById("search_2");
-	});  
-
-	function change_detector_2(event){
-		if (event.key === "Enter") {
-			filter_data_2 = search_box_2.value;
+		function change_detector_4() {
+			kikan_date2 = kikan_nisu_box2.value;
 			gantt.refreshData();
-			setTimeout(function() {
+			gantt.ext.zoom.setLevel("month");
+			setTimeout(function () {
 				gantt.setSizes();
 			}, 0);
 		}
-	}
+		// var bdt = new Date().setDate(new Date().getDate() - 30);
+		gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
+			var adt = new Date().setDate(new Date().getDate() + (parseInt(kikan_date, 10) - 1));
+			var adt2 = new Date().setDate(new Date().getDate() + (parseInt(kikan_date2, 10)));
+			if (kikan == "All") return true;
+			// if (kikan == "Default" &&  task.start_date >= new Date(bdt) &&  task.start_date <= new Date(adt)) return true;
+			// if (kikan == "限定期間" && task.start_date <= new Date(adt)) return true;
+			// if (kikan == "限定期間" && task.start_date <= new Date(adt2) && task.start_date >= new Date(adt)) return true;
+			// return false;
+			if (kikan_date != "0") {
+				if (kikan == "限定期間" && task.start_date <= new Date(adt2) && task.start_date >= new Date(adt)) return true;
+				return false;
+			}
+			else {
+				if (kikan == "限定期間" && task.start_date <= new Date(adt2)) return true;
+				return false;
+			}
+		});
 
-	function compare_input_2(id) {
-	// check task's text
-	if (gantt.getTask(id).text.toLowerCase().indexOf(filter_data_2.toLowerCase()) >= 0)
-		return true;
-	}
+		// HTMLで設定した初期の値を読みこんで表示させる
+		change_detector_3();
+		change_detector_4();
 
-	function all_parents_check(id){
-		var show_task = false;
-		gantt.eachParent(function(task){
-			if (gantt.getTask(task.id).text.toLowerCase().indexOf(filter_data_2.toLowerCase()) >= 0)
-			show_task = true;
-		}, id)
-		return show_task;
-	}
+		var filter_data = "";
+		var search_box = document.getElementById("search");
+		gantt.attachEvent("onDataRender", function () {
+			search_box = document.getElementById("search");
+		});
 
-	gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
-	if (compare_input_2(id) || all_parents_check(id)) {
-		return true;
-	}
-	return false;
-	});
-
-	// 新しいイベントリスナーを追加
-	search_box_2.addEventListener("keyup", change_detector_2);
-
-	// 開いたときに開始日でソード
-	// gantt.sort("start_date",false);
-	// gantt.render()
-	// gantt.attachEvent("onParse", function () {
-	// 	gantt.sort("start_date",false);
-	// });
-	// var nodesSnapshot = document.evaluate('//*[@id="gantt_here"]/div/div[1]/div[1]/div/div/div[1]/div[2]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
-	// nodesSnapshot.snapshotItem(0).click();
-
-	// サイズ変更機能を最適化
-	function updateGanttSize() {
-		const sizeInput = document.getElementById('size-input');
-		const scale = sizeInput.value / 100;
-		
-		// ganttのスケール設定を更新
-		gantt.config.scale_height = Math.round(60 * scale);
-		gantt.config.row_height = Math.round(27 * scale);
-		gantt.config.min_column_width = Math.round(30 * scale);
-		
-		// フォントサイズを調整（最小サイズを8pxに制限）
-		const baseFontSize = Math.max(8, Math.round(12 * scale));
-		
-		// スタイルを動的に更新
-		let styleElement = document.getElementById('gantt-scale-style');
-		if (!styleElement) {
-			styleElement = document.createElement('style');
-			styleElement.id = 'gantt-scale-style';
-			document.head.appendChild(styleElement);
+		function change_detector(event) {
+			if (event.key === "Enter") {
+				filter_data = search_box.value;
+				gantt.refreshData();
+				setTimeout(function () {
+					gantt.setSizes();
+				}, 0);
+			}
 		}
-		
-		styleElement.textContent = `
+
+		function compare_input(id) {
+			var match = false;
+			// check children's text
+			if (gantt.hasChild(id)) {
+				gantt.eachTask(function (child_object) {
+					if (compare_input(child_object.id, filter_data)) match = true;
+				}, id);
+			}
+
+			// check task's text
+			if (gantt.getTask(id).text.toLowerCase().indexOf(filter_data.toLowerCase()) >= 0)
+				match = true;
+
+			return match;
+		}
+
+		gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
+			if (compare_input(id)) {
+				return true;
+			}
+
+			return false;
+		});
+
+		// 新しいイベントリスナーを追加
+		search_box.addEventListener("keyup", change_detector);
+
+		var filter_data_2 = "";
+		var search_box_2 = document.getElementById("search_2");
+		gantt.attachEvent("onDataRender", function () {
+			search_box_2 = document.getElementById("search_2");
+		});
+
+		function change_detector_2(event) {
+			if (event.key === "Enter") {
+				filter_data_2 = search_box_2.value;
+				gantt.refreshData();
+				setTimeout(function () {
+					gantt.setSizes();
+				}, 0);
+			}
+		}
+
+		function compare_input_2(id) {
+			// check task's text
+			if (gantt.getTask(id).text.toLowerCase().indexOf(filter_data_2.toLowerCase()) >= 0)
+				return true;
+		}
+
+		function all_parents_check(id) {
+			var show_task = false;
+			gantt.eachParent(function (task) {
+				if (gantt.getTask(task.id).text.toLowerCase().indexOf(filter_data_2.toLowerCase()) >= 0)
+					show_task = true;
+			}, id)
+			return show_task;
+		}
+
+		gantt.attachEvent("onBeforeTaskDisplay", function (id, task) {
+			if (compare_input_2(id) || all_parents_check(id)) {
+				return true;
+			}
+			return false;
+		});
+
+		// 新しいイベントリスナーを追加
+		search_box_2.addEventListener("keyup", change_detector_2);
+
+		// 開いたときに開始日でソード
+		// gantt.sort("start_date",false);
+		// gantt.render()
+		// gantt.attachEvent("onParse", function () {
+		// 	gantt.sort("start_date",false);
+		// });
+		// var nodesSnapshot = document.evaluate('//*[@id="gantt_here"]/div/div[1]/div[1]/div/div/div[1]/div[2]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
+		// nodesSnapshot.snapshotItem(0).click();
+
+		// サイズ変更機能を最適化
+		function updateGanttSize() {
+			const sizeInput = document.getElementById('size-input');
+			const scale = sizeInput.value / 100;
+
+			// ganttのスケール設定を更新
+			gantt.config.scale_height = Math.round(60 * scale);
+			gantt.config.row_height = Math.round(27 * scale);
+			gantt.config.min_column_width = Math.round(30 * scale);
+
+			// フォントサイズを調整（最小サイズを8pxに制限）
+			const baseFontSize = Math.max(8, Math.round(12 * scale));
+
+			// スタイルを動的に更新
+			let styleElement = document.getElementById('gantt-scale-style');
+			if (!styleElement) {
+				styleElement = document.createElement('style');
+				styleElement.id = 'gantt-scale-style';
+				document.head.appendChild(styleElement);
+			}
+
+			styleElement.textContent = `
 			/* 基本的なフォントサイズ */
 			.gantt_scale_cell, 
 			.gantt_grid_head_cell, 
@@ -1551,296 +1606,296 @@
 				font-size: ${Math.max(8, Math.round(12 * scale))}px !important;
 			}
 		`;
-		
-		// ganttチャートのサイズを更新
-		const ganttContainer = document.getElementById('gantt_here');
-		ganttContainer.style.height = 'calc(100vh - 52px)';
-		ganttContainer.style.width = '100%';
-		
-		// レイアウトを更新
-		gantt.render();
-	}
 
-	// DOMContentLoadedイベントで初期化を行う
-	document.addEventListener('DOMContentLoaded', function() {
-		const sizeInput = document.getElementById('size-input');
-		sizeInput.value = 100; // デフォルト値を設定
-		updateGanttSize();
-	});
+			// ganttチャートのサイズを更新
+			const ganttContainer = document.getElementById('gantt_here');
+			ganttContainer.style.height = 'calc(100vh - 52px)';
+			ganttContainer.style.width = '100%';
 
-	// ホイールイベントでのズーム機能
-	document.getElementById('gantt_here').addEventListener('wheel', function(e) {
-		if (e.ctrlKey) {
-			e.preventDefault();
-			const sizeInput = document.getElementById('size-input');
-			const currentSize = parseInt(sizeInput.value);
-			
-			const delta = e.wheelDelta ? -e.wheelDelta : e.deltaY;
-			const newSize = delta > 0 
-				? Math.max(10, currentSize - 2)
-				: Math.min(200, currentSize + 2);
-			
-			sizeInput.value = newSize;
-			updateGanttSize();
-		}
-	}, { passive: false });
-
-	// キーボードイベントの処理を追加
-	document.addEventListener('keydown', function(e) {
-		if (e.key === 'Escape') {
-			// 選択されているタスクをすべて解除
-			gantt.eachSelectedTask(function(taskId) {
-				gantt.unselectTask(taskId);
-			});
-			// データを再描画
-			gantt.refreshData();
-		}
-	});
-
-	// 印刷モードの状態管理
-	let isPrintMode = false;
-
-	// グローバルスコープで設定を保存する変数を修正
-	let savedConfig = {
-		show_grid: true,
-		scroll_size: 20,
-		grid_width: 280,
-		columns: null  // カラム設定を保存するために追加
-	};
-
-	// 印刷モードトグルボタンのイベントリスナーを修正
-	document.getElementById('printModeToggle').addEventListener('click', function() {
-		isPrintMode = !isPrintMode;
-		this.classList.toggle('active');
-		document.body.classList.toggle('print-mode', isPrintMode);
-		
-		if (isPrintMode) {
-			// 現在の設定を保存
-			savedConfig = {
-				show_grid: gantt.config.show_grid,
-				scroll_size: gantt.config.scroll_size,
-				grid_width: gantt.config.grid_width,
-				columns: [...gantt.config.columns]  // カラム設定を複製して保存
-			};
-			
-			// 印刷モード時の設定を適用
-			gantt.config.show_grid = false;
-			gantt.config.scroll_size = 0;
-			gantt.config.grid_width = 0;
-			gantt.config.columns = [];  // カラムを非表示
-		} else {
-			// 保存していた設定を完全に復元
-			gantt.config.show_grid = savedConfig.show_grid;
-			gantt.config.scroll_size = savedConfig.scroll_size;
-			gantt.config.grid_width = savedConfig.grid_width;
-			gantt.config.columns = savedConfig.columns;  // カラム設定を復元
-		}
-		
-		// テンプレートの更新
-		updateTemplatesForPrintMode(isPrintMode);
-		
-		// レイアウトの更新を最適化
-		requestAnimationFrame(() => {
+			// レイアウトを更新
 			gantt.render();
-			gantt.setSizes();
+		}
+
+		// DOMContentLoadedイベントで初期化を行う
+		document.addEventListener('DOMContentLoaded', function () {
+			const sizeInput = document.getElementById('size-input');
+			sizeInput.value = 100; // デフォルト値を設定
+			updateGanttSize();
 		});
-	});
 
-	const moveTasksButton = document.getElementById('moveTasksButton');
-	if (moveTasksButton) {
-		moveTasksButton.addEventListener('click', function() {
-			const todayStart = gantt.date.day_start(new Date());
-			const recentMonday = getMostRecentMonday(todayStart);
-			const modifiedTaskIds = [];
+		// ホイールイベントでのズーム機能
+		document.getElementById('gantt_here').addEventListener('wheel', function (e) {
+			if (e.ctrlKey) {
+				e.preventDefault();
+				const sizeInput = document.getElementById('size-input');
+				const currentSize = parseInt(sizeInput.value);
 
-			const runInBatch = typeof gantt.batchUpdate === 'function'
-				? function(callback) { gantt.batchUpdate(callback); }
-				: function(callback) { callback(); };
+				const delta = e.wheelDelta ? -e.wheelDelta : e.deltaY;
+				const newSize = delta > 0
+					? Math.max(10, currentSize - 2)
+					: Math.min(200, currentSize + 2);
 
-			runInBatch(function() {
-				gantt.eachTask(function(task) {
-					if (!task) {
-						return;
-					}
+				sizeInput.value = newSize;
+				updateGanttSize();
+			}
+		}, { passive: false });
 
-					const taskProgress = parseFloat(task.progress);
-					if (!Number.isNaN(taskProgress) && Math.abs(taskProgress - 1) < 1e-6) {
-						return;
-					}
-
-					const kindLabel = resolveKindLabel(task.kind_task);
-					let targetStart = null;
-
-					switch (kindLabel) {
-						case 'task':
-							targetStart = todayStart;
-							break;
-						case 'pro':
-							targetStart = recentMonday;
-							break;
-						default:
-							return;
-					}
-
-					const currentStart = normalizeToDayStart(task.start_date);
-					if (currentStart && currentStart.getTime() > todayStart.getTime()) {
-						return;
-					}
-					if (currentStart && currentStart.getTime() === targetStart.getTime()) {
-						return;
-					}
-
-					const normalizedDuration = normalizeDuration(task.duration);
-						task.start_date = new Date(targetStart.getTime());
-					task.end_date = calculateEndDate(task.start_date, normalizedDuration);
-					task.duration = normalizedDuration;
-					if (gantt.config && gantt.config.auto_scheduling) {
-						task.auto_scheduling = true;
-					}
-					gantt.updateTask(task.id);
-					modifiedTaskIds.push(task.id);
+		// キーボードイベントの処理を追加
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape') {
+				// 選択されているタスクをすべて解除
+				gantt.eachSelectedTask(function (taskId) {
+					gantt.unselectTask(taskId);
 				});
-			});
+				// データを再描画
+				gantt.refreshData();
+			}
+		});
 
-			if (modifiedTaskIds.length > 0) {
-				gantt.message(modifiedTaskIds.length + '件のタスクを移動しました。');
+		// 印刷モードの状態管理
+		let isPrintMode = false;
+
+		// グローバルスコープで設定を保存する変数を修正
+		let savedConfig = {
+			show_grid: true,
+			scroll_size: 20,
+			grid_width: 280,
+			columns: null  // カラム設定を保存するために追加
+		};
+
+		// 印刷モードトグルボタンのイベントリスナーを修正
+		document.getElementById('printModeToggle').addEventListener('click', function () {
+			isPrintMode = !isPrintMode;
+			this.classList.toggle('active');
+			document.body.classList.toggle('print-mode', isPrintMode);
+
+			if (isPrintMode) {
+				// 現在の設定を保存
+				savedConfig = {
+					show_grid: gantt.config.show_grid,
+					scroll_size: gantt.config.scroll_size,
+					grid_width: gantt.config.grid_width,
+					columns: [...gantt.config.columns]  // カラム設定を複製して保存
+				};
+
+				// 印刷モード時の設定を適用
+				gantt.config.show_grid = false;
+				gantt.config.scroll_size = 0;
+				gantt.config.grid_width = 0;
+				gantt.config.columns = [];  // カラムを非表示
 			} else {
-				gantt.message('移動対象のタスクがありません。');
+				// 保存していた設定を完全に復元
+				gantt.config.show_grid = savedConfig.show_grid;
+				gantt.config.scroll_size = savedConfig.scroll_size;
+				gantt.config.grid_width = savedConfig.grid_width;
+				gantt.config.columns = savedConfig.columns;  // カラム設定を復元
 			}
-		});
-	}
 
-	function resolveKindLabel(kindValue) {
-		if (!Array.isArray(gantt.kind_tasks)) {
-			return null;
-		}
-		const kindItem = gantt.kind_tasks.find(function(item) {
-			return String(item.key) === String(kindValue);
-		});
-		return kindItem ? kindItem.label : null;
-	}
+			// テンプレートの更新
+			updateTemplatesForPrintMode(isPrintMode);
 
-	function normalizeToDayStart(value) {
-		if (!value) {
-			return null;
-		}
-		let dateValue = value instanceof Date ? new Date(value.getTime()) : null;
-		if (!dateValue && typeof value === 'string' && typeof gantt.date.parseDate === 'function') {
-			dateValue = gantt.date.parseDate(value, gantt.config.date_format);
-		}
-		if (!dateValue) {
-			dateValue = new Date(value);
-		}
-		if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) {
-			return null;
-		}
-		return gantt.date.day_start(dateValue);
-	}
-
-	function normalizeDuration(value) {
-		const parsed = parseFloat(value);
-		if (Number.isNaN(parsed) || parsed < 0) {
-			return 0;
-		}
-		return parsed;
-	}
-
-	function calculateEndDate(startDate, duration) {
-		if (!(startDate instanceof Date) || Number.isNaN(startDate.getTime())) {
-			return null;
-		}
-		if (typeof gantt.calculateEndDate === 'function') {
-			const result = gantt.calculateEndDate({
-				start_date: startDate,
-				duration: duration
+			// レイアウトの更新を最適化
+			requestAnimationFrame(() => {
+				gantt.render();
+				gantt.setSizes();
 			});
-			if (result instanceof Date && !Number.isNaN(result.getTime())) {
-				return result;
-			}
-		}
-		if (duration === 0) {
-			return new Date(startDate.getTime());
-		}
-		const fallback = new Date(startDate.getTime());
-		fallback.setDate(fallback.getDate() + duration);
-		return gantt.date.day_start(fallback);
-	}
+		});
 
-	function getMostRecentMonday(baseDate) {
-		const reference = new Date(baseDate.getTime());
-		const day = reference.getDay();
-		const diff = (day + 6) % 7; // Monday=0, Sunday=6
-		reference.setDate(reference.getDate() - diff);
-		return gantt.date.day_start(reference);
-	}
+		const moveTasksButton = document.getElementById('moveTasksButton');
+		if (moveTasksButton) {
+			moveTasksButton.addEventListener('click', function () {
+				const todayStart = gantt.date.day_start(new Date());
+				const recentMonday = getMostRecentMonday(todayStart);
+				const modifiedTaskIds = [];
 
-	function getMostRecentSunday(baseDate) {
-		const reference = new Date(baseDate.getTime());
-		const day = reference.getDay();
-		const diff = day === 0 ? 7 : day; // ensure we always move to the previous Sunday
-		reference.setDate(reference.getDate() - diff);
-		return gantt.date.day_start(reference);
-	}
+				const runInBatch = typeof gantt.batchUpdate === 'function'
+					? function (callback) { gantt.batchUpdate(callback); }
+					: function (callback) { callback(); };
 
-	// テンプレート更新用の関数を修正
-	function updateTemplatesForPrintMode(isPrintMode) {
-		if (isPrintMode) {
-			gantt.templates.task_text = function(start, end, task) {
-				return "";
-			};
-			
-			gantt.templates.rightside_text = function(start, end, task) {
-				// 印刷モードでは[id]と親の情報を除いたシンプルな表示
-				return '<span style="color: black; text-decoration: none;">' + task.text + '</span>';
-			};
-		} else {
-			gantt.templates.task_text = function(start, end, task) {
-				var idPrefix = getTaskIdPrefix(task);
-				var label = idPrefix ? idPrefix + task.text : task.text;
-				if (task.hyperlink === "") {
-					return label;
+				runInBatch(function () {
+					gantt.eachTask(function (task) {
+						if (!task) {
+							return;
+						}
+
+						const taskProgress = parseFloat(task.progress);
+						if (!Number.isNaN(taskProgress) && Math.abs(taskProgress - 1) < 1e-6) {
+							return;
+						}
+
+						const kindLabel = resolveKindLabel(task.kind_task);
+						let targetStart = null;
+
+						switch (kindLabel) {
+							case 'task':
+								targetStart = todayStart;
+								break;
+							case 'pro':
+								targetStart = recentMonday;
+								break;
+							default:
+								return;
+						}
+
+						const currentStart = normalizeToDayStart(task.start_date);
+						if (currentStart && currentStart.getTime() > todayStart.getTime()) {
+							return;
+						}
+						if (currentStart && currentStart.getTime() === targetStart.getTime()) {
+							return;
+						}
+
+						const normalizedDuration = normalizeDuration(task.duration);
+						task.start_date = new Date(targetStart.getTime());
+						task.end_date = calculateEndDate(task.start_date, normalizedDuration);
+						task.duration = normalizedDuration;
+						if (gantt.config && gantt.config.auto_scheduling) {
+							task.auto_scheduling = true;
+						}
+						gantt.updateTask(task.id);
+						modifiedTaskIds.push(task.id);
+					});
+				});
+
+				if (modifiedTaskIds.length > 0) {
+					gantt.message(modifiedTaskIds.length + '件のタスクを移動しました。');
 				} else {
-					if (task.kind_task === "1" || task.kind_task === "3") {
-						return "";
+					gantt.message('移動対象のタスクがありません。');
+				}
+			});
+		}
+
+		function resolveKindLabel(kindValue) {
+			if (!Array.isArray(gantt.kind_tasks)) {
+				return null;
+			}
+			const kindItem = gantt.kind_tasks.find(function (item) {
+				return String(item.key) === String(kindValue);
+			});
+			return kindItem ? kindItem.label : null;
+		}
+
+		function normalizeToDayStart(value) {
+			if (!value) {
+				return null;
+			}
+			let dateValue = value instanceof Date ? new Date(value.getTime()) : null;
+			if (!dateValue && typeof value === 'string' && typeof gantt.date.parseDate === 'function') {
+				dateValue = gantt.date.parseDate(value, gantt.config.date_format);
+			}
+			if (!dateValue) {
+				dateValue = new Date(value);
+			}
+			if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) {
+				return null;
+			}
+			return gantt.date.day_start(dateValue);
+		}
+
+		function normalizeDuration(value) {
+			const parsed = parseFloat(value);
+			if (Number.isNaN(parsed) || parsed < 0) {
+				return 0;
+			}
+			return parsed;
+		}
+
+		function calculateEndDate(startDate, duration) {
+			if (!(startDate instanceof Date) || Number.isNaN(startDate.getTime())) {
+				return null;
+			}
+			if (typeof gantt.calculateEndDate === 'function') {
+				const result = gantt.calculateEndDate({
+					start_date: startDate,
+					duration: duration
+				});
+				if (result instanceof Date && !Number.isNaN(result.getTime())) {
+					return result;
+				}
+			}
+			if (duration === 0) {
+				return new Date(startDate.getTime());
+			}
+			const fallback = new Date(startDate.getTime());
+			fallback.setDate(fallback.getDate() + duration);
+			return gantt.date.day_start(fallback);
+		}
+
+		function getMostRecentMonday(baseDate) {
+			const reference = new Date(baseDate.getTime());
+			const day = reference.getDay();
+			const diff = (day + 6) % 7; // Monday=0, Sunday=6
+			reference.setDate(reference.getDate() - diff);
+			return gantt.date.day_start(reference);
+		}
+
+		function getMostRecentSunday(baseDate) {
+			const reference = new Date(baseDate.getTime());
+			const day = reference.getDay();
+			const diff = day === 0 ? 7 : day; // ensure we always move to the previous Sunday
+			reference.setDate(reference.getDate() - diff);
+			return gantt.date.day_start(reference);
+		}
+
+		// テンプレート更新用の関数を修正
+		function updateTemplatesForPrintMode(isPrintMode) {
+			if (isPrintMode) {
+				gantt.templates.task_text = function (start, end, task) {
+					return "";
+				};
+
+				gantt.templates.rightside_text = function (start, end, task) {
+					// 印刷モードでは[id]と親の情報を除いたシンプルな表示
+					return '<span style="color: black; text-decoration: none;">' + task.text + '</span>';
+				};
+			} else {
+				gantt.templates.task_text = function (start, end, task) {
+					var idPrefix = getTaskIdPrefix(task);
+					var label = idPrefix ? idPrefix + task.text : task.text;
+					if (task.hyperlink === "") {
+						return label;
 					} else {
-						return '<a href="' + task.hyperlink + '" target="_blank">' + label + '</a>';
+						if (task.kind_task === "1" || task.kind_task === "3") {
+							return "";
+						} else {
+							return '<a href="' + generateLinkUrl(task.hyperlink) + '" target="_blank">' + label + '</a>';
+						}
 					}
-				}
-			};
-			
-			gantt.templates.rightside_text = function(start, end, task) {
-				var idPrefix = getTaskIdPrefix(task);
-				var currentTaskInfo = idPrefix ? `${idPrefix} ${task.text}` : task.text;
-				var parentInfo = getParentInfo(task.id);
-				var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
-				
-				if (task.hyperlink === "") {
-					return displayText;
-				} else {
-					return '<a href="' + task.hyperlink + '" target="_blank">' + displayText + '</a>';
-				}
-			};
+				};
+
+				gantt.templates.rightside_text = function (start, end, task) {
+					var idPrefix = getTaskIdPrefix(task);
+					var currentTaskInfo = idPrefix ? `${idPrefix} ${task.text}` : task.text;
+					var parentInfo = getParentInfo(task.id);
+					var displayText = parentInfo ? `${currentTaskInfo} > ${parentInfo}` : currentTaskInfo;
+
+					if (task.hyperlink === "") {
+						return displayText;
+					} else {
+						return '<a href="' + generateLinkUrl(task.hyperlink) + '" target="_blank">' + displayText + '</a>';
+					}
+				};
+			}
 		}
-	}
 
-	// また、ganttの初期化時にもイベントを追加
-	gantt.attachEvent("onTaskLoading", function(task){
-		if (isPrintMode) {
-			document.querySelectorAll('.gantt_side_content').forEach(function(element) {
-				element.style.display = 'block';
-				element.style.color = 'rgb(0, 0, 0)';
-				element.style.fontSize = '11px';
-			});
-		}
-		return true;
-	});
+		// また、ganttの初期化時にもイベントを追加
+		gantt.attachEvent("onTaskLoading", function (task) {
+			if (isPrintMode) {
+				document.querySelectorAll('.gantt_side_content').forEach(function (element) {
+					element.style.display = 'block';
+					element.style.color = 'rgb(0, 0, 0)';
+					element.style.fontSize = '11px';
+				});
+			}
+			return true;
+		});
 
-	// 階層表示用のラベルを追加
-	gantt.locale.labels.section_hierarchy = "";
+		// 階層表示用のラベルを追加
+		gantt.locale.labels.section_hierarchy = "";
 
-	// スタイルを追加
-	var styleSheet = document.createElement("style");
-	styleSheet.textContent = `
+		// スタイルを追加
+		var styleSheet = document.createElement("style");
+		styleSheet.textContent = `
 		.hierarchy-path {
 			display: block !important;
 			padding: 3px 8px;
@@ -1858,35 +1913,35 @@
 			padding-top: 2px;
 		}
 	`;
-	document.head.appendChild(styleSheet);
+		document.head.appendChild(styleSheet);
 
-	// lightboxが開かれる時のイベントを追加
-	gantt.attachEvent("onLightbox", function(task_id){
-		var task = gantt.getTask(task_id);
-		var hierarchy = getTaskHierarchy(task_id);
-		var hierarchyDiv = document.querySelector(".hierarchy-path");
-		if (hierarchyDiv) {
-			hierarchyDiv.innerHTML = hierarchy;
+		// lightboxが開かれる時のイベントを追加
+		gantt.attachEvent("onLightbox", function (task_id) {
+			var task = gantt.getTask(task_id);
+			var hierarchy = getTaskHierarchy(task_id);
+			var hierarchyDiv = document.querySelector(".hierarchy-path");
+			if (hierarchyDiv) {
+				hierarchyDiv.innerHTML = hierarchy;
+			}
+		});
+
+		// タスクが開かれる前のイベントを追加
+		gantt.attachEvent("onBeforeLightbox", function (id) {
+			var task = gantt.getTask(id);
+			task.hierarchy_path = getTaskHierarchy(id);
+			return true;
+		});
+
+		// 親タスクの情報を取得する関数を追加
+		function getParentInfo(taskId) {
+			var task = gantt.getTask(taskId);
+			if (task.parent && task.parent !== gantt.config.root_id) {
+				var parentTask = gantt.getTask(task.parent);
+				var idPrefix = getTaskIdPrefix(parentTask);
+				return idPrefix ? `${idPrefix} ${parentTask.text}` : parentTask.text;
+			}
+			return "";
 		}
-	});
-
-	// タスクが開かれる前のイベントを追加
-	gantt.attachEvent("onBeforeLightbox", function(id) {
-		var task = gantt.getTask(id);
-		task.hierarchy_path = getTaskHierarchy(id);
-		return true;
-	});
-
-	// 親タスクの情報を取得する関数を追加
-	function getParentInfo(taskId) {
-		var task = gantt.getTask(taskId);
-		if (task.parent && task.parent !== gantt.config.root_id) {
-			var parentTask = gantt.getTask(task.parent);
-			var idPrefix = getTaskIdPrefix(parentTask);
-			return idPrefix ? `${idPrefix} ${parentTask.text}` : parentTask.text;
-		}
-		return "";
-	}
-</script>
+	</script>
 
 </body>
