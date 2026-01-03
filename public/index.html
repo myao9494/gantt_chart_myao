@@ -830,6 +830,16 @@
 	// };
 
 	
+	function generateLinkUrl(url) {
+		if (!url) return "";
+		// http, https, mailto 等で始まる場合はそのまま
+		if (/^[a-z]+:/i.test(url)) {
+			return url;
+		}
+		// それ以外はローカルパスとみなしてAPI経由で開く
+		return "http://localhost:8001/api/open-path?path=" + encodeURIComponent(url);
+	}
+
 	// タスクのバーの右側のテキスト設定
 	gantt.templates.rightside_text = function(start, end, task){
 		var idPrefix = getTaskIdPrefix(task);
@@ -843,7 +853,8 @@
 			if (isPrintMode) {
 				return '<span style="color: black; text-decoration: none;">' + displayText + '</span>';
 			} else {
-				return '<a href="' + task.hyperlink + '" target="_blank">' + displayText + '</a>';
+				// return '<a href="' + task.hyperlink + '" target="_blank">' + displayText + '</a>';
+				return '<a href="' + generateLinkUrl(task.hyperlink) + '" target="_blank">' + displayText + '</a>';
 			}
 		}
 	};
@@ -858,7 +869,8 @@
 			if (task.kind_task === "1" || task.kind_task === "3") {
 				return "";
 			} else {
-				return '<a href="' + task.hyperlink + '" target="_blank">' + label + '</a>';
+				// return '<a href="' + task.hyperlink + '" target="_blank">' + label + '</a>';
+				return '<a href="' + generateLinkUrl(task.hyperlink) + '" target="_blank">' + label + '</a>';
 			}
 		}
 	};
