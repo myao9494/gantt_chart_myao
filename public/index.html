@@ -885,8 +885,8 @@
 		function generateLinkUrl(url) {
 			if (!url) return "";
 			url = url.trim();
-			// http, https, mailto 等で始まる場合はそのまま
-			if (/^[a-z]+:/i.test(url)) {
+			// http, https で始まる場合はそのまま
+			if (/^https?:/i.test(url)) {
 				return url;
 			}
 			// それ以外はローカルパスとみなしてAPI経由で開く
